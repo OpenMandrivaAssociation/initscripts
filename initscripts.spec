@@ -1,4 +1,4 @@
-# 	$Id: initscripts.spec 31421 2006-05-23 22:47:39Z blino $	
+# 	$Id: initscripts.spec 219401 2007-05-01 12:40:37Z blino $	
 
 # The restart part in the real _post_service doesn't work with netfs and isn't needed
 # for other scripts
@@ -6,8 +6,8 @@
 
 Summary: The inittab file and the /etc/init.d scripts
 Name: initscripts
-Version: 8.51
-Release: %mkrel 7
+Version: 8.53
+Release: %mkrel 1
 License: GPL
 Group: System/Base
 Source0: initscripts-%{version}.tar.bz2
@@ -126,6 +126,8 @@ chmod 600 /var/log/btmp
 
 %_mypost_service netfs
 
+%_mypost_service netconsole
+
 %_mypost_service network
 
 %_mypost_service network-up
@@ -209,6 +211,8 @@ fi
 
 %_preun_service network-up
 
+%_preun_service netconsole
+
 %_preun_service dm
 
 %_preun_service partmon
@@ -285,6 +289,7 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %verify(not md5 mtime size) /etc/adjtime
 %config(noreplace) /etc/sysconfig/init
 %config(noreplace) /etc/sysconfig/autofsck
+%config(noreplace) /etc/sysconfig/netconsole
 %config(noreplace) /etc/sysconfig/readonly-root
 /etc/sysconfig/network-scripts/ifdown
 /sbin/ifdown
@@ -428,5 +433,3 @@ rm -rf $RPM_BUILD_ROOT
 #%dir /etc/locale
 #%dir /etc/locale/*
 #%dir /etc/locale/*/LC_MESSAGES
-
-
