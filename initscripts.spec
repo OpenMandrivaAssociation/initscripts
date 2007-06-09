@@ -424,7 +424,7 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) /etc/modules
 /etc/rc.modules
 %dir /etc/modprobe.preload.d/
-%ifnarch sparc
+%ifnarch %{sunsparc}
 /usr/sbin/supermount
 %endif
 /usr/bin/*
