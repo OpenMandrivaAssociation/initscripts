@@ -1,4 +1,4 @@
-# 	$Id: initscripts.spec 219401 2007-05-01 12:40:37Z blino $	
+# 	$Id: initscripts.spec 224291 2007-07-06 10:28:33Z blino $	
 
 # The restart part in the real _post_service doesn't work with netfs and isn't needed
 # for other scripts
@@ -6,7 +6,7 @@
 
 Summary: The inittab file and the /etc/init.d scripts
 Name: initscripts
-Version: 8.53
+Version: 8.54
 Release: %mkrel 1
 License: GPL
 Group: System/Base
