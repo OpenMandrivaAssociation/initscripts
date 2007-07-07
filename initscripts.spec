@@ -7,7 +7,7 @@
 Summary: The inittab file and the /etc/init.d scripts
 Name: initscripts
 Version: 8.54
-Release: %mkrel 1
+Release: %mkrel 2
 License: GPL
 Group: System/Base
 Source0: initscripts-%{version}.tar.bz2
