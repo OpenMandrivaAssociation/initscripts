@@ -1,4 +1,4 @@
-# 	$Id: initscripts.spec 224291 2007-07-06 10:28:33Z blino $	
+# 	$Id: initscripts.spec 225244 2007-08-01 19:01:31Z blino $	
 
 # The restart part in the real _post_service doesn't work with netfs and isn't needed
 # for other scripts
@@ -7,7 +7,7 @@
 Summary: The inittab file and the /etc/init.d scripts
 Name: initscripts
 Version: 8.54
-Release: %mkrel 2
+Release: %mkrel 3
 License: GPL
 Group: System/Base
 Source0: initscripts-%{version}.tar.bz2
@@ -61,14 +61,16 @@ deactivate most network interfaces.
 
 %prep
 %setup -q
-rm -f po/*.po{,t}
+rm -rf po
 %patch0 -p0
+rm -f ChangeLog po
+ln -s mandriva/po
 
-gzip -9 ChangeLog
+gzip -9 mandriva/ChangeLog
 
 %build
 make
-make -C mandrake/ CFLAGS="$RPM_OPT_FLAGS"
+make -C mandriva CFLAGS="$RPM_OPT_FLAGS"
 
 %install
 rm -rf $RPM_BUILD_ROOT
@@ -78,9 +80,9 @@ mkdir -p $RPM_BUILD_ROOT/var/run/netreport
 chmod u=rwx,g=rwx,o=rx $RPM_BUILD_ROOT/var/run/netreport
 
 #MDK
-make -C mandrake/ install ROOT=$RPM_BUILD_ROOT mandir=%{_mandir}
+make -C mandriva install ROOT=$RPM_BUILD_ROOT mandir=%{_mandir}
 
-python mandrake/gprintify.py `find %{buildroot}/etc/rc.d -type f` `find %{buildroot}/sysconfig/network-scripts -type f`
+python mandriva/gprintify.py `find %{buildroot}/etc/rc.d -type f` `find %{buildroot}/sysconfig/network-scripts -type f`
 
 # warly 
 # put locale in /usr, gettext need /usr/share
@@ -377,7 +379,6 @@ rm -rf $RPM_BUILD_ROOT
 /usr/sbin/vpn-stop
 /usr/sbin/mdv-network-event
 /usr/sbin/sys-unconfig
-/sbin/setsysfont
 /bin/doexec
 /bin/ipcalc
 /bin/usleep
@@ -416,7 +417,7 @@ rm -rf $RPM_BUILD_ROOT
 /etc/ppp/ipv6-up
 /etc/ppp/ipv6-down
 %config(noreplace) /etc/initlog.conf
-%doc sysconfig.txt sysvinitfiles ChangeLog.gz static-routes-ipv6 ipv6-tunnel.howto ipv6-6to4.howto
+%doc sysconfig.txt sysvinitfiles mandriva/ChangeLog.gz static-routes-ipv6 ipv6-tunnel.howto ipv6-6to4.howto
 /var/lib/stateless
 %ghost %attr(0664,root,utmp) /var/log/btmp
 %ghost %attr(0664,root,utmp) /var/log/wtmp
