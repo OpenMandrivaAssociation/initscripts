@@ -1,4 +1,4 @@
-# 	$Id: initscripts.spec 225244 2007-08-01 19:01:31Z blino $	
+# 	$Id: initscripts.spec 225808 2007-08-10 21:08:25Z blino $	
 
 # The restart part in the real _post_service doesn't work with netfs and isn't needed
 # for other scripts
@@ -7,7 +7,7 @@
 Summary: The inittab file and the /etc/init.d scripts
 Name: initscripts
 Version: 8.54
-Release: %mkrel 3
+Release: %mkrel 4
 License: GPL
 Group: System/Base
 Source0: initscripts-%{version}.tar.bz2
@@ -260,6 +260,11 @@ exit 0
 
 %triggerpostun -- initscripts <= 8.38-2mdv2007.0
 /sbin/chkconfig --add network-up
+exit 0
+
+%triggerpostun -- initscripts < 8.54-4mdv2008.0
+echo "disabling supermount which is not supported anymore"
+/usr/sbin/supermount -i disable
 exit 0
 
 %postun
