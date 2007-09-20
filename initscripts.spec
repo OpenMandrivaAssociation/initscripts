@@ -1,4 +1,4 @@
-# 	$Id: initscripts.spec 226154 2007-08-20 20:25:41Z blino $	
+# 	$Id: initscripts.spec 228700 2007-09-19 23:48:46Z blino $	
 
 # The restart part in the real _post_service doesn't work with netfs and isn't needed
 # for other scripts
@@ -7,7 +7,7 @@
 Summary: The inittab file and the /etc/init.d scripts
 Name: initscripts
 Version: 8.54
-Release: %mkrel 5
+Release: %mkrel 6
 License: GPL
 Group: System/Base
 Source0: initscripts-%{version}.tar.bz2
@@ -44,7 +44,6 @@ Requires: udev >= 108-2mdv2007.1
 Requires: ifmetric resolvconf
 Requires: dmsetup
 Requires: prcsys
-Requires(pre): sed, grep, chkconfig >= 1.3.8-3mdk,
 Requires(post): /usr/bin/tr grep, chkconfig >= 1.3.8-3mdk
 BuildRequires: glib2-devel
 BuildRequires: pkgconfig
@@ -197,13 +196,6 @@ EOF
 	# Handle boot sequence changes on upgrade
 	%initlvl_chg partmon 80 13
 	
-fi
-
-%pre
-
-# usb is called from rc.sysinit now
-if [ "$1" -gt 0 ]; then
-	/bin/grep -q 'chkconfig:' /etc/init.d/usb 2> /dev/null && /sbin/chkconfig --del usb > /dev/null 2>&1 || :
 fi
 
 %preun
@@ -367,8 +359,6 @@ rm -rf $RPM_BUILD_ROOT
 #mdk
 %dir /etc/sysconfig/network-scripts/cellular.d
 %dir /etc/sysconfig/network-scripts/hostname.d
-#mdk
-%config(noreplace) /etc/sysconfig/usb
 #mdk
 /etc/profile.d/inputrc.sh
 #mdk
