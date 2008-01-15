@@ -1,4 +1,4 @@
-# 	$Id: initscripts.spec 230744 2007-10-03 21:45:24Z blino $	
+# 	$Id: initscripts.spec 232996 2008-01-15 19:12:58Z blino $	
 
 # The restart part in the real _post_service doesn't work with netfs and isn't needed
 # for other scripts
@@ -6,9 +6,10 @@
 
 Summary: The inittab file and the /etc/init.d scripts
 Name: initscripts
-Version: 8.54
-Release: %mkrel 8
-License: GPL
+Version: 8.60
+Release: %mkrel 1
+# ppp-watch is GPLv2+, everything else is GPLv2
+License: GPLv2 and GPLv2+
 Group: System/Base
 Source0: initscripts-%{version}.tar.bz2
 Patch:	initscripts-mdkconf.patch
@@ -29,6 +30,8 @@ Requires: sound-scripts
 #Prereq: gawk
 Requires: iproute2
 Requires: ethtool
+# http://bugzilla.redhat.com/show_bug.cgi?id=252973
+Conflicts: nut < 2.2.0
 Obsoletes: rhsound sapinit
 Provides: rhsound sapinit
 Conflicts: kernel <= 2.2, timeconfig < 3.0, pppd < 2.3.9, wvdial < 1.40-3
@@ -336,6 +339,7 @@ rm -rf $RPM_BUILD_ROOT
 /etc/sysconfig/network-scripts/ifup-wireless
 /etc/X11/prefdm
 /etc/X11/lookupdm
+%config(noreplace) /etc/networks 
 /etc/rwtab
 %dir /etc/rwtab.d
 /etc/statetab
@@ -412,7 +416,7 @@ rm -rf $RPM_BUILD_ROOT
 /etc/ppp/ipv6-up
 /etc/ppp/ipv6-down
 %config(noreplace) /etc/initlog.conf
-%doc sysconfig.txt sysvinitfiles mandriva/ChangeLog.gz static-routes-ipv6 ipv6-tunnel.howto ipv6-6to4.howto
+%doc sysconfig.txt sysvinitfiles mandriva/ChangeLog.gz static-routes-ipv6 ipv6-tunnel.howto ipv6-6to4.howto changes.ipv6
 /var/lib/stateless
 %ghost %attr(0664,root,utmp) /var/log/btmp
 %ghost %attr(0664,root,utmp) /var/log/wtmp
