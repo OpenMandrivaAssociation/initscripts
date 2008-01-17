@@ -1,4 +1,4 @@
-# 	$Id: initscripts.spec 232996 2008-01-15 19:12:58Z blino $	
+# 	$Id: initscripts.spec 233040 2008-01-17 15:37:42Z blino $	
 
 # The restart part in the real _post_service doesn't work with netfs and isn't needed
 # for other scripts
@@ -7,7 +7,7 @@
 Summary: The inittab file and the /etc/init.d scripts
 Name: initscripts
 Version: 8.60
-Release: %mkrel 1
+Release: %mkrel 2
 # ppp-watch is GPLv2+, everything else is GPLv2
 License: GPLv2 and GPLv2+
 Group: System/Base
@@ -40,6 +40,7 @@ Conflicts: dhcpcd < 1.3.21pl1
 Conflicts: XFree86-xfs < 4.2.0-12mdk
 Conflicts: xinitrc < 2.4.12
 Conflicts: lsb < 3.1-11mdv2007.1
+Conflicts: lsb-core < 3.1-15mdv2008.1
 Conflicts: suspend-scripts < 1.27
 Requires: util-linux >= 2.10s, mount >= 2.11l
 Requires: bootloader-utils > 1.4-1mdk
@@ -360,23 +361,19 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) /etc/sysctl.conf
 /etc/profile.d/10lang.sh
 /etc/profile.d/10lang.csh
-#mdk
+#mdv
+/etc/profile.d/10inputrc.sh
+/etc/profile.d/10inputrc.csh
+/etc/profile.d/10tmpdir.sh
+/etc/profile.d/10tmpdir.csh
 %dir /etc/sysconfig/network-scripts/cellular.d
 %dir /etc/sysconfig/network-scripts/hostname.d
-#mdk
-/etc/profile.d/inputrc.sh
-#mdk
-/etc/profile.d/inputrc.csh
-#mdk
-/etc/profile.d/tmpdir.sh
-#mdk
-/etc/profile.d/tmpdir.csh
-#mdv
 /etc/sysconfig/network-scripts/ifup.d/vpn
 /etc/sysconfig/network-scripts/ifdown.d/vpn
 /usr/sbin/vpn-start
 /usr/sbin/vpn-stop
 /usr/sbin/mdv-network-event
+
 /usr/sbin/sys-unconfig
 /bin/doexec
 /bin/ipcalc
@@ -392,7 +389,7 @@ rm -rf $RPM_BUILD_ROOT
 /lib/udev/ccw_init
 %endif
 /sbin/service
-#mdk
+#mdv
 /sbin/hibernate-cleanup.sh
 /sbin/ppp-watch
 %{_mandir}/man*/*
