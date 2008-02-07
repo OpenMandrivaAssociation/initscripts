@@ -1,4 +1,4 @@
-# 	$Id: initscripts.spec 233040 2008-01-17 15:37:42Z blino $	
+# 	$Id: initscripts.spec 234060 2008-02-07 23:05:28Z blino $	
 
 # The restart part in the real _post_service doesn't work with netfs and isn't needed
 # for other scripts
@@ -6,8 +6,8 @@
 
 Summary: The inittab file and the /etc/init.d scripts
 Name: initscripts
-Version: 8.60
-Release: %mkrel 2
+Version: 8.63
+Release: %mkrel 1
 # ppp-watch is GPLv2+, everything else is GPLv2
 License: GPLv2 and GPLv2+
 Group: System/Base
@@ -42,8 +42,8 @@ Conflicts: xinitrc < 2.4.12
 Conflicts: lsb < 3.1-11mdv2007.1
 Conflicts: lsb-core < 3.1-15mdv2008.1
 Conflicts: suspend-scripts < 1.27
+Conflicts: mdadm < 2.6.4-2mdv2008.1
 Requires: util-linux >= 2.10s, mount >= 2.11l
-Requires: bootloader-utils > 1.4-1mdk
 Requires: udev >= 108-2mdv2007.1
 Requires: ifmetric resolvconf
 Requires: dmsetup
@@ -116,6 +116,9 @@ rm -f \
 
 # remove unused hotplug helper and ipsec/isdn stuff
 rm -f $RPM_BUILD_ROOT/etc/sysconfig/network-scripts/{ifdown-ippp,ifup-ippp,ifdown-ipsec,ifup-ipsec,net.hotplug}
+
+# we use network rules from the udev package
+rm -f $RPM_BUILD_ROOT/etc/udev/rules.d/60-net.rules
 
 # we have our own copy of gprintify
 export DONT_GPRINTIFY=1
@@ -345,6 +348,7 @@ rm -rf $RPM_BUILD_ROOT
 %dir /etc/rwtab.d
 /etc/statetab
 %dir /etc/statetab.d
+/etc/udev/rules.d/*
 %config(noreplace) /etc/inittab
 %config(noreplace missingok) /etc/rc.d/rc[0-9].d/*
 /etc/init.d
@@ -413,6 +417,9 @@ rm -rf $RPM_BUILD_ROOT
 /etc/ppp/ipv6-up
 /etc/ppp/ipv6-down
 %config(noreplace) /etc/initlog.conf
+%dir /etc/NetworkManager
+%dir /etc/NetworkManager/dispatcher.d
+/etc/NetworkManager/dispatcher.d/00-netreport
 %doc sysconfig.txt sysvinitfiles mandriva/ChangeLog.gz static-routes-ipv6 ipv6-tunnel.howto ipv6-6to4.howto changes.ipv6
 /var/lib/stateless
 %ghost %attr(0664,root,utmp) /var/log/btmp
