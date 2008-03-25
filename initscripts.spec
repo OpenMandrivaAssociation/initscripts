@@ -1,4 +1,4 @@
-# 	$Id: initscripts.spec 240456 2008-03-21 02:29:18Z blino $	
+# 	$Id: initscripts.spec 240651 2008-03-25 18:40:26Z blino $	
 
 # The restart part in the real _post_service doesn't work with netfs and isn't needed
 # for other scripts
@@ -7,7 +7,7 @@
 Summary: The inittab file and the /etc/init.d scripts
 Name: initscripts
 Version: 8.63
-Release: %mkrel 5
+Release: %mkrel 6
 # ppp-watch is GPLv2+, everything else is GPLv2
 License: GPLv2 and GPLv2+
 Group: System/Base
