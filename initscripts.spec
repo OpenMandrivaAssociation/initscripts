@@ -1,4 +1,4 @@
-# 	$Id: initscripts.spec 240651 2008-03-25 18:40:26Z blino $	
+# 	$Id: initscripts.spec 241905 2008-04-03 10:35:56Z blino $	
 
 # The restart part in the real _post_service doesn't work with netfs and isn't needed
 # for other scripts
@@ -7,7 +7,7 @@
 Summary: The inittab file and the /etc/init.d scripts
 Name: initscripts
 Version: 8.63
-Release: %mkrel 6
+Release: %mkrel 7
 # ppp-watch is GPLv2+, everything else is GPLv2
 License: GPLv2 and GPLv2+
 Group: System/Base
@@ -132,17 +132,17 @@ chown root:utmp /var/log/wtmp /var/run/utmp /var/log/btmp
 chmod 664 /var/log/wtmp /var/run/utmp
 chmod 600 /var/log/btmp
 
-%_mypost_service netfs
-
-%_mypost_service netconsole
+%_mypost_service partmon
 
 %_mypost_service network
 
 %_mypost_service network-up
 
-%_mypost_service partmon
-
 %_mypost_service dm
+
+%_mypost_service netconsole
+
+%_mypost_service netfs
 
 # /etc/sysconfig/desktop format has changed
 if [ -r /etc/sysconfig/desktop ]; then
@@ -208,13 +208,13 @@ fi
 %preun
 %_preun_service netfs
 
-%_preun_service network
-
-%_preun_service network-up
-
 %_preun_service netconsole
 
 %_preun_service dm
+
+%_preun_service network-up
+
+%_preun_service network
 
 %_preun_service partmon
 
