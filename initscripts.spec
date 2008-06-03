@@ -1,4 +1,4 @@
-# 	$Id: initscripts.spec 242355 2008-05-06 19:49:49Z blino $	
+# 	$Id: initscripts.spec 242840 2008-06-03 09:48:43Z blino $	
 
 # The restart part in the real _post_service doesn't work with netfs and isn't needed
 # for other scripts
@@ -7,7 +7,7 @@
 Summary: The inittab file and the /etc/init.d scripts
 Name: initscripts
 Version: 8.63
-Release: %mkrel 8
+Release: %mkrel 9
 # ppp-watch is GPLv2+, everything else is GPLv2
 License: GPLv2 and GPLv2+
 Group: System/Base
@@ -34,7 +34,7 @@ Requires: ethtool
 Conflicts: nut < 2.2.0
 Obsoletes: rhsound sapinit
 Provides: rhsound sapinit
-Conflicts: kernel <= 2.2, timeconfig < 3.0, pppd < 2.3.9, wvdial < 1.40-3
+Conflicts: kernel <= 2.2, timeconfig < 3.0, pppd <= 2.4.4-3mdv2008.1, wvdial < 1.40-3
 Conflicts: initscripts < 1.22.1-5, Aurora <= 7.2-17mdk
 Conflicts: dhcpcd < 1.3.21pl1
 Conflicts: XFree86-xfs < 4.2.0-12mdk
@@ -341,6 +341,8 @@ rm -rf $RPM_BUILD_ROOT
 #/etc/sysconfig/network-scripts/ifup-ippp
 #/etc/sysconfig/network-scripts/ifdown-ippp
 /etc/sysconfig/network-scripts/ifup-wireless
+/etc/sysconfig/network-scripts/ifup-hso
+/etc/sysconfig/network-scripts/ifdown-hso
 /etc/X11/prefdm
 /etc/X11/lookupdm
 %config(noreplace) /etc/networks 
