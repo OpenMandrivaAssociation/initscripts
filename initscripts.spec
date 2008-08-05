@@ -1,13 +1,15 @@
-# 	$Id: initscripts.spec 243745 2008-08-01 15:39:13Z blino $	
+# 	$Id: initscripts.spec 243777 2008-08-04 16:38:26Z blino $	
 
 # The restart part in the real _post_service doesn't work with netfs and isn't needed
 # for other scripts
 %define _mypost_service() if [ $1 = 1 ]; then /sbin/chkconfig --add %{1}; fi;
 
+%define with_upstart 0%{nil} 
+
 Summary: The inittab file and the /etc/init.d scripts
 Name: initscripts
-Version: 8.63
-Release: %mkrel 15
+Version: 8.80
+Release: %mkrel 1
 # ppp-watch is GPLv2+, everything else is GPLv2
 License: GPLv2 and GPLv2+
 Group: System/Base
@@ -20,7 +22,13 @@ Requires: gettext-base >= 0.10.35-20mdk
 Requires: module-init-tools
 #Requires: sysklogd >= 1.3.31
 Requires: /sbin/fuser, which, setup >= 2.2.0-14mdk
-Requires: /sbin/ip, /usr/sbin/arping
+%if %{with_upstart}
+Requires: upstart
+Obsoletes: event-compat-sysv
+%else
+Requires: SysVinit >= 2.85-38
+%endif
+Requires: /sbin/ip, /sbin/arping, net-tools, /bin/find
 # (blino) for pidof -c
 Requires: SysVinit >= 2.86-4mdk
 Requires: perl-MDK-Common >= 1.0.1
@@ -45,7 +53,7 @@ Conflicts: suspend-scripts < 1.27
 Conflicts: mdadm < 2.6.4-2mdv2008.1
 Requires: util-linux-ng >= 2.13.1-4mdv2008.1, mount >= 2.11l
 Requires: udev >= 108-2mdv2007.1
-Requires: ifmetric resolvconf
+Requires: ifmetric, resolvconf >= 1.41
 Requires: dmsetup
 Requires: prcsys
 Requires(post): /usr/bin/tr grep, chkconfig >= 1.3.8-3mdk
@@ -61,6 +69,17 @@ The initscripts package contains the basic system scripts used to boot
 your Mandriva Linux system, change run levels, and shut the system
 down cleanly.  Initscripts also contains the scripts that activate and
 deactivate most network interfaces.
+
+%package -n debugmode
+Summary: Scripts for running in debugging mode
+Requires: initscripts
+Group: System Environment/Base
+
+%description -n debugmode
+The debugmode package contains some basic scripts that are used to run
+the system in a debugging mode.
+
+Currently, this consists of various memory checking code.
 
 %prep
 %setup -q
@@ -79,8 +98,6 @@ make -C mandriva CFLAGS="$RPM_OPT_FLAGS"
 rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT/etc
 make ROOT=$RPM_BUILD_ROOT SUPERUSER=`id -un` SUPERGROUP=`id -gn` mandir=%{_mandir} install
-mkdir -p $RPM_BUILD_ROOT/var/run/netreport
-chmod u=rwx,g=rwx,o=rx $RPM_BUILD_ROOT/var/run/netreport
 
 #MDK
 make -C mandriva install ROOT=$RPM_BUILD_ROOT mandir=%{_mandir}
@@ -101,6 +118,16 @@ python mandriva/gprintify.py `find %{buildroot}/etc/rc.d -type f` `find %{buildr
 #' >> %{name}.lang
 
 %find_lang %{name}
+
+%if %{with_upstart}
+ mv -f $RPM_BUILD_ROOT/etc/inittab.upstart $RPM_BUILD_ROOT/etc/inittab
+ rm -f $RPM_BUILD_ROOT/etc/rc.d/rc1.d/S99single
+ rm -f $RPM_BUILD_ROOT/etc/rc.d/init.d/single
+%else
+ mv -f $RPM_BUILD_ROOT/etc/inittab.sysv $RPM_BUILD_ROOT/etc/inittab
+ rm -rf $RPM_BUILD_ROOT/etc/event.d
+%endif
+rm -f $RPM_BUILD_ROOT/etc/inittab.*
 
 %ifnarch s390 s390x
 rm -f \
@@ -308,11 +335,9 @@ rm -rf $RPM_BUILD_ROOT
 %dir /etc/sysconfig/console/consolefonts
 %dir /etc/sysconfig/modules
 %dir /etc/sysconfig/networking
-%dir /etc/sysconfig/networking/tmp
 %dir /etc/sysconfig/networking/devices
 %dir /etc/sysconfig/networking/profiles
 %dir /etc/sysconfig/networking/profiles/default
-%config(noreplace) /etc/sysconfig/networking/ifcfg-lo
 %config(noreplace) /etc/sysconfig/network-scripts/network-functions
 %config(noreplace) /etc/sysconfig/network-scripts/network-functions-ipv6
 /etc/sysconfig/network-scripts/init.ipv6-global
@@ -350,10 +375,12 @@ rm -rf $RPM_BUILD_ROOT
 %dir /etc/rwtab.d
 /etc/statetab
 %dir /etc/statetab.d
+%if %{with_upstart}
+%config(noreplace) /etc/event.d/*
+%endif
 /etc/udev/rules.d/*
 %config(noreplace) /etc/inittab
 %config(noreplace missingok) /etc/rc.d/rc[0-9].d/*
-/etc/init.d
 /etc/rc[0-9].d
 /etc/rc
 %dir /etc/rc.d/init.d
@@ -365,13 +392,8 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) /etc/rc.d/rc.local
 /etc/rc.d/rc.sysinit
 %config(noreplace) /etc/sysctl.conf
-/etc/profile.d/10lang.sh
-/etc/profile.d/10lang.csh
-#mdv
-/etc/profile.d/10inputrc.sh
-/etc/profile.d/10inputrc.csh
-/etc/profile.d/10tmpdir.sh
-/etc/profile.d/10tmpdir.csh
+%exclude /etc/profile.d/debug*
+%config /etc/profile.d/*
 %dir /etc/sysconfig/network-scripts/cellular.d
 %dir /etc/sysconfig/network-scripts/hostname.d
 /etc/sysconfig/network-scripts/ifup.d/vpn
@@ -379,7 +401,6 @@ rm -rf $RPM_BUILD_ROOT
 /usr/sbin/vpn-start
 /usr/sbin/vpn-stop
 /usr/sbin/mdv-network-event
-
 /usr/sbin/sys-unconfig
 /bin/doexec
 /bin/ipcalc
@@ -389,8 +410,12 @@ rm -rf $RPM_BUILD_ROOT
 /sbin/fstab-decode
 /sbin/genhostid
 /sbin/getkey
+/sbin/securetty
 %attr(2755,root,root) /sbin/netreport
 /sbin/initlog
+/lib/udev/rename_device
+/lib/udev/console_init
+/lib/udev/console_check
 %ifarch s390 s390x
 /lib/udev/ccw_init
 %endif
@@ -422,7 +447,8 @@ rm -rf $RPM_BUILD_ROOT
 %dir /etc/NetworkManager
 %dir /etc/NetworkManager/dispatcher.d
 /etc/NetworkManager/dispatcher.d/00-netreport
-%doc sysconfig.txt sysvinitfiles mandriva/ChangeLog.gz static-routes-ipv6 ipv6-tunnel.howto ipv6-6to4.howto changes.ipv6
+/etc/NetworkManager/dispatcher.d/05-netfs
+%doc sysconfig.txt sysvinitfiles mandriva/ChangeLog.gz static-routes-ipv6 ipv6-tunnel.howto ipv6-6to4.howto changes.ipv6 README-event.d
 /var/lib/stateless
 %ghost %attr(0664,root,utmp) /var/log/btmp
 %ghost %attr(0664,root,utmp) /var/log/wtmp
@@ -439,3 +465,7 @@ rm -rf $RPM_BUILD_ROOT
 #%dir /etc/locale
 #%dir /etc/locale/*
 #%dir /etc/locale/*/LC_MESSAGES
+
+%files -n debugmode
+%config(noreplace) /etc/sysconfig/debug
+%config /etc/profile.d/debug*
