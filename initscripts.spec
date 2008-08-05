@@ -1,4 +1,4 @@
-# 	$Id: initscripts.spec 243777 2008-08-04 16:38:26Z blino $	
+# 	$Id: initscripts.spec 243809 2008-08-05 22:29:02Z blino $	
 
 # The restart part in the real _post_service doesn't work with netfs and isn't needed
 # for other scripts
@@ -73,7 +73,7 @@ deactivate most network interfaces.
 %package -n debugmode
 Summary: Scripts for running in debugging mode
 Requires: initscripts
-Group: System Environment/Base
+Group: System/Base
 
 %description -n debugmode
 The debugmode package contains some basic scripts that are used to run
