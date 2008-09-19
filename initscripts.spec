@@ -1,4 +1,4 @@
-# 	$Id: initscripts.spec 244649 2008-09-02 14:29:52Z blino $	
+# 	$Id: initscripts.spec 246051 2008-09-19 17:39:26Z blino $	
 
 # The restart part in the real _post_service doesn't work with netfs and isn't needed
 # for other scripts
@@ -9,7 +9,7 @@
 Summary: The inittab file and the /etc/init.d scripts
 Name: initscripts
 Version: 8.81
-Release: %mkrel 2
+Release: %mkrel 3
 # ppp-watch is GPLv2+, everything else is GPLv2
 License: GPLv2 and GPLv2+
 Group: System/Base
@@ -322,6 +322,7 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) %verify(not md5 mtime size) /etc/adjtime
 %config(noreplace) /etc/sysconfig/init
 %config(noreplace) /etc/sysconfig/autofsck
+%config(noreplace) /etc/sysconfig/partmon
 %config(noreplace) /etc/sysconfig/netconsole
 %config(noreplace) /etc/sysconfig/readonly-root
 /etc/sysconfig/network-scripts/ifdown
