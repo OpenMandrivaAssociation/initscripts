@@ -14,7 +14,7 @@ Release: %mkrel 9
 License: GPLv2 and GPLv2+
 Group: System/Base
 Source0: initscripts-%{version}.tar.bz2
-Patch:	initscripts-mdkconf.patch
+Patch0:	initscripts-mdkconf.patch
 BuildRoot: /%{_tmppath}/%{name}-%{version}-%{release}-root
 Requires: mingetty, /bin/awk, /bin/sed, mktemp, e2fsprogs >= 1.18-2mdk
 Requires: procps >= 2.0.7-8mdk
