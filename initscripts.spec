@@ -1,4 +1,4 @@
-# 	$Id: initscripts.spec 250554 2008-12-18 16:43:17Z fcrozat $	
+# 	$Id: initscripts.spec 251997 2009-01-22 15:26:34Z fcrozat $	
 
 # The restart part in the real _post_service doesn't work with netfs and isn't needed
 # for other scripts
@@ -8,8 +8,8 @@
 
 Summary: The inittab file and the /etc/init.d scripts
 Name: initscripts
-Version: 8.81
-Release: %mkrel 9
+Version: 8.88
+Release: %mkrel 1
 # ppp-watch is GPLv2+, everything else is GPLv2
 License: GPLv2 and GPLv2+
 Group: System/Base
@@ -133,7 +133,7 @@ rm -f $RPM_BUILD_ROOT/etc/inittab.*
 rm -f \
  $RPM_BUILD_ROOT/etc/sysconfig/network-scripts/ifup-ctc \
  $RPM_BUILD_ROOT/etc/sysconfig/network-scripts/ifup-iucv \
- $RPM_BUILD_ROOT/etc/udev/rules.d/55-ccw.rules \
+ $RPM_BUILD_ROOT/lib/udev/rules.d/55-ccw.rules \
  $RPM_BUILD_ROOT/lib/udev/ccw_init
 %else
 rm -f \
@@ -145,7 +145,7 @@ rm -f \
 rm -f $RPM_BUILD_ROOT/etc/sysconfig/network-scripts/{ifdown-ippp,ifup-ippp,ifdown-ipsec,ifup-ipsec,net.hotplug}
 
 # we use network rules from the udev package
-rm -f $RPM_BUILD_ROOT/etc/udev/rules.d/60-net.rules
+rm -f $RPM_BUILD_ROOT/lib/udev/rules.d/60-net.rules
 
 # we have our own copy of gprintify
 export DONT_GPRINTIFY=1
@@ -379,7 +379,7 @@ rm -rf $RPM_BUILD_ROOT
 %if %{with_upstart}
 %config(noreplace) /etc/event.d/*
 %endif
-/etc/udev/rules.d/*
+/lib/udev/rules.d/*
 %config(noreplace) /etc/inittab
 %config(noreplace missingok) /etc/rc.d/rc[0-9].d/*
 /etc/rc[0-9].d
