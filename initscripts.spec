@@ -9,7 +9,7 @@
 Summary: The inittab file and the /etc/init.d scripts
 Name: initscripts
 Version: 8.88
-Release: %mkrel 2
+Release: %mkrel 3
 # ppp-watch is GPLv2+, everything else is GPLv2
 License: GPLv2 and GPLv2+
 Group: System/Base
@@ -85,10 +85,12 @@ Currently, this consists of various memory checking code.
 %setup -q
 rm -rf po
 %patch0 -p0
-rm -f ChangeLog po
+rm -f po
 ln -s mandriva/po
 
 gzip -9 mandriva/ChangeLog
+mv ChangeLog ChangeLog-RH
+gzip -9 ChangeLog-RH
 
 %build
 make
@@ -449,7 +451,7 @@ rm -rf $RPM_BUILD_ROOT
 %dir /etc/NetworkManager/dispatcher.d
 /etc/NetworkManager/dispatcher.d/00-netreport
 /etc/NetworkManager/dispatcher.d/05-netfs
-%doc sysconfig.txt sysvinitfiles mandriva/ChangeLog.gz static-routes-ipv6 ipv6-tunnel.howto ipv6-6to4.howto changes.ipv6 README-event.d
+%doc sysconfig.txt sysvinitfiles mandriva/ChangeLog.gz ChangeLog-RH.gz static-routes-ipv6 ipv6-tunnel.howto ipv6-6to4.howto changes.ipv6 README-event.d
 /var/lib/stateless
 %ghost %attr(0664,root,utmp) /var/log/btmp
 %ghost %attr(0664,root,utmp) /var/log/wtmp
