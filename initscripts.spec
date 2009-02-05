@@ -9,7 +9,7 @@
 Summary: The inittab file and the /etc/init.d scripts
 Name: initscripts
 Version: 8.88
-Release: %mkrel 4
+Release: %mkrel 5
 # ppp-watch is GPLv2+, everything else is GPLv2
 License: GPLv2 and GPLv2+
 Group: System/Base
@@ -56,7 +56,7 @@ Requires: udev >= 108-2mdv2007.1
 Requires: ifmetric, resolvconf >= 1.41
 Requires: dmsetup
 Requires: prcsys
-Requires(post): /usr/bin/tr grep, chkconfig >= 1.3.8-3mdk
+Requires(post): /usr/bin/tr grep, chkconfig >= 1.3.37-3mdk
 BuildRequires: glib2-devel
 BuildRequires: pkgconfig
 BuildRequires: popt-devel
@@ -295,6 +295,9 @@ echo "disabling supermount which is not supported anymore"
 /usr/sbin/supermount -i disable
 exit 0
 
+%triggerpostun -- initscripts < 8.88-5mdv2008.0
+/sbin/chkconfig --level 7 dm reset
+
 %postun
 if [ -f /var/lock/TMP_1ST ];then 
 		rm -f /var/lock/TMP_1ST
@@ -385,6 +388,7 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) /etc/inittab
 %config(noreplace missingok) /etc/rc.d/rc[0-9].d/*
 /etc/rc[0-9].d
+/etc/rcS.d
 /etc/rc
 %dir /etc/rc.d/init.d
 %config(noreplace) /etc/rc.local
