@@ -9,7 +9,7 @@
 Summary: The inittab file and the /etc/init.d scripts
 Name: initscripts
 Version: 8.88
-Release: %mkrel 15
+Release: %mkrel 16
 # ppp-watch is GPLv2+, everything else is GPLv2
 License: GPLv2 and GPLv2+
 Group: System/Base
@@ -330,6 +330,7 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) /etc/sysconfig/partmon
 %config(noreplace) /etc/sysconfig/netconsole
 %config(noreplace) /etc/sysconfig/readonly-root
+%config(noreplace) /etc/sysconfig/speedboot
 /etc/sysconfig/network-scripts/ifdown
 /sbin/ifdown
 /etc/sysconfig/network-scripts/ifdown-post
@@ -376,6 +377,8 @@ rm -rf $RPM_BUILD_ROOT
 /etc/sysconfig/network-scripts/ifdown-hso
 /etc/X11/prefdm
 /etc/X11/lookupdm
+%dir /etc/X11/xsetup.d
+/etc/X11/xsetup.d/90speedboot.xsetup
 %config(noreplace) /etc/networks 
 /etc/rwtab
 %dir /etc/rwtab.d
@@ -457,6 +460,7 @@ rm -rf $RPM_BUILD_ROOT
 /etc/NetworkManager/dispatcher.d/05-netfs
 %doc sysconfig.txt sysvinitfiles mandriva/ChangeLog.gz ChangeLog-RH.gz static-routes-ipv6 ipv6-tunnel.howto ipv6-6to4.howto changes.ipv6 README-event.d
 /var/lib/stateless
+%dir /var/lib/speedboot
 %ghost %attr(0664,root,utmp) /var/log/btmp
 %ghost %attr(0664,root,utmp) /var/log/wtmp
 %ghost %attr(0664,root,utmp) /var/run/utmp
