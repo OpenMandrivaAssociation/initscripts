@@ -62,7 +62,7 @@ BuildRequires: pkgconfig
 BuildRequires: popt-devel
 BuildRequires: python
 # http://fedora.redhat.com/projects/additional-projects/initscripts/
-Url: http://cvs.mandriva.com/cgi-bin/viewvc.cgi/soft/initscripts/?root=svn
+Url: http://svn.mandriva.com/cgi-bin/viewvc.cgi/soft/initscripts/trunk/
 
 %description
 The initscripts package contains the basic system scripts used to boot
