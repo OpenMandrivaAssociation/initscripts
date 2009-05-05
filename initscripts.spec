@@ -61,7 +61,7 @@ BuildRequires: glib2-devel
 BuildRequires: pkgconfig
 BuildRequires: popt-devel
 BuildRequires: python
-# http://fedora.redhat.com/projects/additional-projects/initscripts/
+# Upstream URL: http://git.fedorahosted.org/git/initscripts.git
 Url: http://svn.mandriva.com/cgi-bin/viewvc.cgi/soft/initscripts/trunk/
 
 %description
