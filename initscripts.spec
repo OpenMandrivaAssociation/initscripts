@@ -8,8 +8,8 @@
 
 Summary: The inittab file and the /etc/init.d scripts
 Name: initscripts
-Version: 8.88
-Release: %mkrel 26
+Version: 8.97
+Release: %mkrel 1
 # ppp-watch is GPLv2+, everything else is GPLv2
 License: GPLv2 and GPLv2+
 Group: System/Base
@@ -352,9 +352,7 @@ rm -rf $RPM_BUILD_ROOT
 /etc/sysconfig/network-scripts/ifup-ipx
 /etc/sysconfig/network-scripts/ifup-post
 /etc/sysconfig/network-scripts/ifdown-ppp
-/etc/sysconfig/network-scripts/ifdown-sl
 /etc/sysconfig/network-scripts/ifup-ppp
-/etc/sysconfig/network-scripts/ifup-sl
 /etc/sysconfig/network-scripts/ifup-routes
 /etc/sysconfig/network-scripts/ifdown-routes
 /etc/sysconfig/network-scripts/ifup-plip
