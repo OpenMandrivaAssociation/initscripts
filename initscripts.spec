@@ -9,26 +9,41 @@
 Summary: The inittab file and the /etc/init.d scripts
 Name: initscripts
 Version: 8.97
-Release: %mkrel 6
+Release: %mkrel 7
 # ppp-watch is GPLv2+, everything else is GPLv2
 License: GPLv2 and GPLv2+
 Group: System/Base
 Source0: initscripts-%{version}.tar.bz2
 Patch0:	initscripts-mdkconf.patch
 BuildRoot: /%{_tmppath}/%{name}-%{version}-%{release}-root
-Requires: mingetty, /bin/awk, /bin/sed, mktemp, e2fsprogs >= 1.18-2mdk
+Requires: mingetty
+# for /bin/awk
+Requires: gawk
+# for /bin/sed
+Requires: sed
+Requires: mktemp
+Requires: e2fsprogs >= 1.18-2mdk
 Requires: procps >= 2.0.7-8mdk
 Requires: gettext-base >= 0.10.35-20mdk
 Requires: module-init-tools
 #Requires: sysklogd >= 1.3.31
-Requires: /sbin/fuser, which, setup >= 2.2.0-14mdk
+# for /sbin/fuser
+Requires: psmisc
+Requires: which
+Requires: setup >= 2.2.0-14mdk
 %if %{with_upstart}
 Requires: upstart
 Obsoletes: event-compat-sysv
 %else
 Requires: SysVinit >= 2.85-38
 %endif
-Requires: /sbin/ip, /sbin/arping, net-tools, /bin/find
+# for /sbin/ip
+Requires: iproute2
+# for /sbin/arping
+Requires: iputils
+Requires: net-tools
+# for /bin/find
+Requires: findutils
 # (blino) for pidof -c
 Requires: SysVinit >= 2.86-4mdk
 Requires: perl-MDK-Common >= 1.0.1
