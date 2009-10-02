@@ -8,8 +8,8 @@
 
 Summary: The inittab file and the /etc/init.d scripts
 Name: initscripts
-Version: 8.97
-Release: %mkrel 11
+Version: 8.99
+Release: %mkrel 1
 # ppp-watch is GPLv2+, everything else is GPLv2
 License: GPLv2 and GPLv2+
 Group: System/Base
@@ -45,7 +45,8 @@ Requires: net-tools
 # for /bin/find
 Requires: findutils
 # (blino) for pidof -c
-Requires: SysVinit >= 2.86-4mdk
+Requires: sysvinit-tools >= 2.87
+
 Requires: perl-MDK-Common >= 1.0.1
 Requires: ifplugd >= 0.24
 Requires: sound-scripts
@@ -66,7 +67,8 @@ Conflicts: lsb < 3.1-11mdv2007.1
 Conflicts: lsb-core < 3.1-15mdv2008.1
 Conflicts: suspend-scripts < 1.27
 Conflicts: mdadm < 2.6.4-2mdv2008.1
-Requires: util-linux-ng >= 2.13.1-4mdv2008.1, mount >= 2.11l
+Requires: util-linux-ng >= 2.16
+Requires: mount >= 2.11l
 Requires: udev >= 108-2mdv2007.1
 Requires: ifmetric, resolvconf >= 1.41
 Requires: dmsetup
