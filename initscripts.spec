@@ -9,7 +9,7 @@
 Summary: The inittab file and the /etc/init.d scripts
 Name: initscripts
 Version: 8.99
-Release: %mkrel 15
+Release: %mkrel 16
 # ppp-watch is GPLv2+, everything else is GPLv2
 License: GPLv2 and GPLv2+
 Group: System/Base
@@ -26,6 +26,8 @@ Requires: e2fsprogs >= 1.18-2mdk
 Requires: procps >= 2.0.7-8mdk
 Requires: gettext-base >= 0.10.35-20mdk
 Requires: module-init-tools
+# needed for chvt --userwait
+Requires: kbd >= 1.15.1-2mdv
 #Requires: sysklogd >= 1.3.31
 # for /sbin/fuser
 Requires: psmisc
