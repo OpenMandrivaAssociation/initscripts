@@ -8,8 +8,8 @@
 
 Summary: The inittab file and the /etc/init.d scripts
 Name: initscripts
-Version: 8.99
-Release: %mkrel 16
+Version: 9.17
+Release: %mkrel 1
 # ppp-watch is GPLv2+, everything else is GPLv2
 License: GPLv2 and GPLv2+
 Group: System/Base
@@ -151,6 +151,7 @@ python mandriva/gprintify.py `find %{buildroot}/etc/rc.d -type f` `find %{buildr
 %else
  mv -f $RPM_BUILD_ROOT/etc/inittab.sysv $RPM_BUILD_ROOT/etc/inittab
  rm -rf $RPM_BUILD_ROOT/etc/event.d
+ rm -rf $RPM_BUILD_ROOT/etc/init
 %endif
 rm -f $RPM_BUILD_ROOT/etc/inittab.*
 
@@ -407,6 +408,7 @@ rm -rf $RPM_BUILD_ROOT
 %dir /etc/statetab.d
 %if %{with_upstart}
 %config(noreplace) /etc/event.d/*
+/etc/init/*
 %endif
 /lib/udev/rules.d/*
 %config(noreplace) /etc/inittab
@@ -433,7 +435,6 @@ rm -rf $RPM_BUILD_ROOT
 /usr/sbin/vpn-stop
 /usr/sbin/mdv-network-event
 /usr/sbin/sys-unconfig
-/bin/doexec
 /bin/ipcalc
 /bin/usleep
 %attr(4755,root,root) /usr/sbin/usernetctl
@@ -443,7 +444,6 @@ rm -rf $RPM_BUILD_ROOT
 /sbin/getkey
 /sbin/securetty
 %attr(2755,root,root) /sbin/netreport
-/sbin/initlog
 /lib/udev/rename_device
 /lib/udev/console_init
 /lib/udev/console_check
@@ -451,6 +451,7 @@ rm -rf $RPM_BUILD_ROOT
 /lib/udev/ccw_init
 %endif
 /sbin/service
+/sbin/sushell
 #mdv
 /sbin/hibernate-cleanup.sh
 /sbin/ppp-watch
@@ -474,12 +475,11 @@ rm -rf $RPM_BUILD_ROOT
 /etc/ppp/ip-down.ipv6to4
 /etc/ppp/ipv6-up
 /etc/ppp/ipv6-down
-%config(noreplace) /etc/initlog.conf
 %dir /etc/NetworkManager
 %dir /etc/NetworkManager/dispatcher.d
 /etc/NetworkManager/dispatcher.d/00-netreport
 /etc/NetworkManager/dispatcher.d/05-netfs
-%doc sysconfig.txt sysvinitfiles mandriva/ChangeLog.gz ChangeLog-RH.gz static-routes-ipv6 ipv6-tunnel.howto ipv6-6to4.howto changes.ipv6 README-event.d
+%doc sysconfig.txt sysvinitfiles mandriva/ChangeLog.gz ChangeLog-RH.gz static-routes-ipv6 ipv6-tunnel.howto ipv6-6to4.howto changes.ipv6
 /var/lib/stateless
 %dir /var/lib/speedboot
 %ghost %attr(0664,root,utmp) /var/log/btmp
