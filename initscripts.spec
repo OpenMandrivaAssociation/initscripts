@@ -4,11 +4,12 @@
 # for other scripts
 %define _mypost_service() if [ $1 = 1 ]; then /sbin/chkconfig --add %{1}; fi;
 
-%define with_upstart 0%{nil} 
+%define with_upstart 0
+%define with_systemd 0
 
 Summary: The inittab file and the /etc/init.d scripts
 Name: initscripts
-Version: 9.17
+Version: 9.21
 Release: %mkrel 1
 # ppp-watch is GPLv2+, everything else is GPLv2
 License: GPLv2 and GPLv2+
@@ -47,7 +48,8 @@ Requires: net-tools
 # for /bin/find
 Requires: findutils
 # (blino) for pidof -c
-Requires: sysvinit-tools >= 2.87
+# (bor)   for pidof -m
+Requires: sysvinit-tools >= 2.87-8mdv2011.0
 
 Requires: perl-MDK-Common >= 1.0.1
 Requires: ifplugd >= 0.24
@@ -175,6 +177,10 @@ rm -f $RPM_BUILD_ROOT/lib/udev/rules.d/60-net.rules
 
 # we have our own copy of gprintify
 export DONT_GPRINTIFY=1
+
+%if ! %{with_systemd}
+ rm -rf $RPM_BUILD_ROOT/lib/systemd
+%endif
 
 %post
 ##Fixme
@@ -497,6 +503,21 @@ rm -rf $RPM_BUILD_ROOT
 #%dir /etc/locale
 #%dir /etc/locale/*
 #%dir /etc/locale/*/LC_MESSAGES
+%if %{with_systemd}
+/lib/systemd/system/ctrl-alt-del.target
+/lib/systemd/system/default.target
+/lib/systemd/system/display-manager.service
+/lib/systemd/system/graphical.target.wants/display-manager.service
+/lib/systemd/system/halt.service
+/lib/systemd/system/killall.service
+/lib/systemd/system/multi-user.target.wants/rc-local.service
+/lib/systemd/system/poweroff.service
+/lib/systemd/system/prefdm.service
+/lib/systemd/system/rc-local.service
+/lib/systemd/system/reboot.service
+/lib/systemd/system/single.service
+/lib/systemd/system/sysinit.service
+%endif
 
 %files -n debugmode
 %config(noreplace) /etc/sysconfig/debug
