@@ -375,8 +375,8 @@ rm -rf $RPM_BUILD_ROOT
 %dir /etc/sysconfig/networking/devices
 %dir /etc/sysconfig/networking/profiles
 %dir /etc/sysconfig/networking/profiles/default
-%config(noreplace) /etc/sysconfig/network-scripts/network-functions
-%config(noreplace) /etc/sysconfig/network-scripts/network-functions-ipv6
+/etc/sysconfig/network-scripts/network-functions
+/etc/sysconfig/network-scripts/network-functions-ipv6
 /etc/sysconfig/network-scripts/init.ipv6-global
 %config(noreplace) /etc/sysconfig/network-scripts/ifcfg-lo
 /etc/sysconfig/network-scripts/ifup-ipx
