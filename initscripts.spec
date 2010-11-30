@@ -5,12 +5,12 @@
 %define _mypost_service() if [ $1 = 1 ]; then /sbin/chkconfig --add %{1}; fi;
 
 %define with_upstart 0
-%define with_systemd 0
+%define with_systemd 1
 
 Summary: The inittab file and the /etc/init.d scripts
 Name: initscripts
 Version: 9.21
-Release: %mkrel 1
+Release: %mkrel 1.2
 # ppp-watch is GPLv2+, everything else is GPLv2
 License: GPLv2 and GPLv2+
 Group: System/Base
@@ -178,7 +178,14 @@ rm -f $RPM_BUILD_ROOT/lib/udev/rules.d/60-net.rules
 # we have our own copy of gprintify
 export DONT_GPRINTIFY=1
 
-%if ! %{with_systemd}
+%if %{with_systemd}
+pushd $RPM_BUILD_ROOT/lib/systemd/system && {
+  # install prefdm as dm.service to hide /etc/init.d/dm
+  mv prefdm.service dm.service
+  ln -sf dm.service display-manager.service
+  popd
+}
+%else
  rm -rf $RPM_BUILD_ROOT/lib/systemd
 %endif
 
@@ -512,7 +519,7 @@ rm -rf $RPM_BUILD_ROOT
 /lib/systemd/system/killall.service
 /lib/systemd/system/multi-user.target.wants/rc-local.service
 /lib/systemd/system/poweroff.service
-/lib/systemd/system/prefdm.service
+/lib/systemd/system/dm.service
 /lib/systemd/system/rc-local.service
 /lib/systemd/system/reboot.service
 /lib/systemd/system/single.service
