@@ -10,7 +10,7 @@
 Summary: The inittab file and the /etc/init.d scripts
 Name: initscripts
 Version: 9.21
-Release: %mkrel 2
+Release: %mkrel 3
 # ppp-watch is GPLv2+, everything else is GPLv2
 License: GPLv2 and GPLv2+
 Group: System/Base
@@ -183,6 +183,9 @@ pushd $RPM_BUILD_ROOT/lib/systemd/system && {
   # install prefdm as dm.service to hide /etc/init.d/dm
   mv prefdm.service dm.service
   ln -sf dm.service display-manager.service
+  # sysinit.target no more pulls sysinit.service; do it here
+  mkdir sysinit.target.wants
+  ln -s ../sysinit.service sysinit.target.wants
   popd
 }
 %else
@@ -524,6 +527,7 @@ rm -rf $RPM_BUILD_ROOT
 /lib/systemd/system/reboot.service
 /lib/systemd/system/single.service
 /lib/systemd/system/sysinit.service
+/lib/systemd/system/sysinit.target.wants/sysinit.service
 %endif
 
 %files -n debugmode
