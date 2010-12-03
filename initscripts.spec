@@ -71,6 +71,7 @@ Conflicts: lsb < 3.1-11mdv2007.1
 Conflicts: lsb-core < 3.1-15mdv2008.1
 Conflicts: suspend-scripts < 1.27
 Conflicts: mdadm < 2.6.4-2mdv2008.1
+Conflicts: systemd < 15-3mdv2011.0
 Requires: util-linux-ng >= 2.16
 Requires: mount >= 2.11l
 Requires: udev >= 108-2mdv2007.1
