@@ -10,7 +10,7 @@
 Summary: The inittab file and the /etc/init.d scripts
 Name: initscripts
 Version: 9.21
-Release: %mkrel 3
+Release: %mkrel 4
 # ppp-watch is GPLv2+, everything else is GPLv2
 License: GPLv2 and GPLv2+
 Group: System/Base
@@ -186,6 +186,8 @@ pushd $RPM_BUILD_ROOT/lib/systemd/system && {
   # sysinit.target no more pulls sysinit.service; do it here
   mkdir sysinit.target.wants
   ln -s ../sysinit.service sysinit.target.wants
+  ## TODO remove when synced with SVN
+  rm -f halt.service killall.service poweroff.service reboot.service
   popd
 }
 %else
@@ -518,13 +520,9 @@ rm -rf $RPM_BUILD_ROOT
 /lib/systemd/system/default.target
 /lib/systemd/system/display-manager.service
 /lib/systemd/system/graphical.target.wants/display-manager.service
-/lib/systemd/system/halt.service
-/lib/systemd/system/killall.service
 /lib/systemd/system/multi-user.target.wants/rc-local.service
-/lib/systemd/system/poweroff.service
 /lib/systemd/system/dm.service
 /lib/systemd/system/rc-local.service
-/lib/systemd/system/reboot.service
 /lib/systemd/system/single.service
 /lib/systemd/system/sysinit.service
 /lib/systemd/system/sysinit.target.wants/sysinit.service
