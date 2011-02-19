@@ -9,8 +9,8 @@
 
 Summary: The inittab file and the /etc/init.d scripts
 Name: initscripts
-Version: 9.21
-Release: %mkrel 4
+Version: 9.24
+Release: %mkrel 1
 # ppp-watch is GPLv2+, everything else is GPLv2
 License: GPLv2 and GPLv2+
 Group: System/Base
@@ -71,7 +71,7 @@ Conflicts: lsb < 3.1-11mdv2007.1
 Conflicts: lsb-core < 3.1-15mdv2008.1
 Conflicts: suspend-scripts < 1.27
 Conflicts: mdadm < 2.6.4-2mdv2008.1
-Conflicts: systemd < 15-3mdv2011.0
+Conflicts: systemd < 17-4.2
 Requires: util-linux-ng >= 2.16
 Requires: mount >= 2.11l
 Requires: udev >= 108-2mdv2007.1
@@ -181,12 +181,6 @@ export DONT_GPRINTIFY=1
 
 %if %{with_systemd}
 pushd $RPM_BUILD_ROOT/lib/systemd/system && {
-  # install prefdm as dm.service to hide /etc/init.d/dm
-  mv prefdm.service dm.service
-  ln -sf dm.service display-manager.service
-  # sysinit.target no more pulls sysinit.service; do it here
-  mkdir sysinit.target.wants
-  ln -s ../sysinit.service sysinit.target.wants
   ## TODO remove when synced with SVN
   rm -f halt.service killall.service poweroff.service reboot.service
   popd
@@ -517,16 +511,42 @@ rm -rf $RPM_BUILD_ROOT
 #%dir /etc/locale/*
 #%dir /etc/locale/*/LC_MESSAGES
 %if %{with_systemd}
+%{_sysconfdir}/tmpfiles.d/initscripts.conf
+%{_sysconfdir}/tmpfiles.d/mandriva.conf
+/lib/systemd/fedora-autorelabel
+/lib/systemd/fedora-autoswap
+/lib/systemd/fedora-configure
+/lib/systemd/fedora-loadmodules
+/lib/systemd/fedora-readonly
+/lib/systemd/fedora-storage-init
+/lib/systemd/mandriva-boot-links
+/lib/systemd/mandriva-save-dmesg
+/lib/systemd/system/basic.target.wants/fedora-autorelabel.service
+/lib/systemd/system/basic.target.wants/fedora-autoswap.service
+/lib/systemd/system/basic.target.wants/fedora-configure.service
+/lib/systemd/system/basic.target.wants/fedora-loadmodules.service
+/lib/systemd/system/basic.target.wants/fedora-sysinit-hack.service
+/lib/systemd/system/basic.target.wants/mandriva-boot-links.service
+/lib/systemd/system/basic.target.wants/mandriva-everytime.service
+/lib/systemd/system/basic.target.wants/mandriva-save-dmesg.service
 /lib/systemd/system/ctrl-alt-del.target
-/lib/systemd/system/default.target
-/lib/systemd/system/display-manager.service
-/lib/systemd/system/graphical.target.wants/display-manager.service
-/lib/systemd/system/multi-user.target.wants/rc-local.service
-/lib/systemd/system/dm.service
-/lib/systemd/system/rc-local.service
-/lib/systemd/system/single.service
-/lib/systemd/system/sysinit.service
-/lib/systemd/system/sysinit.target.wants/sysinit.service
+/lib/systemd/system/fedora-autorelabel.service
+/lib/systemd/system/fedora-autoswap.service
+/lib/systemd/system/fedora-configure.service
+/lib/systemd/system/fedora-loadmodules.service
+/lib/systemd/system/fedora-readonly.service
+/lib/systemd/system/fedora-storage-init.service
+/lib/systemd/system/fedora-sysinit-hack.service
+/lib/systemd/system/fedora-sysinit-unhack.service
+/lib/systemd/system/fedora-wait-storage.service
+/lib/systemd/system/mandriva-boot-links.service
+/lib/systemd/system/mandriva-everytime.service
+/lib/systemd/system/mandriva-save-dmesg.service
+/lib/systemd/system/local-fs.target.wants/fedora-readonly.service
+/lib/systemd/system/local-fs.target.wants/fedora-storage-init.service
+/lib/systemd/system/mandriva-kmsg-loglevel.service
+/lib/systemd/system/multi-user.target.wants/fedora-sysinit-unhack.service
+/lib/systemd/system/sysinit.target.wants/mandriva-kmsg-loglevel.service
 %endif
 
 %files -n debugmode
