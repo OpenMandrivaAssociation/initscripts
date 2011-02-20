@@ -133,8 +133,8 @@ make -C mandriva install ROOT=$RPM_BUILD_ROOT mandir=%{_mandir}
 python mandriva/gprintify.py \
 	`find %{buildroot}/etc/rc.d -type f` \
 	`find %{buildroot}/sysconfig/network-scripts -type f` \
-	%{buildroot}/systemd/fedora-* \
-	%{buildroot}/systemd/mandriva-*
+	%{buildroot}/lib/systemd/fedora-* \
+	%{buildroot}/lib/systemd/mandriva-*
 
 # warly 
 # put locale in /usr, gettext need /usr/share
