@@ -10,7 +10,7 @@
 Summary: The inittab file and the /etc/init.d scripts
 Name: initscripts
 Version: 9.24
-Release: %mkrel 2
+Release: %mkrel 3
 # ppp-watch is GPLv2+, everything else is GPLv2
 License: GPLv2 and GPLv2+
 Group: System/Base
@@ -130,7 +130,11 @@ make ROOT=$RPM_BUILD_ROOT SUPERUSER=`id -un` SUPERGROUP=`id -gn` mandir=%{_mandi
 #MDK
 make -C mandriva install ROOT=$RPM_BUILD_ROOT mandir=%{_mandir}
 
-python mandriva/gprintify.py `find %{buildroot}/etc/rc.d -type f` `find %{buildroot}/sysconfig/network-scripts -type f`
+python mandriva/gprintify.py \
+	`find %{buildroot}/etc/rc.d -type f` \
+	`find %{buildroot}/sysconfig/network-scripts -type f` \
+	%{buildroot}/systemd/fedora-* \
+	%{buildroot}/systemd/mandriva-*
 
 # warly 
 # put locale in /usr, gettext need /usr/share
