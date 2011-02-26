@@ -10,7 +10,7 @@
 Summary: The inittab file and the /etc/init.d scripts
 Name: initscripts
 Version: 9.24
-Release: %mkrel 4
+Release: %mkrel 5
 # ppp-watch is GPLv2+, everything else is GPLv2
 License: GPLv2 and GPLv2+
 Group: System/Base
@@ -72,6 +72,7 @@ Conflicts: lsb-core < 3.1-15mdv2008.1
 Conflicts: suspend-scripts < 1.27
 Conflicts: mdadm < 2.6.4-2mdv2008.1
 Conflicts: systemd < 17-4.2
+Conflicts: networkmanager < 0.8.2-8
 Requires: util-linux-ng >= 2.16
 Requires: mount >= 2.11l
 Requires: udev >= 108-2mdv2007.1
