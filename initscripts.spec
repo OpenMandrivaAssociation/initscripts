@@ -9,8 +9,8 @@
 
 Summary: The inittab file and the /etc/init.d scripts
 Name: initscripts
-Version: 9.24
-Release: %mkrel 5
+Version: 9.25
+Release: %mkrel 1
 # ppp-watch is GPLv2+, everything else is GPLv2
 License: GPLv2 and GPLv2+
 Group: System/Base
@@ -71,7 +71,7 @@ Conflicts: lsb < 3.1-11mdv2007.1
 Conflicts: lsb-core < 3.1-15mdv2008.1
 Conflicts: suspend-scripts < 1.27
 Conflicts: mdadm < 2.6.4-2mdv2008.1
-Conflicts: systemd < 17-4.2
+Conflicts: systemd < 19
 Conflicts: networkmanager < 0.8.2-8
 Requires: util-linux-ng >= 2.16
 Requires: mount >= 2.11l
@@ -193,6 +193,8 @@ pushd $RPM_BUILD_ROOT/lib/systemd/system && {
 %else
  rm -rf $RPM_BUILD_ROOT/lib/systemd
 %endif
+
+install -d -m 0755 %{buildroot}/%{_sysconfdir}/sysctl.d
 
 %post
 ##Fixme
@@ -443,6 +445,7 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) /etc/rc.d/rc.local
 /etc/rc.d/rc.sysinit
 %config(noreplace) /etc/sysctl.conf
+%dir /etc/sysctl.d
 %exclude /etc/profile.d/debug*
 %config /etc/profile.d/*
 %dir /etc/sysconfig/network-scripts/cellular.d
