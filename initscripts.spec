@@ -10,7 +10,7 @@
 Summary: The inittab file and the /etc/init.d scripts
 Name: initscripts
 Version: 9.25
-Release: %mkrel 1
+Release: %mkrel 2
 # ppp-watch is GPLv2+, everything else is GPLv2
 License: GPLv2 and GPLv2+
 Group: System/Base
@@ -71,7 +71,7 @@ Conflicts: lsb < 3.1-11mdv2007.1
 Conflicts: lsb-core < 3.1-15mdv2008.1
 Conflicts: suspend-scripts < 1.27
 Conflicts: mdadm < 2.6.4-2mdv2008.1
-Conflicts: systemd < 19
+Conflicts: systemd <= 19-2
 Conflicts: networkmanager < 0.8.2-8
 Requires: util-linux-ng >= 2.16
 Requires: mount >= 2.11l
@@ -184,13 +184,7 @@ rm -f $RPM_BUILD_ROOT/lib/udev/rules.d/60-net.rules
 # we have our own copy of gprintify
 export DONT_GPRINTIFY=1
 
-%if %{with_systemd}
-pushd $RPM_BUILD_ROOT/lib/systemd/system && {
-  ## TODO remove when synced with SVN
-  rm -f halt.service killall.service poweroff.service reboot.service
-  popd
-}
-%else
+%if !%{with_systemd}
  rm -rf $RPM_BUILD_ROOT/lib/systemd
 %endif
 
@@ -548,12 +542,14 @@ rm -rf $RPM_BUILD_ROOT
 /lib/systemd/system/fedora-sysinit-unhack.service
 /lib/systemd/system/fedora-wait-storage.service
 /lib/systemd/system/mandriva-boot-links.service
+/lib/systemd/system/mandriva-clean-var-run-lock.service
 /lib/systemd/system/mandriva-everytime.service
 /lib/systemd/system/mandriva-save-dmesg.service
 /lib/systemd/system/local-fs.target.wants/fedora-readonly.service
 /lib/systemd/system/local-fs.target.wants/fedora-storage-init.service
 /lib/systemd/system/mandriva-kmsg-loglevel.service
 /lib/systemd/system/multi-user.target.wants/fedora-sysinit-unhack.service
+/lib/systemd/system/sysinit.target.wants/mandriva-clean-var-run-lock.service
 /lib/systemd/system/sysinit.target.wants/mandriva-kmsg-loglevel.service
 %endif
 
