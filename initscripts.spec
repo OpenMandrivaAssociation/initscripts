@@ -10,7 +10,7 @@
 Summary: The inittab file and the /etc/init.d scripts
 Name: initscripts
 Version: 9.25
-Release: %mkrel 4
+Release: %mkrel 5
 # ppp-watch is GPLv2+, everything else is GPLv2
 License: GPLv2 and GPLv2+
 Group: System/Base
@@ -53,7 +53,7 @@ Requires: sysvinit-tools >= 2.87-8mdv2011.0
 
 Requires: perl-MDK-Common >= 1.0.1
 Requires: ifplugd >= 0.24
-Requires: sound-scripts
+#Requires: sound-scripts
 # (tv) unused:
 #Prereq: gawk
 Requires: iproute2
