@@ -10,7 +10,7 @@
 Summary: The inittab file and the /etc/init.d scripts
 Name: initscripts
 Version: 9.25
-Release: %mkrel 5
+Release: 6
 # ppp-watch is GPLv2+, everything else is GPLv2
 License: GPLv2 and GPLv2+
 Group: System/Base
@@ -374,7 +374,6 @@ rm -rf $RPM_BUILD_ROOT
 /etc/sysconfig/network-scripts/ifdown-post
 /etc/sysconfig/network-scripts/ifup
 /sbin/ifup
-%dir /etc/sysconfig
 %dir /etc/sysconfig/console
 %dir /etc/sysconfig/console/consoletrans
 %dir /etc/sysconfig/console/consolefonts
