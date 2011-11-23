@@ -10,7 +10,7 @@
 Summary: The inittab file and the /etc/init.d scripts
 Name: initscripts
 Version: 9.25
-Release: 6
+Release: 7
 # ppp-watch is GPLv2+, everything else is GPLv2
 License: GPLv2 and GPLv2+
 Group: System/Base
@@ -78,7 +78,11 @@ Requires: mount >= 2.11l
 Requires: udev >= 108-2mdv2007.1
 Requires: ifmetric, resolvconf >= 1.41
 Requires: dmsetup
+%if %{with_systemd}
+Conflicts: prcsys
+%else
 Requires: prcsys
+%endif
 Requires(post): /usr/bin/tr grep, chkconfig >= 1.3.37-3mdk
 BuildRequires: glib2-devel
 BuildRequires: pkgconfig
