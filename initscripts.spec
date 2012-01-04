@@ -10,12 +10,13 @@
 Summary: The inittab file and the /etc/init.d scripts
 Name: initscripts
 Version: 9.25
-Release: 7
+Release: 8
 # ppp-watch is GPLv2+, everything else is GPLv2
 License: GPLv2 and GPLv2+
 Group: System/Base
 Source0: initscripts-%{version}.tar.bz2
 Patch0:	initscripts-mdkconf.patch
+Patch1: removal_of_haldameon.patch
 BuildRoot: /%{_tmppath}/%{name}-%{version}-%{release}-root
 Requires: mingetty
 # for /bin/awk
@@ -116,6 +117,7 @@ Currently, this consists of various memory checking code.
 %setup -q
 rm -rf po
 %patch0 -p0
+%patch1 -p0
 rm -f po
 ln -s mandriva/po
 
