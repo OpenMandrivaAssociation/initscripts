@@ -1,4 +1,5 @@
-# 	$Id: initscripts.spec 252003 2009-01-22 17:26:21Z eugeni $	
+%define _build_pkgcheck_set %{nil}
+%define _build_pkgcheck_srpm %{nil}
 
 # The restart part in the real _post_service doesn't work with netfs and isn't needed
 # for other scripts
@@ -10,13 +11,14 @@
 Summary: The inittab file and the /etc/init.d scripts
 Name: initscripts
 Version: 9.25
-Release: 8
+Release: 9
 # ppp-watch is GPLv2+, everything else is GPLv2
 License: GPLv2 and GPLv2+
 Group: System/Base
 Source0: initscripts-%{version}.tar.bz2
 Patch0:	initscripts-mdkconf.patch
 Patch1: removal_of_haldameon.patch
+Patch2: initscripts-9.25-mdv-typo.patch
 BuildRoot: /%{_tmppath}/%{name}-%{version}-%{release}-root
 Requires: mingetty
 # for /bin/awk
@@ -118,6 +120,7 @@ Currently, this consists of various memory checking code.
 rm -rf po
 %patch0 -p0
 %patch1 -p0
+%patch2 -p1
 rm -f po
 ln -s mandriva/po
 
