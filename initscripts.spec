@@ -11,7 +11,7 @@
 Summary: The inittab file and the /etc/init.d scripts
 Name: initscripts
 Version: 9.25
-Release: 9
+Release: 10
 # ppp-watch is GPLv2+, everything else is GPLv2
 License: GPLv2 and GPLv2+
 Group: System/Base
@@ -19,6 +19,7 @@ Source0: initscripts-%{version}.tar.bz2
 Patch0:	initscripts-mdkconf.patch
 Patch1: removal_of_haldameon.patch
 Patch2: initscripts-9.25-mdv-typo.patch
+Patch3: initscripts-9.25-fall-back-to-ifup-ifdown-commandos-if-no-networkmanager.patch
 BuildRoot: /%{_tmppath}/%{name}-%{version}-%{release}-root
 Requires: mingetty
 # for /bin/awk
@@ -121,6 +122,7 @@ rm -rf po
 %patch0 -p0
 %patch1 -p0
 %patch2 -p1
+%patch3 -p1
 rm -f po
 ln -s mandriva/po
 
