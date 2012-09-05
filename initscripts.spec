@@ -13,6 +13,7 @@ Release: 1
 License: GPLv2 and GPLv2+
 Group: System/Base
 Source0: initscripts-%{version}.tar.bz2
+Source1: %{name}.rpmlintrc
 Patch0:	initscripts-mdkconf.patch
 Patch1: removal_of_haldameon.patch
 
