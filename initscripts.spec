@@ -106,10 +106,6 @@ BuildRequires: python
 # Upstream URL: http://git.fedorahosted.org/git/initscripts.git
 Url: http://svn.mandriva.com/cgi-bin/viewvc.cgi/soft/initscripts/trunk/
 
-#this is required since latest glibc (new atomic OPs?)
-%define _requires_exceptions GLIBC_PRIVATE
-
-
 %description
 The initscripts package contains the basic system scripts used to boot
 your Mandriva Linux system, change run levels, and shut the system
