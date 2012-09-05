@@ -214,7 +214,10 @@ rm -f $RPM_BUILD_ROOT/lib/udev/rules.d/60-net.rules
 export DONT_GPRINTIFY=1
 
 %if !%{with systemd}
- rm -rf $RPM_BUILD_ROOT/lib/systemd
+  rm -rf $RPM_BUILD_ROOT/lib/systemd
+%else
+  # (cg) Mask netfs initscript under systemd as native support is built in.
+  ln -sf /dev/null $RPM_BUILD_ROOT/lib/systemd/system/netfs.service
 %endif
 
 install -d -m 0755 %{buildroot}/%{_sysconfdir}/sysctl.d
@@ -562,6 +565,7 @@ fi
 /lib/systemd/system/fedora-storage-init.service
 /lib/systemd/system/fedora-storage-init-late.service
 /lib/systemd/system/fedora-wait-storage.service
+/lib/systemd/system/netfs.service
 /lib/systemd/system/mandriva-boot-links.service
 /lib/systemd/system/mandriva-everytime.service
 /lib/systemd/system/mandriva-save-dmesg.service
