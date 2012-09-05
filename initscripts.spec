@@ -2,110 +2,109 @@
 # for other scripts
 %define _mypost_service() if [ $1 = 1 ]; then /sbin/chkconfig --add %{1}; fi;
 
-%define with_upstart 0
-%define with_systemd 1
+%bcond_with	upstart
+%bcond_without	systemd
 
-Summary: The inittab file and the /etc/init.d scripts
-Name: initscripts
-Version: 9.34
-Release: 1
+Summary:	The inittab file and the /etc/init.d scripts
+Name:		initscripts
+Version:	9.34
+Release:	1
 # ppp-watch is GPLv2+, everything else is GPLv2
-License: GPLv2 and GPLv2+
-Group: System/Base
-Source0: initscripts-%{version}.tar.bz2
-Source1: %{name}.rpmlintrc
-Patch0:	initscripts-mdkconf.patch
-Patch1: removal_of_haldameon.patch
+License:	GPLv2 and GPLv2+
+Group:		System/Base
+Source0:	initscripts-%{version}.tar.bz2
+Source1:	%{name}.rpmlintrc
+Patch0:		initscripts-mdkconf.patch
+Patch1:		removal_of_haldameon.patch
 
 # (cg) Upstream cherry picks
-Patch0101: 0101-Don-t-bother-with-stdin-stdout-stderr-for-rmmod-modp.patch
-Patch0102: 0102-Just-exit-on-first-response-744734.patch
-Patch0103: 0103-Add-cifs-to-check-for-network-filesystem-760018.patch
-Patch0104: 0104-Don-t-exit-with-an-error-if-SEinux-isn-t-active.-768.patch
-Patch0105: 0105-Handle-dmraid-sets-with-spaces-728795-lnykryn-redhat.patch
-Patch0106: 0106-Typo-in-crypttab.5.patch
-Patch0107: 0107-Drop-StandardInput-tty-785662.patch
-Patch0108: 0108-Do-not-check-mounted-filesystems-745224.patch
-Patch0109: 0109-Improve-comment-in-init-serial.conf-746808.patch
+Patch0101:	0101-Don-t-bother-with-stdin-stdout-stderr-for-rmmod-modp.patch
+Patch0102:	0102-Just-exit-on-first-response-744734.patch
+Patch0103:	0103-Add-cifs-to-check-for-network-filesystem-760018.patch
+Patch0104:	0104-Don-t-exit-with-an-error-if-SEinux-isn-t-active.-768.patch
+Patch0105:	0105-Handle-dmraid-sets-with-spaces-728795-lnykryn-redhat.patch
+Patch0106:	0106-Typo-in-crypttab.5.patch
+Patch0107:	0107-Drop-StandardInput-tty-785662.patch
+Patch0108:	0108-Do-not-check-mounted-filesystems-745224.patch
+Patch0109:	0109-Improve-comment-in-init-serial.conf-746808.patch
 
 # (cg) Patches to go into mgaconf mega patch eventually
-Patch0500: 0500-Make-sure-to-invalidate-nscd-cache-under-systemd-as-.patch
-Patch0501: 0501-Rename-for-new-udev-systemd-servies.patch
+Patch0500:	0500-Make-sure-to-invalidate-nscd-cache-under-systemd-as-.patch
+Patch0501:	0501-Rename-for-new-udev-systemd-servies.patch
 
-BuildRoot: /%{_tmppath}/%{name}-%{version}-%{release}-root
-Requires: mingetty
+Requires:	mingetty
 # for /bin/awk
-Requires: gawk
+Requires:	gawk
 # for /bin/sed
-Requires: sed
-Requires: mktemp
-Requires: e2fsprogs >= 1.18-2mdk
-Requires: procps >= 2.0.7-8mdk
-Requires: gettext-base >= 0.10.35-20mdk
-Requires: module-init-tools
+Requires:	sed
+Requires:	mktemp
+Requires:	e2fsprogs >= 1.18-2mdk
+Requires:	procps >= 2.0.7-8mdk
+Requires:	gettext-base >= 0.10.35-20mdk
+Requires:	module-init-tools
 # needed for chvt --userwait
-Requires: kbd >= 1.15.1-2mdv
-#Requires: sysklogd >= 1.3.31
+Requires:	kbd >= 1.15.1-2mdv
+#Requires:	sysklogd >= 1.3.31
 # for /sbin/fuser
-Requires: psmisc
-Requires: which
-Requires: setup >= 2.2.0-14mdk
-%if %{with_upstart}
-Requires: upstart
-Obsoletes: event-compat-sysv
+Requires:	psmisc
+Requires:	which
+Requires:	setup >= 2.2.0-14mdk
+%if %{with upstart}
+Requires:	upstart
+Obsoletes:	event-compat-sysv
 %else
-Requires: SysVinit >= 2.85-38
+Requires:	SysVinit >= 2.85-38
 %endif
 # for /sbin/ip
-Requires: iproute2
+Requires:	iproute2
 # for /sbin/arping
-Requires: iputils
-Requires: net-tools
+Requires:	iputils
+Requires:	net-tools
 # for /bin/find
-Requires: findutils
+Requires:	findutils
 # (blino) for pidof -c
-# (bor)   for pidof -m
-Requires: sysvinit-tools >= 2.87-8mdv2011.0
+# (bor) for pidof -m
+Requires:	sysvinit-tools >= 2.87-8mdv2011.0
 
-Requires: perl-MDK-Common >= 1.0.1
-Requires: ifplugd >= 0.24
+Requires:	perl-MDK-Common >= 1.0.1
+Requires:	ifplugd >= 0.24
 #Requires: sound-scripts
 # (tv) unused:
-#Prereq: gawk
-Requires: iproute2
-Requires: ethtool
+#Prereq:	gawk
+Requires:	iproute2
+Requires:	ethtool
 # http://bugzilla.redhat.com/show_bug.cgi?id=252973
-Conflicts: nut < 2.2.0
-Obsoletes: rhsound sapinit
-Provides: rhsound sapinit
-Conflicts: kernel <= 2.2, timeconfig < 3.0, pppd <= 2.4.4-3mdv2008.1, wvdial < 1.40-3
-Conflicts: initscripts < 1.22.1-5, Aurora <= 7.2-17mdk
-Conflicts: dhcpcd < 1.3.21pl1
-Conflicts: XFree86-xfs < 4.2.0-12mdk
-Conflicts: xinitrc < 2.4.12
-Conflicts: lsb < 3.1-11mdv2007.1
-Conflicts: lsb-core < 3.1-15mdv2008.1
-Conflicts: suspend-scripts < 1.27
-Conflicts: mdadm < 2.6.4-2mdv2008.1
-Conflicts: systemd <= 19-2
-Conflicts: networkmanager < 0.8.2-8
-Requires: util-linux-ng >= 2.16
-Requires: mount >= 2.11l
-Requires: udev >= 108-2mdv2007.1
-Requires: ifmetric, resolvconf >= 1.41
-Requires: dmsetup
-%if %{with_systemd}
-Conflicts: prcsys
+Conflicts:	nut < 2.2.0
+Obsoletes:	rhsound sapinit
+Provides:	rhsound sapinit
+Conflicts:	kernel <= 2.2, timeconfig < 3.0, pppd <= 2.4.4-3mdv2008.1, wvdial < 1.40-3
+Conflicts:	initscripts < 1.22.1-5, Aurora <= 7.2-17mdk
+Conflicts:	dhcpcd < 1.3.21pl1
+Conflicts:	XFree86-xfs < 4.2.0-12mdk
+Conflicts:	xinitrc < 2.4.12
+Conflicts:	lsb < 3.1-11mdv2007.1
+Conflicts:	lsb-core < 3.1-15mdv2008.1
+Conflicts:	suspend-scripts < 1.27
+Conflicts:	mdadm < 2.6.4-2mdv2008.1
+Conflicts:	systemd <= 19-2
+Conflicts:	networkmanager < 0.8.2-8
+Requires:	util-linux-ng >= 2.16
+Requires:	mount >= 2.11l
+Requires:	udev >= 108-2mdv2007.1
+Requires:	ifmetric, resolvconf >= 1.41
+Requires:	dmsetup
+%if %{with systemd}
+Conflicts:	prcsys
 %else
-Requires: prcsys
+Requires:	prcsys
 %endif
-Requires(post): /usr/bin/tr grep, chkconfig >= 1.3.37-3mdk
-BuildRequires: glib2-devel
-BuildRequires: pkgconfig
-BuildRequires: popt-devel
-BuildRequires: python
+Requires(post):	/usr/bin/tr grep, chkconfig >= 1.3.37-3mdk
+BuildRequires:	glib2-devel
+BuildRequires:	pkgconfig
+BuildRequires:	popt-devel
+BuildRequires:	python
 # Upstream URL: http://git.fedorahosted.org/git/initscripts.git
-Url: http://svn.mandriva.com/cgi-bin/viewvc.cgi/soft/initscripts/trunk/
+Url:		http://svn.mandriva.com/cgi-bin/viewvc.cgi/soft/initscripts/trunk/
 
 %description
 The initscripts package contains the basic system scripts used to boot
@@ -113,12 +112,12 @@ your Mandriva Linux system, change run levels, and shut the system
 down cleanly.  Initscripts also contains the scripts that activate and
 deactivate most network interfaces.
 
-%package -n debugmode
-Summary: Scripts for running in debugging mode
-Requires: initscripts
-Group: System/Base
+%package -n	debugmode
+Summary:	Scripts for running in debugging mode
+Requires:	initscripts
+Group:		System/Base
 
-%description -n debugmode
+%description -n	debugmode
 The debugmode package contains some basic scripts that are used to run
 the system in a debugging mode.
 
@@ -155,7 +154,6 @@ make CFLAGS="%{optflags}" LDFLAGS="%{ldflags}"
 make -C mandriva CFLAGS="%{optflags}" LDFLAGS="%{ldflags}"
 
 %install
-rm -rf $RPM_BUILD_ROOT
 mkdir -p $RPM_BUILD_ROOT/etc
 make ROOT=$RPM_BUILD_ROOT SUPERUSER=`id -un` SUPERGROUP=`id -gn` mandir=%{_mandir} install
 
@@ -183,7 +181,7 @@ python mandriva/gprintify.py \
 
 %find_lang %{name}
 
-%if %{with_upstart}
+%if %{with upstart}
  mv -f $RPM_BUILD_ROOT/etc/inittab.upstart $RPM_BUILD_ROOT/etc/inittab
  rm -f $RPM_BUILD_ROOT/etc/rc.d/rc1.d/S99single
  rm -f $RPM_BUILD_ROOT/etc/rc.d/init.d/single
@@ -215,7 +213,7 @@ rm -f $RPM_BUILD_ROOT/lib/udev/rules.d/60-net.rules
 # we have our own copy of gprintify
 export DONT_GPRINTIFY=1
 
-%if !%{with_systemd}
+%if !%{with systemd}
  rm -rf $RPM_BUILD_ROOT/lib/systemd
 %endif
 
@@ -245,8 +243,8 @@ chmod 600 /var/log/btmp
 # /etc/sysconfig/desktop format has changed
 if [ -r /etc/sysconfig/desktop ]; then
     if ! grep -q = /etc/sysconfig/desktop; then
-        DESK=`cat /etc/sysconfig/desktop`
-        echo "DESKTOP=$DESK" > /etc/sysconfig/desktop
+	DESK=`cat /etc/sysconfig/desktop`
+	echo "DESKTOP=$DESK" > /etc/sysconfig/desktop
     fi
 fi
 
@@ -257,7 +255,7 @@ do
 		mkdir -p /etc/locale/$i/LC_MESSAGES/
 		cp %{_datadir}/locale/$i/LC_MESSAGES/initscripts.mo \
 			/etc/locale/$i/LC_MESSAGES/
-                #
+		#
 		# warly
 		# FIXME: this should be done by each locale when installed or upgraded
 		#
@@ -276,7 +274,7 @@ do
 	fi
 done
 
-%define initlvl_chg() if [[ -f /etc/rc3.d/S%{2}%{1} ]] && [[ -f /etc/rc5.d/S%{2}%{1} ]] && egrep -q 'chkconfig: [0-9]+ %{3}' /etc/init.d/%{1}; then chkconfig --add %{1} || : ; fi; \
+%define initlvl_chg() if [[ -f /etc/rc3.d/S%{2}%{1} ]] && [[ -f /etc/rc5.d/S%{2}%{1} ]] && grep -q -e 'chkconfig: [0-9]+ %{3}' /etc/init.d/%{1}; then chkconfig --add %{1} || : ; fi; \
 %{nil}
 
 # only needed on upgrade
@@ -380,11 +378,7 @@ if [ "$1" = "0" ]; then
 	rmdir /etc/locale/* >/dev/null 2> /dev/null
 fi
 
-%clean
-rm -rf $RPM_BUILD_ROOT
-
 %files -f %{name}.lang
-%defattr(-,root,root)
 %dir /etc/sysconfig/network-scripts
 %dir /etc/sysconfig/network-scripts/ifup.d
 %dir /etc/sysconfig/network-scripts/ifdown.d
@@ -450,7 +444,7 @@ rm -rf $RPM_BUILD_ROOT
 %dir /etc/rwtab.d
 /etc/statetab
 %dir /etc/statetab.d
-%if %{with_upstart}
+%if %{with upstart}
 %config(noreplace) /etc/event.d/*
 /etc/init/*
 %endif
@@ -533,7 +527,7 @@ rm -rf $RPM_BUILD_ROOT
 %config(noreplace) /etc/modules
 /etc/rc.modules
 %dir /etc/modprobe.preload.d/
-%ifnarch %{sunsparc}
+%ifnarch %{sparcx}
 /usr/sbin/supermount
 %endif
 /usr/bin/*
@@ -542,7 +536,7 @@ rm -rf $RPM_BUILD_ROOT
 #%dir /etc/locale
 #%dir /etc/locale/*
 #%dir /etc/locale/*/LC_MESSAGES
-%if %{with_systemd}
+%if %{with systemd}
 %{_sysconfdir}/tmpfiles.d/initscripts.conf
 %{_sysconfdir}/tmpfiles.d/mandriva.conf
 /lib/systemd/fedora-autorelabel
