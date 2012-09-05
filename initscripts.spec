@@ -10,16 +10,30 @@
 
 Summary: The inittab file and the /etc/init.d scripts
 Name: initscripts
-Version: 9.25
-Release: 10
+Version: 9.34
+Release: 1
 # ppp-watch is GPLv2+, everything else is GPLv2
 License: GPLv2 and GPLv2+
 Group: System/Base
 Source0: initscripts-%{version}.tar.bz2
 Patch0:	initscripts-mdkconf.patch
 Patch1: removal_of_haldameon.patch
-Patch2: initscripts-9.25-mdv-typo.patch
-Patch3: initscripts-9.25-fall-back-to-ifup-ifdown-commandos-if-no-networkmanager.patch
+
+# (cg) Upstream cherry picks
+Patch0101: 0101-Don-t-bother-with-stdin-stdout-stderr-for-rmmod-modp.patch
+Patch0102: 0102-Just-exit-on-first-response-744734.patch
+Patch0103: 0103-Add-cifs-to-check-for-network-filesystem-760018.patch
+Patch0104: 0104-Don-t-exit-with-an-error-if-SEinux-isn-t-active.-768.patch
+Patch0105: 0105-Handle-dmraid-sets-with-spaces-728795-lnykryn-redhat.patch
+Patch0106: 0106-Typo-in-crypttab.5.patch
+Patch0107: 0107-Drop-StandardInput-tty-785662.patch
+Patch0108: 0108-Do-not-check-mounted-filesystems-745224.patch
+Patch0109: 0109-Improve-comment-in-init-serial.conf-746808.patch
+
+# (cg) Patches to go into mgaconf mega patch eventually
+Patch0500: 0500-Make-sure-to-invalidate-nscd-cache-under-systemd-as-.patch
+Patch0501: 0501-Rename-for-new-udev-systemd-servies.patch
+
 BuildRoot: /%{_tmppath}/%{name}-%{version}-%{release}-root
 Requires: mingetty
 # for /bin/awk
@@ -119,10 +133,22 @@ Currently, this consists of various memory checking code.
 %prep
 %setup -q
 rm -rf po
-%patch0 -p0
+
+%patch0 -p1
 %patch1 -p0
-%patch2 -p1
-%patch3 -p1
+%patch0101 -p1
+%patch0102 -p1
+%patch0103 -p1
+%patch0104 -p1
+%patch0105 -p1
+%patch0106 -p1
+%patch0107 -p1
+%patch0108 -p1
+%patch0109 -p1
+
+%patch0500 -p1
+%patch0501 -p1
+
 rm -f po
 ln -s mandriva/po
 
@@ -526,7 +552,6 @@ rm -rf $RPM_BUILD_ROOT
 %{_sysconfdir}/tmpfiles.d/initscripts.conf
 %{_sysconfdir}/tmpfiles.d/mandriva.conf
 /lib/systemd/fedora-autorelabel
-/lib/systemd/fedora-autoswap
 /lib/systemd/fedora-configure
 /lib/systemd/fedora-loadmodules
 /lib/systemd/fedora-readonly
@@ -534,32 +559,28 @@ rm -rf $RPM_BUILD_ROOT
 /lib/systemd/mandriva-boot-links
 /lib/systemd/mandriva-save-dmesg
 /lib/systemd/system/basic.target.wants/fedora-autorelabel.service
-/lib/systemd/system/basic.target.wants/fedora-autoswap.service
+/lib/systemd/system/basic.target.wants/fedora-autorelabel-mark.service
 /lib/systemd/system/basic.target.wants/fedora-configure.service
 /lib/systemd/system/basic.target.wants/fedora-loadmodules.service
-/lib/systemd/system/basic.target.wants/fedora-sysinit-hack.service
 /lib/systemd/system/basic.target.wants/mandriva-boot-links.service
 /lib/systemd/system/basic.target.wants/mandriva-everytime.service
 /lib/systemd/system/basic.target.wants/mandriva-save-dmesg.service
 /lib/systemd/system/ctrl-alt-del.target
 /lib/systemd/system/fedora-autorelabel.service
-/lib/systemd/system/fedora-autoswap.service
+/lib/systemd/system/fedora-autorelabel-mark.service
 /lib/systemd/system/fedora-configure.service
 /lib/systemd/system/fedora-loadmodules.service
 /lib/systemd/system/fedora-readonly.service
 /lib/systemd/system/fedora-storage-init.service
-/lib/systemd/system/fedora-sysinit-hack.service
-/lib/systemd/system/fedora-sysinit-unhack.service
+/lib/systemd/system/fedora-storage-init-late.service
 /lib/systemd/system/fedora-wait-storage.service
 /lib/systemd/system/mandriva-boot-links.service
-/lib/systemd/system/mandriva-clean-var-run-lock.service
 /lib/systemd/system/mandriva-everytime.service
 /lib/systemd/system/mandriva-save-dmesg.service
 /lib/systemd/system/local-fs.target.wants/fedora-readonly.service
 /lib/systemd/system/local-fs.target.wants/fedora-storage-init.service
+/lib/systemd/system/local-fs.target.wants/fedora-storage-init-late.service
 /lib/systemd/system/mandriva-kmsg-loglevel.service
-/lib/systemd/system/multi-user.target.wants/fedora-sysinit-unhack.service
-/lib/systemd/system/sysinit.target.wants/mandriva-clean-var-run-lock.service
 /lib/systemd/system/sysinit.target.wants/mandriva-kmsg-loglevel.service
 %endif
 
