@@ -1,6 +1,3 @@
-%define _build_pkgcheck_set %{nil}
-%define _build_pkgcheck_srpm %{nil}
-
 # The restart part in the real _post_service doesn't work with netfs and isn't needed
 # for other scripts
 %define _mypost_service() if [ $1 = 1 ]; then /sbin/chkconfig --add %{1}; fi;
