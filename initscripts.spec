@@ -151,8 +151,8 @@ mv ChangeLog ChangeLog-RH
 gzip -9 ChangeLog-RH
 
 %build
-make
-make -C mandriva CFLAGS="$RPM_OPT_FLAGS"
+make CFLAGS="%{optflags}" LDFLAGS="%{ldflags}"
+make -C mandriva CFLAGS="%{optflags}" LDFLAGS="%{ldflags}"
 
 %install
 rm -rf $RPM_BUILD_ROOT
