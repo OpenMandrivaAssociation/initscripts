@@ -125,24 +125,9 @@ Currently, this consists of various memory checking code.
 
 %prep
 %setup -q
+%apply_patches
+find -name "*.0???~" -delete
 rm -rf po
-
-%patch0 -p1
-%patch1 -p0
-%patch0101 -p1
-%patch0102 -p1
-%patch0103 -p1
-%patch0104 -p1
-%patch0105 -p1
-%patch0106 -p1
-%patch0107 -p1
-%patch0108 -p1
-%patch0109 -p1
-
-%patch0500 -p1
-%patch0501 -p1
-
-rm -f po
 ln -s mandriva/po
 
 gzip -9 mandriva/ChangeLog
