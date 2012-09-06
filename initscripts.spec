@@ -8,7 +8,7 @@
 Summary:	The inittab file and the /etc/init.d scripts
 Name:		initscripts
 Version:	9.34
-Release:	1
+Release:	2
 # ppp-watch is GPLv2+, everything else is GPLv2
 License:	GPLv2 and GPLv2+
 Group:		System/Base
@@ -32,7 +32,6 @@ Patch0109:	0109-Improve-comment-in-init-serial.conf-746808.patch
 Patch0500:	0500-Make-sure-to-invalidate-nscd-cache-under-systemd-as-.patch
 Patch0501:	0501-Rename-for-new-udev-systemd-servies.patch
 
-Requires:	mingetty
 # for /bin/awk
 Requires:	gawk
 # for /bin/sed
