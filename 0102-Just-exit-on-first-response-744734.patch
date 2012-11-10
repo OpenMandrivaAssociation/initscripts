@@ -1,0 +1,27 @@
+From 3d9fa7ce1c472476327f1d1a5310cae3dea9d57e Mon Sep 17 00:00:00 2001
+From: Bill Nottingham <notting@redhat.com>
+Date: Tue, 15 Nov 2011 13:40:56 -0500
+Subject: [PATCH 102/109] Just exit on first response (#744734) (cherry picked
+ from commit
+ 74eb8b4e9cc1aecb9bce40f4e5df1c41a36396e9)
+
+---
+ rc.d/init.d/netconsole |    2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/rc.d/init.d/netconsole b/rc.d/init.d/netconsole
+index 42733de..1b10af2 100644
+--- a/rc.d/init.d/netconsole
++++ b/rc.d/init.d/netconsole
+@@ -54,7 +54,7 @@ print_address_info ()
+ 		target=$host
+ 	fi
+ 	if [ -z "$SYSLOGMACADDR" ]; then
+-		arp=$(LANG=C /sbin/arping -c 1 -I $DEV $target 2>/dev/null | awk '/ reply from .*[.*]/ { print gensub(".* reply from .* \\[(.*)\\].*","\\1","G"); exit }')
++		arp=$(LANG=C /sbin/arping -f -c 1 -I $DEV $target 2>/dev/null | awk '/ reply from .*[.*]/ { print gensub(".* reply from .* \\[(.*)\\].*","\\1","G"); exit }')
+ 		[ -n "$arp" ] && echo "SYSLOGMACADDR=$arp"
+ 	fi	
+ }	
+-- 
+1.7.9.2
+

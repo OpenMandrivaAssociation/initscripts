@@ -1,0 +1,57 @@
+From d9902a8cb93645537b83dd49d32722a4ed2c735f Mon Sep 17 00:00:00 2001
+From: Bill Nottingham <notting@redhat.com>
+Date: Mon, 19 Dec 2011 14:52:58 -0500
+Subject: [PATCH 104/109] Don't exit with an error if SEinux isn't active.
+ (#768628) (cherry picked from commit
+ 1c38e273b3b2114ae9525f1ad28ad4f44ce6bf55)
+
+---
+ systemd/fedora-readonly |   12 +++++++++---
+ 1 file changed, 9 insertions(+), 3 deletions(-)
+
+diff --git a/systemd/fedora-readonly b/systemd/fedora-readonly
+index 4e8003a..1317289 100755
+--- a/systemd/fedora-readonly
++++ b/systemd/fedora-readonly
+@@ -16,6 +16,12 @@ if [ -e "/sys/fs/selinux/enforce" ] && [ "$(cat /proc/self/attr/current)" != "ke
+ 	fi
+ fi
+ 
++selinux_fixup() {
++	if [ -n "$SELINUX_STATE" ] && [ -e "$1" ]; then
++		restorecon -R "$1"
++	fi
++}
++
+ # Only read this once.
+ [ -z "${cmdline}" ] && cmdline=$(cat /proc/cmdline)
+ 
+@@ -91,7 +97,7 @@ if [ "$READONLY" = "yes" -o "$TEMPORARY_STATE" = "yes" ]; then
+ 				*)
+ 					;;
+ 			esac
+-			[ -n "$SELINUX_STATE" ] && [ -e "$path" ] && restorecon -R "$path"
++			selinux_fixup "$path"
+ 		done
+ 	done
+ 
+@@ -153,14 +159,14 @@ if [ "$READONLY" = "yes" -o "$TEMPORARY_STATE" = "yes" ]; then
+ 
+ 			for path in $(grep -v "^#" "$file" 2>/dev/null); do
+ 				mount_state "$path"
+-				[ -n "$SELINUX_STATE" ] && [ -e "$path" ] && restorecon -R "$path"
++				selinux_fixup "$path"
+ 			done
+ 		done
+ 
+ 		if [ -f "$STATE_MOUNT/files" ] ; then
+ 			for path in $(grep -v "^#" "$STATE_MOUNT/files" 2>/dev/null); do
+ 				mount_state "$path"
+-				[ -n "$SELINUX_STATE" ] && [ -e "$path" ] && restorecon -R "$path"
++				selinux_fixup "$path"
+ 			done
+ 		fi
+ 	fi
+-- 
+1.7.9.2
+

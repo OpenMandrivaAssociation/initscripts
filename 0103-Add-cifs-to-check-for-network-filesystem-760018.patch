@@ -1,0 +1,31 @@
+From 419852538521451ed27d1ab1e55987f6cb6e50bb Mon Sep 17 00:00:00 2001
+From: Bill Nottingham <notting@redhat.com>
+Date: Wed, 14 Dec 2011 17:49:19 -0500
+Subject: [PATCH 103/109] Add cifs to check for network filesystem (#760018).
+
+Use findmnt to simplify the code.
+(cherry picked from commit 3031ac68e251d5090c3e021fb387a9ba0c8f343d)
+---
+ rc.d/init.d/network |    6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/rc.d/init.d/network b/rc.d/init.d/network
+index c6b86c3..93b93d9 100755
+--- a/rc.d/init.d/network
++++ b/rc.d/init.d/network
+@@ -184,10 +184,8 @@ case "$1" in
+   	# If this is a final shutdown/halt, check for network FS,
+ 	# and unmount them even if the user didn't turn on netfs
+ 	if [ "$RUNLEVEL" = "6" -o "$RUNLEVEL" = "0" -o "$RUNLEVEL" = "1" ]; then
+-		NFSMTAB=$(LC_ALL=C awk '$3  ~ /^nfs/ { print $2 }' /proc/mounts)
+-		SMBMTAB=$(LC_ALL=C awk '$3 == "smbfs" { print $2 }' /proc/mounts)
+-		NCPMTAB=$(LC_ALL=C awk '$3 == "ncpfs" { print $2 }' /proc/mounts)
+-		if [ -n "$NFSMTAB" -o -n "$SMBMTAB" -o -n "$NCPMTAB" ] ; then
++		NETMOUNTS=$(findmnt -m -t nfs,nfs4,smbfs,ncpfs,cifs 2>/dev/null)
++		if [ -n "$NETMOUNTS" ] ; then
+ 			/etc/init.d/netfs stop
+ 		fi
+ 	fi
+-- 
+1.7.9.2
+
