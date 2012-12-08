@@ -1,0 +1,17 @@
+diff -Nur initscripts-9.34.old/prefdm initscripts-9.34/prefdm
+--- initscripts-9.34.old/prefdm	2012-11-20 15:35:48.000000000 +0400
++++ initscripts-9.34/prefdm	2012-11-20 15:37:40.528827294 +0400
+@@ -45,6 +45,7 @@
+ 	    dm=GNOME
+ 	elif [ "$DISPLAYMANAGER" = "KDM" -o "$DISPLAYMANAGER" = "kdm" -o "$DISPLAYMANAGER" = "KDE" -o "$DISPLAYMANAGER" = "kde" ]; then
+ 	    dm=KDM
++	    plymouth_quit=yes
+ 	elif [ "$DISPLAYMANAGER" = "WDM" -o "$DISPLAYMANAGER" = "wdm" ] ; then
+ 	    dm=WDM
+ 	    plymouth_quit=yes
+@@ -77,3 +78,4 @@
+ # catch all exit error
+ [ -x /bin/plymouth ] && /bin/plymouth quit
+ exit 1
++/bin/plymouth quit
+\ В конце файла нет новой строки

@@ -1,0 +1,5 @@
+from Config import *
+from os import environ
+
+addFilter('initscripts\..*: hardcoded-library-path (\(.*\) |)in .*/lib/')
+addFilter('initscripts\..*: no-chkconfig-line')
