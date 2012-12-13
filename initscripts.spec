@@ -574,6 +574,14 @@ fi
 
 
 %changelog
+* Thu Dec 13 2012 Per Øyvind Karlsen <peroyvind@mandriva.org> 9.34-6
+- remove some more bashism from scripts
+
+* Sat Nov  3 2012 Per Øyvind Karlsen <peroyvind@mandriva.org> 9.34-3
++ Revision: 821733
+- remove some bashism in /etc/rc.d/init.d/functions which prevents it from being
+  used with drakx/busybox
+
 * Fri Sep 07 2012 Per Øyvind Karlsen <peroyvind@mandriva.org> 9.34-2
 + Revision: 816501
 - drop dependency on mingetty, we're now working agetty provided by util-linux
