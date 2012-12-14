@@ -119,16 +119,12 @@ python mandriva/gprintify.py \
 # we have our own copy of gprintify
 export DONT_GPRINTIFY=1
 
-install -d -m 0755 %{buildroot}%{_sysconfdir}/sysctl.d
-
 %post
 ##
 touch /var/log/wtmp /var/run/utmp /var/log/btmp
 chown root:utmp /var/log/wtmp /var/run/utmp /var/log/btmp
 chmod 664 /var/log/wtmp /var/run/utmp
 chmod 600 /var/log/btmp
-#Create symlink to compartibility with Fedora. In future version move %{_sysconfdir}/sysctl.conf to /etc/sysctl.d
-ln -sf %{_sysconfdir}/sysctl.conf /etc/sysctl.d/sysctl.conf
 
 %_post_service partmon
 
@@ -217,7 +213,6 @@ ln -sf %{_sysconfdir}/sysctl.conf /etc/sysctl.d/sysctl.conf
 /lib/lsb/init-functions
 %{_sysconfdir}/rc.d/init.d/*
 %config(noreplace) %{_sysconfdir}/sysctl.conf
-%dir %{_sysconfdir}/sysctl.d
 %dir %{_prefix}/lib/sysctl.d
 %{_prefix}/lib/sysctl.d/00-system.conf
 %exclude %{_sysconfdir}/profile.d/debug*
@@ -315,6 +310,7 @@ ln -sf %{_sysconfdir}/sysctl.conf /etc/sysctl.d/sysctl.conf
 
 %changelog
 * Fri Dec 14 2012 Per Øyvind Karlsen <peroyvind@mandriva.org> 9.43-1
+- drop dead /etc/sysctl.d, /usr/lib/sysctl.d replaces it
 - compile with -Os
 - drop supermount script, supermount has been dead for ages!
 - clean out old junk
