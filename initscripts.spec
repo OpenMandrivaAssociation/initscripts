@@ -1,7 +1,3 @@
-# The restart part in the real _post_service doesn't work with netfs and isn't needed
-# for other scripts
-%define _mypost_service() if [ $1 = 1 ]; then /sbin/chkconfig --add %{1}; fi;
-
 Summary:	The inittab file and the %{_sysconfdir}/init.d scripts
 Name:		initscripts
 Version:	9.43
@@ -134,21 +130,18 @@ chmod 600 /var/log/btmp
 #Create symlink to compartibility with Fedora. In future version move %{_sysconfdir}/sysctl.conf to /etc/sysctl.d
 ln -sf %{_sysconfdir}/sysctl.conf /etc/sysctl.d/sysctl.conf
 
-%_mypost_service partmon
+%_post_service partmon
 
-%_mypost_service network
+%_post_service network
 
-%_mypost_service network-up
+%_post_service network-up
 
-%_mypost_service dm
+%_post_service dm
 
-%_mypost_service netconsole
+%_post_service netconsole
 
-%_mypost_service netfs
 
 %preun
-%_preun_service netfs
-
 %_preun_service netconsole
 
 %_preun_service dm
