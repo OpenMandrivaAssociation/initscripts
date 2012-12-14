@@ -227,57 +227,6 @@ done
 
 %_preun_service partmon
 
-%triggerpostun -- initscripts <= 4.72
-
-. /etc/sysconfig/init
-. /etc/sysconfig/network
-
-# These are the non-default settings. By putting them at the end
-# of the /etc/sysctl.conf file, it will override the default
-# settings earlier in the file.
-
-if [ -n "$FORWARD_IPV4" -a "$FORWARD_IPV4" != "no" -a "$FORWARD_IPV4" != "false" ]; then
-	echo "# added by initscripts install on `date`" >> /etc/sysctl.conf
-	echo "net.ipv4.ip_forward = 1" >> /etc/sysctl.conf
-fi
-
-newnet=`mktemp /etc/sysconfig/network.XXXXXX`
-if [ -n "$newnet" ]; then
-  sed "s|FORWARD_IPV4.*|# FORWARD_IPV4 removed; see /etc/sysctl.conf|g" \
-   /etc/sysconfig/network > $newnet
-  sed "s|DEFRAG_IPV4.*|# DEFRAG_IPV4 removed; obsolete in 2.4. kernel|g" \
-   $newnet > /etc/sysconfig/network
-  rm -f $newnet
-fi
-
-if [ -n "$MAGIC_SYSRQ" -a "$MAGIC_SYSRQ" != "no" ]; then
-	echo "# added by initscripts install on `date`" >> /etc/sysctl.conf
-	echo "kernel.sysrq = 1" >> /etc/sysctl.conf
-fi
-if uname -m | grep -q sparc ; then
-   if [ -n "$STOP_A" -a "$STOP_A" != "no" ]; then
-	echo "# added by initscripts install on `date`" >> /etc/sysctl.conf
-	echo "kernel.stop-a = 1" >> /etc/sysctl.conf
-   fi
-fi
-
-%triggerun -- initscripts < 7.62
-/sbin/chkconfig --del random
-/sbin/chkconfig --del rawdevices
-exit 0
-
-%triggerpostun -- initscripts <= 8.38-2mdv2007.0
-/sbin/chkconfig --add network-up
-exit 0
-
-%triggerpostun -- initscripts < 8.54-4mdv2008.0
-echo "disabling supermount which is not supported anymore"
-/usr/sbin/supermount -i disable
-exit 0
-
-%triggerpostun -- initscripts < 8.88-5mdv2008.0
-/sbin/chkconfig --level 7 dm reset
-
 %postun
 if [ -f /var/lock/TMP_1ST ];then 
 		rm -f /var/lock/TMP_1ST
@@ -463,6 +412,7 @@ fi
 
 %changelog
 * Fri Dec 14 2012 Per Øyvind Karlsen <peroyvind@mandriva.org> 9.43-1
+- drop ancient triggers
 - merge all changes into our own git branch
 - new version
 
