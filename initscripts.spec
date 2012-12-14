@@ -2,7 +2,7 @@
 # for other scripts
 %define _mypost_service() if [ $1 = 1 ]; then /sbin/chkconfig --add %{1}; fi;
 
-Summary:	The inittab file and the /etc/init.d scripts
+Summary:	The inittab file and the %{_sysconfdir}/init.d scripts
 Name:		initscripts
 Version:	9.43
 Release:	1
@@ -11,7 +11,7 @@ License:	GPLv2 and GPLv2+
 Group:		System/Base
 Source0:	initscripts-%{version}.tar.xz
 Source1:	%{name}.rpmlintrc
-Provides:   /etc/init.d
+Provides:	%{_sysconfdir}/init.d
 
 # for /bin/awk
 Requires:	gawk
@@ -68,7 +68,7 @@ Requires:	udev >= 108-2mdv2007.1
 Requires:	ifmetric, resolvconf >= 1.41
 Requires:	dmsetup
 Conflicts:	prcsys
-Requires(post):	/usr/bin/tr grep, chkconfig >= 1.3.37-3mdk
+Requires(post):	%{_bindir}/tr grep, chkconfig >= 1.3.37-3mdk
 BuildRequires:	glib2-devel
 BuildRequires:	pkgconfig
 BuildRequires:	popt-devel
@@ -105,57 +105,26 @@ make CFLAGS="%{optflags}" LDFLAGS="%{ldflags}"
 make -C mandriva CFLAGS="%{optflags}" LDFLAGS="%{ldflags}"
 
 %install
-mkdir -p $RPM_BUILD_ROOT/etc
-make ROOT=$RPM_BUILD_ROOT SUPERUSER=`id -un` SUPERGROUP=`id -gn` mandir=%{_mandir} install
+mkdir -p %{buildroot}%{_sysconfdir}
+make ROOT=%{buildroot} SUPERUSER=`id -un` SUPERGROUP=`id -gn` mandir=%{_mandir} install
 
 #MDK
-make -C mandriva install ROOT=$RPM_BUILD_ROOT mandir=%{_mandir}
+make -C mandriva install ROOT=%{buildroot} mandir=%{_mandir}
 
 python mandriva/gprintify.py \
-	`find %{buildroot}/etc/rc.d -type f` \
+	`find %{buildroot}%{_sysconfdir}/rc.d -type f` \
 	`find %{buildroot}/sysconfig/network-scripts -type f` \
-	%{buildroot}/lib/systemd/fedora-* \
-	%{buildroot}/lib/systemd/mandriva-*
-
-# warly 
-# put locale in /usr, gettext need /usr/share
-#
-# extracted from /usr/lib/rpm/find-lang.sh and adapted to find locales in /etc
-#find $RPM_BUILD_ROOT -type f|sed '
-#1i\
-#%defattr (644, root, root, 755)
-#s:'"$RPM_BUILD_ROOT"'::
-#s:\(.*/etc/locale/\)\([^/_]\+\)\(.*'"$NAME"'\.mo$\):%lang(\2) \1\2\3:
-#s:^\([^%].*\)::
-#s:%lang(C) ::
-#' >> %{name}.lang
+	%{buildroot}%{_systemdrootdir}/fedora-* \
+	%{buildroot}%{_systemdrootdir}/mandriva-*
 
 %find_lang %{name}
 
- rm -rf $RPM_BUILD_ROOT/etc/event.d
- rm -rf $RPM_BUILD_ROOT/etc/init
-
-%ifnarch s390 s390x
-rm -f \
- $RPM_BUILD_ROOT/etc/sysconfig/network-scripts/ifup-ctc \
- $RPM_BUILD_ROOT/etc/sysconfig/network-scripts/ifup-iucv \
- $RPM_BUILD_ROOT/lib/udev/rules.d/55-ccw.rules \
- $RPM_BUILD_ROOT/lib/udev/ccw_init
-%else
-rm -f \
- $RPM_BUILD_ROOT/etc/sysconfig/init.s390
-%endif
-
-# remove unused hotplug helper and ipsec/isdn stuff
-rm -f $RPM_BUILD_ROOT/etc/sysconfig/network-scripts/{ifdown-ippp,ifup-ippp,ifdown-ipsec,ifup-ipsec,net.hotplug}
-
-# we use network rules from the udev package
-rm -f $RPM_BUILD_ROOT/lib/udev/rules.d/60-net.rules
+rm %{buildroot}%{_sysconfdir}/sysconfig/network-scripts/ifup-ctc
 
 # we have our own copy of gprintify
 export DONT_GPRINTIFY=1
 
-install -d -m 0755 %{buildroot}/%{_sysconfdir}/sysctl.d
+install -d -m 0755 %{buildroot}%{_sysconfdir}/sysctl.d
 
 %post
 ##
@@ -163,8 +132,8 @@ touch /var/log/wtmp /var/run/utmp /var/log/btmp
 chown root:utmp /var/log/wtmp /var/run/utmp /var/log/btmp
 chmod 664 /var/log/wtmp /var/run/utmp
 chmod 600 /var/log/btmp
-#Create symlink to compartibility with Fedora. In future version move /etc/sysctl.conf to /etc/sysctl.d
-ln -sf /etc/sysctl.conf /etc/sysctl.d/sysctl.conf
+#Create symlink to compartibility with Fedora. In future version move %{_sysconfdir}/sysctl.conf to /etc/sysctl.d
+ln -sf %{_sysconfdir}/sysctl.conf /etc/sysctl.d/sysctl.conf
 
 %_mypost_service partmon
 
@@ -177,40 +146,6 @@ ln -sf /etc/sysctl.conf /etc/sysctl.d/sysctl.conf
 %_mypost_service netconsole
 
 %_mypost_service netfs
-
-# /etc/sysconfig/desktop format has changed
-if [ -r /etc/sysconfig/desktop ]; then
-    if ! grep -q = /etc/sysconfig/desktop; then
-	DESK=`cat /etc/sysconfig/desktop`
-	echo "DESKTOP=$DESK" > /etc/sysconfig/desktop
-    fi
-fi
-
-# Add right translation file
-for i in `echo $LANGUAGE:$LC_ALL:$LC_COLLATE:$LANG:C | tr ':' ' '`
-do
-	if [ -r %{_datadir}/locale/$i/LC_MESSAGES/initscripts.mo ]; then
-		mkdir -p /etc/locale/$i/LC_MESSAGES/
-		cp %{_datadir}/locale/$i/LC_MESSAGES/initscripts.mo \
-			/etc/locale/$i/LC_MESSAGES/
-		#
-		# warly
-		# FIXME: this should be done by each locale when installed or upgraded
-		#
-		pushd %{_datadir}/locale/$i/ > /dev/null && for j in LC_*
-		do
-			if [ -r $j -a ! -d $j ]; then
-			    cp $j /etc/locale/$i/
-			fi
-		done && popd > /dev/null
-		if [ -r %{_datadir}/locale/$i/LC_MESSAGES/SYS_LC_MESSAGES ]; then
-			cp %{_datadir}/locale/$LANG/LC_MESSAGES/SYS_LC_MESSAGES /etc/locale/$i/LC_MESSAGES/
-		fi
-		#
-		#
-		break
-	fi
-done
 
 %preun
 %_preun_service netfs
@@ -225,100 +160,87 @@ done
 
 %_preun_service partmon
 
-%postun
-if [ -f /var/lock/TMP_1ST ];then 
-		rm -f /var/lock/TMP_1ST
-fi
-if [ "$1" = "0" ]; then
-	for i in /etc/locale/*/LC_MESSAGES/initscripts.mo
-	do
-		rm -f $i
-		rmdir `dirname $i` >/dev/null 2> /dev/null
-	done
-	rmdir /etc/locale/* >/dev/null 2> /dev/null
-fi
-
 %files -f %{name}.lang
-%dir /etc/sysconfig/network-scripts
-%dir /etc/sysconfig/network-scripts/ifup.d
-%dir /etc/sysconfig/network-scripts/ifdown.d
-%dir /etc/sysconfig/network-scripts/wireless.d
-%dir /etc/sysconfig/network-scripts/vpn.d
-%dir /etc/sysconfig/network-scripts/vpn.d/openvpn
-%dir /etc/sysconfig/network-scripts/vpn.d/pptp
-%dir /etc/sysconfig/network-scripts/vpn.d/vpnc
-%config(noreplace) %verify(not md5 mtime size) /etc/adjtime
-%config(noreplace) /etc/sysconfig/init
-%config(noreplace) /etc/sysconfig/autofsck
-%config(noreplace) /etc/sysconfig/partmon
-%config(noreplace) /etc/sysconfig/netconsole
-%config(noreplace) /etc/sysconfig/readonly-root
-/etc/sysconfig/network-scripts/ifdown
+%dir %{_sysconfdir}/sysconfig/network-scripts
+%dir %{_sysconfdir}/sysconfig/network-scripts/ifup.d
+%dir %{_sysconfdir}/sysconfig/network-scripts/ifdown.d
+%dir %{_sysconfdir}/sysconfig/network-scripts/wireless.d
+%dir %{_sysconfdir}/sysconfig/network-scripts/vpn.d
+%dir %{_sysconfdir}/sysconfig/network-scripts/vpn.d/openvpn
+%dir %{_sysconfdir}/sysconfig/network-scripts/vpn.d/pptp
+%dir %{_sysconfdir}/sysconfig/network-scripts/vpn.d/vpnc
+%config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/adjtime
+%config(noreplace) %{_sysconfdir}/sysconfig/init
+%config(noreplace) %{_sysconfdir}/sysconfig/autofsck
+%config(noreplace) %{_sysconfdir}/sysconfig/partmon
+%config(noreplace) %{_sysconfdir}/sysconfig/netconsole
+%config(noreplace) %{_sysconfdir}/sysconfig/readonly-root
+%{_sysconfdir}/sysconfig/network-scripts/ifdown
 /sbin/ifdown
-/etc/sysconfig/network-scripts/ifdown-post
-/etc/sysconfig/network-scripts/ifup
+%{_sysconfdir}/sysconfig/network-scripts/ifdown-post
+%{_sysconfdir}/sysconfig/network-scripts/ifup
 /sbin/ifup
-%dir /etc/sysconfig/console
-%dir /etc/sysconfig/console/consoletrans
-%dir /etc/sysconfig/console/consolefonts
-%dir /etc/sysconfig/modules
-/etc/sysconfig/network-scripts/network-functions
-/etc/sysconfig/network-scripts/network-functions-ipv6
-/etc/sysconfig/network-scripts/init.ipv6-global
-%config(noreplace) /etc/sysconfig/network-scripts/ifcfg-lo
-/etc/sysconfig/network-scripts/ifup-ipx
-/etc/sysconfig/network-scripts/ifup-post
-/etc/sysconfig/network-scripts/ifdown-ppp
-/etc/sysconfig/network-scripts/ifup-ppp
-/etc/sysconfig/network-scripts/ifup-routes
-/etc/sysconfig/network-scripts/ifdown-routes
-/etc/sysconfig/network-scripts/ifup-plip
-/etc/sysconfig/network-scripts/ifup-plusb
-/etc/sysconfig/network-scripts/ifup-bnep
-/etc/sysconfig/network-scripts/ifdown-bnep
-/etc/sysconfig/network-scripts/ifup-eth
-/etc/sysconfig/network-scripts/ifdown-eth
-/etc/sysconfig/network-scripts/ifup-ipv6
-/etc/sysconfig/network-scripts/ifdown-ipv6
-/etc/sysconfig/network-scripts/ifup-sit
-/etc/sysconfig/network-scripts/ifdown-sit
-/etc/sysconfig/network-scripts/ifup-tunnel
-/etc/sysconfig/network-scripts/ifdown-tunnel
-/etc/sysconfig/network-scripts/ifup-aliases
-#/etc/sysconfig/network-scripts/ifup-ippp
-#/etc/sysconfig/network-scripts/ifdown-ippp
-/etc/sysconfig/network-scripts/ifup-wireless
-/etc/sysconfig/network-scripts/ifup-hso
-/etc/sysconfig/network-scripts/ifdown-hso
-/etc/X11/prefdm
-/etc/X11/lookupdm
-%config(noreplace) /etc/networks 
-/etc/rwtab
-%dir /etc/rwtab.d
-/etc/statetab
-%dir /etc/statetab.d
+%dir %{_sysconfdir}/sysconfig/console
+%dir %{_sysconfdir}/sysconfig/console/consoletrans
+%dir %{_sysconfdir}/sysconfig/console/consolefonts
+%dir %{_sysconfdir}/sysconfig/modules
+%{_sysconfdir}/sysconfig/network-scripts/network-functions
+%{_sysconfdir}/sysconfig/network-scripts/network-functions-ipv6
+%{_sysconfdir}/sysconfig/network-scripts/init.ipv6-global
+%config(noreplace) %{_sysconfdir}/sysconfig/network-scripts/ifcfg-lo
+%{_sysconfdir}/sysconfig/network-scripts/ifup-ipx
+%{_sysconfdir}/sysconfig/network-scripts/ifup-post
+%{_sysconfdir}/sysconfig/network-scripts/ifdown-ppp
+%{_sysconfdir}/sysconfig/network-scripts/ifup-ppp
+%{_sysconfdir}/sysconfig/network-scripts/ifup-routes
+%{_sysconfdir}/sysconfig/network-scripts/ifdown-routes
+%{_sysconfdir}/sysconfig/network-scripts/ifup-plip
+%{_sysconfdir}/sysconfig/network-scripts/ifup-plusb
+%{_sysconfdir}/sysconfig/network-scripts/ifup-bnep
+%{_sysconfdir}/sysconfig/network-scripts/ifdown-bnep
+%{_sysconfdir}/sysconfig/network-scripts/ifup-eth
+%{_sysconfdir}/sysconfig/network-scripts/ifdown-eth
+%{_sysconfdir}/sysconfig/network-scripts/ifup-ipv6
+%{_sysconfdir}/sysconfig/network-scripts/ifdown-ipv6
+%{_sysconfdir}/sysconfig/network-scripts/ifup-sit
+%{_sysconfdir}/sysconfig/network-scripts/ifdown-sit
+%{_sysconfdir}/sysconfig/network-scripts/ifup-tunnel
+%{_sysconfdir}/sysconfig/network-scripts/ifdown-tunnel
+%{_sysconfdir}/sysconfig/network-scripts/ifup-aliases
+#%{_sysconfdir}/sysconfig/network-scripts/ifup-ippp
+#%{_sysconfdir}/sysconfig/network-scripts/ifdown-ippp
+%{_sysconfdir}/sysconfig/network-scripts/ifup-wireless
+%{_sysconfdir}/sysconfig/network-scripts/ifup-hso
+%{_sysconfdir}/sysconfig/network-scripts/ifdown-hso
+%{_sysconfdir}/X11/prefdm
+%{_sysconfdir}/X11/lookupdm
+%config(noreplace) %{_sysconfdir}/networks 
+%{_sysconfdir}/rwtab
+%dir %{_sysconfdir}/rwtab.d
+%{_sysconfdir}/statetab
+%dir %{_sysconfdir}/statetab.d
 /lib/udev/rules.d/*
-%config(noreplace) /etc/inittab
-%dir /etc/rc.d/init.d
+%config(noreplace) %{_sysconfdir}/inittab
+%dir %{_sysconfdir}/rc.d/init.d
 /lib/lsb/init-functions
-/etc/rc.d/init.d/*
-%config(noreplace) /etc/sysctl.conf
-%dir /etc/sysctl.d
+%{_sysconfdir}/rc.d/init.d/*
+%config(noreplace) %{_sysconfdir}/sysctl.conf
+%dir %{_sysconfdir}/sysctl.d
 %dir %{_prefix}/lib/sysctl.d
 %{_prefix}/lib/sysctl.d/00-system.conf
-%exclude /etc/profile.d/debug*
-%config /etc/profile.d/*
-%dir /etc/sysconfig/network-scripts/cellular.d
-%dir /etc/sysconfig/network-scripts/hostname.d
-/etc/sysconfig/network-scripts/ifup.d/vpn
-/etc/sysconfig/network-scripts/ifdown.d/vpn
-/usr/sbin/vpn-start
-/usr/sbin/vpn-stop
-/usr/sbin/mdv-network-event
-/usr/sbin/sys-unconfig
+%exclude %{_sysconfdir}/profile.d/debug*
+%config %{_sysconfdir}/profile.d/*
+%dir %{_sysconfdir}/sysconfig/network-scripts/cellular.d
+%dir %{_sysconfdir}/sysconfig/network-scripts/hostname.d
+%{_sysconfdir}/sysconfig/network-scripts/ifup.d/vpn
+%{_sysconfdir}/sysconfig/network-scripts/ifdown.d/vpn
+%{_sbindir}/vpn-start
+%{_sbindir}/vpn-stop
+%{_sbindir}/mdv-network-event
+%{_sbindir}/sys-unconfig
 /bin/ipcalc
 /bin/usleep
-%attr(4755,root,root) /usr/sbin/usernetctl
+%attr(4755,root,root) %{_sbindir}/usernetctl
 /sbin/consoletype
 /sbin/genhostid
 /sbin/netreport
@@ -341,75 +263,71 @@ fi
 %lang(ru)	%{_mandir}/ru/man*/*
 %lang(uk)	%{_mandir}/uk/man*/*
 %dir %attr(775,root,root) /var/run/netreport
-%dir /etc/ppp
-%dir /etc/ppp/ip-down.d
-%dir /etc/ppp/ip-up.d
-%dir /etc/ppp/peers
-/etc/ppp/ip-up
-/etc/ppp/ip-down
-/etc/ppp/ip-up.ipv6to4
-/etc/ppp/ip-down.ipv6to4
-/etc/ppp/ipv6-up
-/etc/ppp/ipv6-down
-%dir /etc/NetworkManager
-%dir /etc/NetworkManager/dispatcher.d
-/etc/NetworkManager/dispatcher.d/00-netreport
+%dir %{_sysconfdir}/ppp
+%dir %{_sysconfdir}/ppp/ip-down.d
+%dir %{_sysconfdir}/ppp/ip-up.d
+%dir %{_sysconfdir}/ppp/peers
+%{_sysconfdir}/ppp/ip-up
+%{_sysconfdir}/ppp/ip-down
+%{_sysconfdir}/ppp/ip-up.ipv6to4
+%{_sysconfdir}/ppp/ip-down.ipv6to4
+%{_sysconfdir}/ppp/ipv6-up
+%{_sysconfdir}/ppp/ipv6-down
+%dir %{_sysconfdir}/NetworkManager
+%dir %{_sysconfdir}/NetworkManager/dispatcher.d
+%{_sysconfdir}/NetworkManager/dispatcher.d/00-netreport
 %doc sysconfig.txt sysvinitfiles ChangeLog.xz static-routes-ipv6 ipv6-tunnel.howto ipv6-6to4.howto changes.ipv6
 /var/lib/stateless
 %ghost %attr(0664,root,utmp) /var/log/btmp
 %ghost %attr(0664,root,utmp) /var/log/wtmp
 %ghost %attr(0664,root,utmp) /var/run/utmp
-%config(noreplace) /etc/modules
-/etc/rc.modules
-%dir /etc/modprobe.preload.d/
+%config(noreplace) %{_sysconfdir}/modules
+%{_sysconfdir}/rc.modules
+%dir %{_sysconfdir}/modprobe.preload.d/
 %ifnarch %{sparcx}
-/usr/sbin/supermount
+%{_sbindir}/supermount
 %endif
-/usr/bin/*
-# warly
-# gettext need /use/share/locale anyway
-#%dir /etc/locale
-#%dir /etc/locale/*
-#%dir /etc/locale/*/LC_MESSAGES
+%{_bindir}/*
 %dir /lib/tmpfiles.d
 /lib/tmpfiles.d/initscripts.conf
 /lib/tmpfiles.d/mandriva.conf
-/lib/systemd/fedora-autorelabel
-/lib/systemd/fedora-configure
-/lib/systemd/fedora-import-state
-/lib/systemd/fedora-loadmodules
-/lib/systemd/fedora-readonly
-/lib/systemd/mandriva-boot-links
-/lib/systemd/mandriva-save-dmesg
-/lib/systemd/system/basic.target.wants/fedora-autorelabel.service
-/lib/systemd/system/basic.target.wants/fedora-autorelabel-mark.service
-/lib/systemd/system/basic.target.wants/fedora-configure.service
-/lib/systemd/system/basic.target.wants/fedora-loadmodules.service
-/lib/systemd/system/basic.target.wants/mandriva-boot-links.service
-/lib/systemd/system/basic.target.wants/mandriva-everytime.service
-/lib/systemd/system/basic.target.wants/mandriva-save-dmesg.service
-/lib/systemd/system/ctrl-alt-del.target
-/lib/systemd/system/fedora-autorelabel.service
-/lib/systemd/system/fedora-autorelabel-mark.service
-/lib/systemd/system/fedora-configure.service
-/lib/systemd/system/fedora-import-state.service
-/lib/systemd/system/fedora-loadmodules.service
-/lib/systemd/system/fedora-readonly.service
-/lib/systemd/system/mandriva-boot-links.service
-/lib/systemd/system/mandriva-everytime.service
-/lib/systemd/system/mandriva-save-dmesg.service
-/lib/systemd/system/local-fs.target.wants/fedora-import-state.service
-/lib/systemd/system/local-fs.target.wants/fedora-readonly.service
-/lib/systemd/system/mandriva-kmsg-loglevel.service
-/lib/systemd/system/sysinit.target.wants/mandriva-kmsg-loglevel.service
+%{_systemdrootdir}/fedora-autorelabel
+%{_systemdrootdir}/fedora-configure
+%{_systemdrootdir}/fedora-import-state
+%{_systemdrootdir}/fedora-loadmodules
+%{_systemdrootdir}/fedora-readonly
+%{_systemdrootdir}/mandriva-boot-links
+%{_systemdrootdir}/mandriva-save-dmesg
+%{_systemunitdir}/basic.target.wants/fedora-autorelabel.service
+%{_systemunitdir}/basic.target.wants/fedora-autorelabel-mark.service
+%{_systemunitdir}/basic.target.wants/fedora-configure.service
+%{_systemunitdir}/basic.target.wants/fedora-loadmodules.service
+%{_systemunitdir}/basic.target.wants/mandriva-boot-links.service
+%{_systemunitdir}/basic.target.wants/mandriva-everytime.service
+%{_systemunitdir}/basic.target.wants/mandriva-save-dmesg.service
+%{_systemunitdir}/ctrl-alt-del.target
+%{_systemunitdir}/fedora-autorelabel.service
+%{_systemunitdir}/fedora-autorelabel-mark.service
+%{_systemunitdir}/fedora-configure.service
+%{_systemunitdir}/fedora-import-state.service
+%{_systemunitdir}/fedora-loadmodules.service
+%{_systemunitdir}/fedora-readonly.service
+%{_systemunitdir}/mandriva-boot-links.service
+%{_systemunitdir}/mandriva-everytime.service
+%{_systemunitdir}/mandriva-save-dmesg.service
+%{_systemunitdir}/local-fs.target.wants/fedora-import-state.service
+%{_systemunitdir}/local-fs.target.wants/fedora-readonly.service
+%{_systemunitdir}/mandriva-kmsg-loglevel.service
+%{_systemunitdir}/sysinit.target.wants/mandriva-kmsg-loglevel.service
 
 %files -n debugmode
-%config(noreplace) /etc/sysconfig/debug
-%config /etc/profile.d/debug*
+%config(noreplace) %{_sysconfdir}/sysconfig/debug
+%config %{_sysconfdir}/profile.d/debug*
 
 
 %changelog
 * Fri Dec 14 2012 Per Øyvind Karlsen <peroyvind@mandriva.org> 9.43-1
+- clean out old junk
 - drop ancient triggers
 - merge all changes into our own git branch
 - new version
@@ -419,7 +337,7 @@ fi
 
 * Sat Nov  3 2012 Per Øyvind Karlsen <peroyvind@mandriva.org> 9.34-3
 + Revision: 821733
-- remove some bashism in /etc/rc.d/init.d/functions which prevents it from being
+- remove some bashism in %{_sysconfdir}/rc.d/init.d/functions which prevents it from being
   used with drakx/busybox
 
 * Fri Sep 07 2012 Per Øyvind Karlsen <peroyvind@mandriva.org> 9.34-2
@@ -456,7 +374,7 @@ fi
 
 * Wed Nov 16 2011 Per Øyvind Karlsen <peroyvind@mandriva.org> 9.25-6
 + Revision: 731148
-- don't own /etc/sysconfig, it's already owned by 'filesystem' package
+- don't own %{_sysconfdir}/sysconfig, it's already owned by 'filesystem' package
 
 * Wed Apr 27 2011 Antoine Ginies <aginies@mandriva.com> 9.25-5
 + Revision: 659668
@@ -495,7 +413,7 @@ fi
   o rc.sysinit: add support for sysctl.d
   o /sbin/service: accept --ignore-dependencies, --skip-redirect as options
 - needs systemd >= 19 due to --ignore-dependencies
-- own /etc/sysctl.d
+- own %{_sysconfdir}/sysctl.d
 
 * Sat Feb 26 2011 Andrey Borzenkov <arvidjaar@mandriva.org> 9.24-5
 + Revision: 640139
@@ -508,7 +426,7 @@ fi
 * Sun Feb 20 2011 Andrey Borzenkov <arvidjaar@mandriva.org> 9.24-3
 + Revision: 638847
 - order mandriva-everytime.service before basic.target
-- gprintify scripts under /lib/systemd/system as well
+- gprintify scripts under %{_systemdrootdir}/system as well
 
 * Sat Feb 19 2011 Andrey Borzenkov <arvidjaar@mandriva.org> 9.24-2
 + Revision: 638827
@@ -549,7 +467,7 @@ fi
 - do not unmount /proc in halt, it is not needed and confuses systemd
 - use LC_ALL for nmcli output (we set LC_MESSAGES with overrides LANG)
 - export INIT_VERSION in systemd units (patch from systemd)
-- export SINGLE in single.service in case /etc/sysconfig/init was not
+- export SINGLE in single.service in case %{_sysconfdir}/sysconfig/init was not
   updated (patch from systemd)
 - conditional build systemd units (disabled for now)
 
@@ -726,7 +644,7 @@ fi
 + Revision: 388885
 - Fix many speedboot issues :
  - disable speedboot when netprofile needs to be manually selected
- - disable speedboot on the fly when /etc/crypttab exists
+ - disable speedboot on the fly when %{_sysconfdir}/crypttab exists
  - fix status not being updated when using kdm
  - disable speedboot in failsafe mode
  - disable speedboot only when MD RAID / LVM volumes are detected
@@ -920,7 +838,7 @@ fi
 - load usb-storage module very early so that the usb-stor-scan process
   gets a chance to run in background sooner, not to block boot waiting
   for it later (thanks to Frederic Crozat for the debugging)
-- make partmon configurable in /etc/sysconfig/partmon (#40625)
+- make partmon configurable in %{_sysconfdir}/sysconfig/partmon (#40625)
 - fix improper quoting in 10tmpdir.sh (from vdanen, #40256)
 
 * Tue Sep 02 2008 Olivier Blin <blino@mandriva.org> 8.81-2mdv2009.0
@@ -950,8 +868,8 @@ fi
 - fix group of debugmode package
 - 8.80
 - build without upstart
-- do not create /etc/sysconfig/networking/tmp
-- do not link /etc/init.d, it's done in chkconfig
+- do not create %{_sysconfdir}/sysconfig/networking/tmp
+- do not link %{_sysconfdir}/init.d, it's done in chkconfig
 - do not make ifcfg-lo a symlink to old networking directory
 - do not load sysctl conf twice
 - do not set loglevel twice
@@ -983,13 +901,13 @@ fi
 - detect splashy
 - do not create fb0, this will be done in initrd
 - avoid tty to be corrupted by splashy (from debian initscript)
-- do not start brltty if BRLTTY is set to "no" in /etc/sysconfig/init
+- do not start brltty if BRLTTY is set to "no" in %{_sysconfdir}/sysconfig/init
 - prefdm (ander): quote the argument $dm since the preferred window
   manager may contain whitespace in its name (i.e. KDM 3)
 
 * Fri Jun 20 2008 Pixel <pixel@mandriva.com> 8.63-10mdv2009.0
 + Revision: 227382
-- lookupdm: /etc/X11/dm.d is now /usr/share/X11/dm.d
+- lookupdm: %{_sysconfdir}/X11/dm.d is now /usr/share/X11/dm.d
 
 * Tue Jun 03 2008 Olivier Blin <blino@mandriva.org> 8.63-9mdv2009.0
 + Revision: 214498
@@ -1047,7 +965,7 @@ fi
 - mdv-network-event: do not check for /var/run/dbus/system_bus_socket,
   just hide errors
 - run /sbin/halt.pre if present before umounting filesystems in
-  /etc/init.d/halt
+  %{_sysconfdir}/init.d/halt
 
 * Mon Mar 10 2008 Olivier Blin <blino@mandriva.org> 8.63-4mdv2008.1
 + Revision: 183583
@@ -1063,7 +981,7 @@ fi
 * Mon Feb 18 2008 Olivier Blin <blino@mandriva.org> 8.63-2mdv2008.1
 + Revision: 171866
 - rc.sysinit:
-  o don't source /etc/sysconfig/init (already done by /etc/init.d/functions)
+  o don't source %{_sysconfdir}/sysconfig/init (already done by /etc/init.d/functions)
   o mount /proc/bus/usb before udev is started
   o remove duplicate pam_console reset
   o reduce diff with RH by moving quota and crypto code around
@@ -1078,7 +996,7 @@ fi
 
 * Thu Jan 17 2008 Olivier Blin <blino@mandriva.org> 8.60-2mdv2008.1
 + Revision: 154214
-- conflicts with lsb-core < 3.1-15mdv2008.1 (/etc/networks has been moved in initscripts)
+- conflicts with lsb-core < 3.1-15mdv2008.1 (%{_sysconfdir}/networks has been moved in initscripts)
 - set MIN_LINK_DETECTION_DELAY (to zero)
 - do not make profile scripts executable
   (based on input from Guillaume Rousse)
@@ -1088,7 +1006,7 @@ fi
 + Revision: 153094
 - 8.60
 - remove default MIN_LINK_DETECTION_DELAY (to catch buggy drivers)
-- add support for an optional /etc/rc.early.local file, to be run at
+- add support for an optional %{_sysconfdir}/rc.early.local file, to be run at
   the very start of rc.sysinit (suggested by Colin Guthrie)
 - nfs-common should be started before netfs (Anssi)
 
