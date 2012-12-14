@@ -158,8 +158,6 @@ export DONT_GPRINTIFY=1
 install -d -m 0755 %{buildroot}/%{_sysconfdir}/sysctl.d
 
 %post
-##Fixme
-touch /etc/sysconfig/i18n
 ##
 touch /var/log/wtmp /var/run/utmp /var/log/btmp
 chown root:utmp /var/log/wtmp /var/run/utmp /var/log/btmp
