@@ -11,7 +11,6 @@ License:	GPLv2 and GPLv2+
 Group:		System/Base
 Source0:	initscripts-%{version}.tar.xz
 Source1:	%{name}.rpmlintrc
-Provides:	%{_sysconfdir}/init.d
 
 # for /bin/awk
 Requires:	gawk
@@ -318,7 +317,6 @@ ln -sf %{_sysconfdir}/sysctl.conf /etc/sysctl.d/sysctl.conf
 %files -n debugmode
 %config(noreplace) %{_sysconfdir}/sysconfig/debug
 %config %{_sysconfdir}/profile.d/debug*
-
 
 %changelog
 * Fri Dec 14 2012 Per Øyvind Karlsen <peroyvind@mandriva.org> 9.43-1
