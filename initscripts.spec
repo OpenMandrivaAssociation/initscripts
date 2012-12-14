@@ -67,7 +67,7 @@ Requires:	udev >= 108-2mdv2007.1
 Requires:	ifmetric, resolvconf >= 1.41
 Requires:	dmsetup
 Conflicts:	prcsys
-Requires(post):	%{_bindir}/tr grep, chkconfig >= 1.3.37-3mdk
+Requires(post):	rpm-helper
 BuildRequires:	glib2-devel
 BuildRequires:	pkgconfig
 BuildRequires:	popt-devel
