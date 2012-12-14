@@ -100,6 +100,7 @@ ln -s mandriva/po
 xz --text ChangeLog
 
 %build
+%global optflags %{optflags} -Os
 %setup_compile_flags
 make
 make -C mandriva
@@ -321,6 +322,7 @@ ln -sf %{_sysconfdir}/sysctl.conf /etc/sysctl.d/sysctl.conf
 
 %changelog
 * Fri Dec 14 2012 Per Øyvind Karlsen <peroyvind@mandriva.org> 9.43-1
+- compile with -Os
 - drop supermount script, supermount has been dead for ages!
 - clean out old junk
 - drop ancient triggers
