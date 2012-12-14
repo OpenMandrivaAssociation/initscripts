@@ -2,39 +2,16 @@
 # for other scripts
 %define _mypost_service() if [ $1 = 1 ]; then /sbin/chkconfig --add %{1}; fi;
 
-%bcond_with	upstart
-%bcond_without	systemd
-
 Summary:	The inittab file and the /etc/init.d scripts
 Name:		initscripts
-Version:	9.34
-Release:	5
+Version:	9.43
+Release:	1
 # ppp-watch is GPLv2+, everything else is GPLv2
 License:	GPLv2 and GPLv2+
 Group:		System/Base
-Source0:	initscripts-%{version}.tar.bz2
+Source0:	initscripts-%{version}.tar.xz
 Source1:	%{name}.rpmlintrc
-Patch0:		initscripts-mdkconf.patch
-Patch1:		removal_of_haldameon.patch
 Provides:   /etc/init.d
-
-# (cg) Upstream cherry picks
-Patch0101:	0101-Don-t-bother-with-stdin-stdout-stderr-for-rmmod-modp.patch
-Patch0102:	0102-Just-exit-on-first-response-744734.patch
-Patch0103:	0103-Add-cifs-to-check-for-network-filesystem-760018.patch
-Patch0104:	0104-Don-t-exit-with-an-error-if-SEinux-isn-t-active.-768.patch
-Patch0105:	0105-Handle-dmraid-sets-with-spaces-728795-lnykryn-redhat.patch
-Patch0106:	0106-Typo-in-crypttab.5.patch
-Patch0107:	0107-Drop-StandardInput-tty-785662.patch
-Patch0108:	0108-Do-not-check-mounted-filesystems-745224.patch
-Patch0109:	0109-Improve-comment-in-init-serial.conf-746808.patch
-
-# (cg) Patches to go into mgaconf mega patch eventually
-Patch0500:	0500-Make-sure-to-invalidate-nscd-cache-under-systemd-as-.patch
-Patch0501:	0501-Rename-for-new-udev-systemd-servies.patch
-Patch0502:      initscripts-9.34.plymouth-quit.patch
-#ROSA patches
-Patch0503:      initscripts-9.34.mandriva.everytime.patch
 
 # for /bin/awk
 Requires:	gawk
@@ -52,12 +29,6 @@ Requires:	kbd >= 1.15.1-2mdv
 Requires:	psmisc
 Requires:	which
 Requires:	setup >= 2.2.0-14mdk
-%if %{with upstart}
-Requires:	upstart
-Obsoletes:	event-compat-sysv
-%else
-Requires:	SysVinit >= 2.85-38
-%endif
 # for /sbin/ip
 Requires:	iproute2
 # for /sbin/arping
@@ -96,18 +67,14 @@ Requires:	mount >= 2.11l
 Requires:	udev >= 108-2mdv2007.1
 Requires:	ifmetric, resolvconf >= 1.41
 Requires:	dmsetup
-%if %{with systemd}
 Conflicts:	prcsys
-%else
-Requires:	prcsys
-%endif
 Requires(post):	/usr/bin/tr grep, chkconfig >= 1.3.37-3mdk
 BuildRequires:	glib2-devel
 BuildRequires:	pkgconfig
 BuildRequires:	popt-devel
 BuildRequires:	python
 # Upstream URL: http://git.fedorahosted.org/git/initscripts.git
-Url:		http://svn.mandriva.com/cgi-bin/viewvc.cgi/soft/initscripts/trunk/
+Url:		https://abf.rosalinux.ru/proyvind/initscripts
 
 %description
 The initscripts package contains the basic system scripts used to boot
@@ -128,14 +95,10 @@ Currently, this consists of various memory checking code.
 
 %prep
 %setup -q
-%apply_patches
-find -name "*.0???~" -delete
 rm -rf po
 ln -s mandriva/po
 
-gzip -9 mandriva/ChangeLog
-mv ChangeLog ChangeLog-RH
-gzip -9 ChangeLog-RH
+xz --text ChangeLog
 
 %build
 make CFLAGS="%{optflags}" LDFLAGS="%{ldflags}"
@@ -169,16 +132,8 @@ python mandriva/gprintify.py \
 
 %find_lang %{name}
 
-%if %{with upstart}
- mv -f $RPM_BUILD_ROOT/etc/inittab.upstart $RPM_BUILD_ROOT/etc/inittab
- rm -f $RPM_BUILD_ROOT/etc/rc.d/rc1.d/S99single
- rm -f $RPM_BUILD_ROOT/etc/rc.d/init.d/single
-%else
- mv -f $RPM_BUILD_ROOT/etc/inittab.sysv $RPM_BUILD_ROOT/etc/inittab
  rm -rf $RPM_BUILD_ROOT/etc/event.d
  rm -rf $RPM_BUILD_ROOT/etc/init
-%endif
-rm -f $RPM_BUILD_ROOT/etc/inittab.*
 
 %ifnarch s390 s390x
 rm -f \
@@ -188,7 +143,6 @@ rm -f \
  $RPM_BUILD_ROOT/lib/udev/ccw_init
 %else
 rm -f \
- $RPM_BUILD_ROOT/etc/rc.d/rc.sysinit.s390init \
  $RPM_BUILD_ROOT/etc/sysconfig/init.s390
 %endif
 
@@ -201,20 +155,7 @@ rm -f $RPM_BUILD_ROOT/lib/udev/rules.d/60-net.rules
 # we have our own copy of gprintify
 export DONT_GPRINTIFY=1
 
-%if !%{with systemd}
-  rm -rf $RPM_BUILD_ROOT/lib/systemd
-%else
-  # (cg) Mask netfs initscript under systemd as native support is built in.
-  ln -sf /dev/null $RPM_BUILD_ROOT/lib/systemd/system/netfs.service
-%endif
-
 install -d -m 0755 %{buildroot}/%{_sysconfdir}/sysctl.d
-
-#drop speedboot
-rm -f %{buildroot}/etc/sysconfig/speedboot
-rm -rf %{buildroot}/var/lib/speedboot
-rm -f %{buildroot}/etc/X11/xsetup.d/90speedboot.xsetup
-rm -rf %{buildroot}/etc/X11/xsetup.d
 
 %post
 ##Fixme
@@ -272,33 +213,6 @@ do
 		break
 	fi
 done
-
-%define initlvl_chg() if [[ -f /etc/rc3.d/S%{2}%{1} ]] && [[ -f /etc/rc5.d/S%{2}%{1} ]] && grep -q -e 'chkconfig: [0-9]+ %{3}' /etc/init.d/%{1}; then chkconfig --add %{1} || : ; fi; \
-%{nil}
-
-# only needed on upgrade
-if [ $1 != 0 ]; then
-	# handle the switch to an independant prefdm initscript
-	if grep -q '^x:5' /etc/inittab; then
-		rm -f /etc/inittab.new
-		sed 's/x:5/#x:5/' < /etc/inittab > /etc/inittab.new
-		mv -f /etc/inittab.new /etc/inittab
-		chkconfig --add dm || :
-	fi
-
-	# handle single user mode declaration
-	if ! grep -q '..:S:' /etc/inittab; then
-		cat >> /etc/inittab <<EOF
-
-# Single user mode
-~~:S:wait:/bin/sh
-EOF
-	fi
-	
-	# Handle boot sequence changes on upgrade
-	%initlvl_chg partmon 80 13
-	
-fi
 
 %preun
 %_preun_service netfs
@@ -401,10 +315,6 @@ fi
 %dir /etc/sysconfig/console/consoletrans
 %dir /etc/sysconfig/console/consolefonts
 %dir /etc/sysconfig/modules
-%dir /etc/sysconfig/networking
-%dir /etc/sysconfig/networking/devices
-%dir /etc/sysconfig/networking/profiles
-%dir /etc/sysconfig/networking/profiles/default
 /etc/sysconfig/network-scripts/network-functions
 /etc/sysconfig/network-scripts/network-functions-ipv6
 /etc/sysconfig/network-scripts/init.ipv6-global
@@ -440,26 +350,15 @@ fi
 %dir /etc/rwtab.d
 /etc/statetab
 %dir /etc/statetab.d
-%if %{with upstart}
-%config(noreplace) /etc/event.d/*
-/etc/init/*
-%endif
 /lib/udev/rules.d/*
 %config(noreplace) /etc/inittab
-%config(noreplace missingok) /etc/rc.d/rc[0-9].d/*
-/etc/rc[0-9].d
-/etc/rcS.d
-/etc/rc
 %dir /etc/rc.d/init.d
-%config(noreplace) /etc/rc.local
-/etc/rc.sysinit
 /lib/lsb/init-functions
 /etc/rc.d/init.d/*
-/etc/rc.d/rc
-%config(noreplace) /etc/rc.d/rc.local
-/etc/rc.d/rc.sysinit
 %config(noreplace) /etc/sysctl.conf
 %dir /etc/sysctl.d
+%dir %{_prefix}/lib/sysctl.d
+%{_prefix}/lib/sysctl.d/00-system.conf
 %exclude /etc/profile.d/debug*
 %config /etc/profile.d/*
 %dir /etc/sysconfig/network-scripts/cellular.d
@@ -474,14 +373,9 @@ fi
 /bin/usleep
 %attr(4755,root,root) /usr/sbin/usernetctl
 /sbin/consoletype
-/sbin/fstab-decode
 /sbin/genhostid
-/sbin/getkey
-/sbin/securetty
-%attr(2755,root,root) /sbin/netreport
+/sbin/netreport
 /lib/udev/rename_device
-/lib/udev/console_init
-/lib/udev/console_check
 %ifarch s390 s390x
 /lib/udev/ccw_init
 %endif
@@ -513,8 +407,7 @@ fi
 %dir /etc/NetworkManager
 %dir /etc/NetworkManager/dispatcher.d
 /etc/NetworkManager/dispatcher.d/00-netreport
-/etc/NetworkManager/dispatcher.d/05-netfs
-%doc sysconfig.txt sysvinitfiles mandriva/ChangeLog.gz ChangeLog-RH.gz static-routes-ipv6 ipv6-tunnel.howto ipv6-6to4.howto changes.ipv6
+%doc sysconfig.txt sysvinitfiles ChangeLog.xz static-routes-ipv6 ipv6-tunnel.howto ipv6-6to4.howto changes.ipv6
 /var/lib/stateless
 %ghost %attr(0664,root,utmp) /var/log/btmp
 %ghost %attr(0664,root,utmp) /var/log/wtmp
@@ -531,14 +424,14 @@ fi
 #%dir /etc/locale
 #%dir /etc/locale/*
 #%dir /etc/locale/*/LC_MESSAGES
-%if %{with systemd}
-%{_sysconfdir}/tmpfiles.d/initscripts.conf
-%{_sysconfdir}/tmpfiles.d/mandriva.conf
+%dir /lib/tmpfiles.d
+/lib/tmpfiles.d/initscripts.conf
+/lib/tmpfiles.d/mandriva.conf
 /lib/systemd/fedora-autorelabel
 /lib/systemd/fedora-configure
+/lib/systemd/fedora-import-state
 /lib/systemd/fedora-loadmodules
 /lib/systemd/fedora-readonly
-/lib/systemd/fedora-storage-init
 /lib/systemd/mandriva-boot-links
 /lib/systemd/mandriva-save-dmesg
 /lib/systemd/system/basic.target.wants/fedora-autorelabel.service
@@ -552,21 +445,16 @@ fi
 /lib/systemd/system/fedora-autorelabel.service
 /lib/systemd/system/fedora-autorelabel-mark.service
 /lib/systemd/system/fedora-configure.service
+/lib/systemd/system/fedora-import-state.service
 /lib/systemd/system/fedora-loadmodules.service
 /lib/systemd/system/fedora-readonly.service
-/lib/systemd/system/fedora-storage-init.service
-/lib/systemd/system/fedora-storage-init-late.service
-/lib/systemd/system/fedora-wait-storage.service
-/lib/systemd/system/netfs.service
 /lib/systemd/system/mandriva-boot-links.service
 /lib/systemd/system/mandriva-everytime.service
 /lib/systemd/system/mandriva-save-dmesg.service
+/lib/systemd/system/local-fs.target.wants/fedora-import-state.service
 /lib/systemd/system/local-fs.target.wants/fedora-readonly.service
-/lib/systemd/system/local-fs.target.wants/fedora-storage-init.service
-/lib/systemd/system/local-fs.target.wants/fedora-storage-init-late.service
 /lib/systemd/system/mandriva-kmsg-loglevel.service
 /lib/systemd/system/sysinit.target.wants/mandriva-kmsg-loglevel.service
-%endif
 
 %files -n debugmode
 %config(noreplace) /etc/sysconfig/debug
@@ -574,6 +462,10 @@ fi
 
 
 %changelog
+* Fri Dec 14 2012 Per Øyvind Karlsen <peroyvind@mandriva.org> 9.43-1
+- merge all changes into our own git branch
+- new version
+
 * Thu Dec 13 2012 Per Øyvind Karlsen <peroyvind@mandriva.org> 9.34-6
 - remove some more bashism from scripts
 
