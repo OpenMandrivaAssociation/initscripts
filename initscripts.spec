@@ -119,8 +119,6 @@ python mandriva/gprintify.py \
 
 %find_lang %{name}
 
-rm %{buildroot}%{_sysconfdir}/sysconfig/network-scripts/ifup-ctc
-
 # we have our own copy of gprintify
 export DONT_GPRINTIFY=1
 
@@ -284,9 +282,6 @@ ln -sf %{_sysconfdir}/sysctl.conf /etc/sysctl.d/sysctl.conf
 %config(noreplace) %{_sysconfdir}/modules
 %{_sysconfdir}/rc.modules
 %dir %{_sysconfdir}/modprobe.preload.d/
-%ifnarch %{sparcx}
-%{_sbindir}/supermount
-%endif
 %{_bindir}/*
 %dir /lib/tmpfiles.d
 /lib/tmpfiles.d/initscripts.conf
@@ -327,6 +322,7 @@ ln -sf %{_sysconfdir}/sysctl.conf /etc/sysctl.d/sysctl.conf
 
 %changelog
 * Fri Dec 14 2012 Per Øyvind Karlsen <peroyvind@mandriva.org> 9.43-1
+- drop supermount script, supermount has been dead for ages!
 - clean out old junk
 - drop ancient triggers
 - merge all changes into our own git branch
