@@ -100,8 +100,9 @@ ln -s mandriva/po
 xz --text ChangeLog
 
 %build
-%make CFLAGS="%{optflags}" LDFLAGS="%{ldflags}"
-%make -C mandriva CFLAGS="%{optflags}" LDFLAGS="%{ldflags}"
+%setup_compile_flags
+make
+make -C mandriva
 
 %install
 mkdir -p %{buildroot}%{_sysconfdir}
