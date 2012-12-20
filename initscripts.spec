@@ -1,7 +1,7 @@
 Summary:	The inittab file and the %{_sysconfdir}/init.d scripts
 Name:		initscripts
 Version:	9.43
-Release:	1
+Release:	2
 # ppp-watch is GPLv2+, everything else is GPLv2
 License:	GPLv2 and GPLv2+
 Group:		System/Base
@@ -16,12 +16,15 @@ Requires:	mktemp
 Requires:	e2fsprogs >= 1.18-2mdk
 Requires:	procps >= 2.0.7-8mdk
 Requires:	gettext-base >= 0.10.35-20mdk
-Requires:	module-init-tools
+#(tpg) this is in basesystem package
+#Requires:	module-init-tools
+
 # needed for chvt --userwait
 Requires:	kbd >= 1.15.1-2mdv
 #Requires:	sysklogd >= 1.3.31
 # for /sbin/fuser
-Requires:	psmisc
+#(tpg) this is in basesystem package
+#Requires:	psmisc
 Requires:	which
 Requires:	setup >= 2.2.0-14mdk
 # for /sbin/ip
@@ -31,6 +34,7 @@ Requires:	iputils
 Requires:	net-tools
 # for /bin/find
 Requires:	findutils
+
 # (blino) for pidof -c
 # (bor) for pidof -m
 Requires:	sysvinit-tools >= 2.87-8mdv2011.0
@@ -44,8 +48,8 @@ Requires:	iproute2
 Requires:	ethtool
 # http://bugzilla.redhat.com/show_bug.cgi?id=252973
 Conflicts:	nut < 2.2.0
-Obsoletes:	rhsound sapinit
-Provides:	rhsound sapinit
+Obsoletes:	rhsound < %{version}-%{release} sapinit < %{version}-%{release}
+Provides:	rhsound  sapinit
 Conflicts:	kernel <= 2.2, timeconfig < 3.0, pppd <= 2.4.4-3mdv2008.1, wvdial < 1.40-3
 Conflicts:	initscripts < 1.22.1-5, Aurora <= 7.2-17mdk
 Conflicts:	dhcpcd < 1.3.21pl1
