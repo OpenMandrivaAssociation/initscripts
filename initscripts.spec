@@ -50,7 +50,7 @@ Requires:	ethtool
 # http://bugzilla.redhat.com/show_bug.cgi?id=252973
 Conflicts:	nut < 2.2.0
 Obsoletes:	rhsound < %{version}-%{release} sapinit < %{version}-%{release}
-Provides:	rhsound  sapinit
+Provides:	rhsound sapinit
 Conflicts:	kernel <= 2.2, timeconfig < 3.0, pppd <= 2.4.4-3mdv2008.1, wvdial < 1.40-3
 Conflicts:	initscripts < 1.22.1-5, Aurora <= 7.2-17mdk
 Conflicts:	dhcpcd < 1.3.21pl1
