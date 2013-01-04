@@ -1,7 +1,7 @@
 Summary:	The inittab file and the %{_sysconfdir}/init.d scripts
 Name:		initscripts
 Version:	9.43
-Release:	2
+Release:	3
 # ppp-watch is GPLv2+, everything else is GPLv2
 License:	GPLv2 and GPLv2+
 Group:		System/Base
@@ -316,9 +316,13 @@ chmod 600 /var/log/btmp
 %config %{_sysconfdir}/profile.d/debug*
 
 %changelog
-* Fri Dec 14 2012 Per Øyvind Karlsen <peroyvind@mandriva.org> 9.43-2
+* Fri Jan  4 2013 Per Øyvind Karlsen <peroyvind@mandriva.org> 9.43-3
 - rewrite partmon script from perl to shell (P0), freeing ourself from any
   perl dependencies
+
+* Thu Dec 20 2012 Tomasz Paweł Gajc <tpg@mandriva.org> 9.43-2
+- do not require module-init-tools and psmisc as these pkgs are pulled in by
+  basesystem package, do not obsolete itself btw.
 
 * Fri Dec 14 2012 Per Øyvind Karlsen <peroyvind@mandriva.org> 9.43-1
 - drop dead /etc/sysctl.d, /usr/lib/sysctl.d replaces it
