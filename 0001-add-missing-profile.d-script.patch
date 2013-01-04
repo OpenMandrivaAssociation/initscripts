@@ -1,0 +1,26 @@
+From d07fe1219deb923dcec55ebcfd3d7709cfd0831f Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?"proyvind=20(Per=20=C3=98yvind=20Karlsen)"?=
+ <peroyvind@mandriva.org>
+Date: Fri, 4 Jan 2013 20:51:02 +0100
+Subject: [PATCH] add missing profile.d script
+
+---
+ mandriva/inputrc.sh | 6 ++++++
+ 1 file changed, 6 insertions(+)
+ create mode 100644 mandriva/inputrc.sh
+
+diff --git a/mandriva/inputrc.sh b/mandriva/inputrc.sh
+new file mode 100644
+index 0000000..69296ea
+--- /dev/null
++++ b/mandriva/inputrc.sh
+@@ -0,0 +1,6 @@
++#!/bin/bash
++
++test -f $HOME/.inputrc || export INPUTRC=/etc/inputrc
++export LESS=-MM
++test -f $HOME/.less || export LESSKEY=/etc/.less
++
+-- 
+1.7.11.3
+
