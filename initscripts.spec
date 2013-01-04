@@ -1,12 +1,14 @@
 Summary:	The inittab file and the %{_sysconfdir}/init.d scripts
 Name:		initscripts
 Version:	9.43
-Release:	1
+Release:	2
 # ppp-watch is GPLv2+, everything else is GPLv2
 License:	GPLv2 and GPLv2+
 Group:		System/Base
 Source0:	initscripts-%{version}.tar.xz
 Source1:	%{name}.rpmlintrc
+# generated from own git branch
+Patch0:		0001-rewrite-partmon-perl-script-as-shell-script.patch
 
 # for /bin/awk
 Requires:	gawk
@@ -35,7 +37,6 @@ Requires:	findutils
 # (bor) for pidof -m
 Requires:	sysvinit-tools >= 2.87-8mdv2011.0
 
-Requires:	perl-MDK-Common >= 1.0.1
 Requires:	ifplugd >= 0.24
 #Requires: sound-scripts
 # (tv) unused:
@@ -90,6 +91,8 @@ Currently, this consists of various memory checking code.
 
 %prep
 %setup -q
+%patch0 -p1 -b .shell~
+
 rm -rf po
 ln -s mandriva/po
 
@@ -309,6 +312,10 @@ chmod 600 /var/log/btmp
 %config %{_sysconfdir}/profile.d/debug*
 
 %changelog
+* Fri Dec 14 2012 Per Øyvind Karlsen <peroyvind@mandriva.org> 9.43-2
+- rewrite partmon script from perl to shell (P0), freeing ourself from any
+  perl dependencies
+
 * Fri Dec 14 2012 Per Øyvind Karlsen <peroyvind@mandriva.org> 9.43-1
 - drop dead /etc/sysctl.d, /usr/lib/sysctl.d replaces it
 - compile with -Os
