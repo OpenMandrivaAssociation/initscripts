@@ -9,6 +9,7 @@ Source0:	initscripts-%{version}.tar.xz
 Source1:	%{name}.rpmlintrc
 # generated from own git branch
 Patch0:		0001-rewrite-partmon-perl-script-as-shell-script.patch
+Patch1:		0001-fix-sourced-script-with-shebang.patch
 
 # for /bin/awk
 Requires:	gawk
@@ -96,7 +97,7 @@ Currently, this consists of various memory checking code.
 %prep
 %setup -q
 %patch0 -p1 -b .shell~
-
+%patch1 -p1 -b .noshebang~
 rm -rf po
 ln -s mandriva/po
 
@@ -317,6 +318,7 @@ chmod 600 /var/log/btmp
 
 %changelog
 * Fri Jan  4 2013 Per Øyvind Karlsen <peroyvind@mandriva.org> 9.43-3
+- fix sourced-script-with-shebang for /etc/profile.d/10tmpdir.sh (P1)
 - rewrite partmon script from perl to shell (P0), freeing ourself from any
   perl dependencies
 

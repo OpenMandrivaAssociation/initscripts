@@ -1,0 +1,22 @@
+From fe06472692465547bbf190db283daa10a226f193 Mon Sep 17 00:00:00 2001
+From: =?UTF-8?q?"proyvind=20(Per=20=C3=98yvind=20Karlsen)"?=
+ <peroyvind@mandriva.org>
+Date: Fri, 4 Jan 2013 04:41:42 +0100
+Subject: [PATCH] fix sourced-script-with-shebang
+
+---
+ mandriva/tmpdir.sh | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/mandriva/tmpdir.sh b/mandriva/tmpdir.sh
+index c4e1abd..03f534c 100644
+--- a/mandriva/tmpdir.sh
++++ b/mandriva/tmpdir.sh
+@@ -1,4 +1,3 @@
+-#!/bin/sh
+ # $Id$
+ # Set TMPDIR to ~/tmp and create it if directory not exist.
+ 
+-- 
+1.7.11.3
+
