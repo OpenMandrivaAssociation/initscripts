@@ -1,12 +1,14 @@
 Summary:	The inittab file and the %{_sysconfdir}/init.d scripts
 Name:		initscripts
 Version:	9.43
-Release:	3
+Release:	4
 # ppp-watch is GPLv2+, everything else is GPLv2
 License:	GPLv2 and GPLv2+
 Group:		System/Base
 Source0:	initscripts-%{version}.tar.xz
-Source1:	%{name}.rpmlintrc
+# udev rules for speeding up SSDs by using the noop scheduler
+Source1:	60-ssd.rules
+Source100:	%{name}.rpmlintrc
 # generated from own git branch
 Patch0:		0001-rewrite-partmon-perl-script-as-shell-script.patch
 Patch1:		0001-fix-sourced-script-with-shebang.patch
@@ -123,6 +125,8 @@ python mandriva/gprintify.py \
 	`find %{buildroot}/sysconfig/network-scripts -type f` \
 	%{buildroot}%{_systemdrootdir}/fedora-* \
 	%{buildroot}%{_systemdrootdir}/mandriva-*
+
+install -c -m 644 %SOURCE1 %buildroot/lib/udev/rules.d/
 
 %find_lang %{name}
 
