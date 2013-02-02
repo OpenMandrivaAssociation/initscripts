@@ -67,7 +67,6 @@ Conflicts:	mdadm < 2.6.4-2mdv2008.1
 Conflicts:	systemd <= 19-2
 Conflicts:	networkmanager < 0.8.2-8
 Requires:	util-linux-ng >= 2.16
-Requires:	mount >= 2.11l
 Requires:	udev >= 108-2mdv2007.1
 Requires:	ifmetric, resolvconf >= 1.41
 Requires:	dmsetup
