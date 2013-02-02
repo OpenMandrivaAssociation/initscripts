@@ -1,7 +1,7 @@
 Summary:	The inittab file and the %{_sysconfdir}/init.d scripts
 Name:		initscripts
 Version:	9.43
-Release:	4
+Release:	5
 # ppp-watch is GPLv2+, everything else is GPLv2
 License:	GPLv2 and GPLv2+
 Group:		System/Base
@@ -132,6 +132,9 @@ install -c -m 644 %SOURCE1 %buildroot/lib/udev/rules.d/
 
 # we have our own copy of gprintify
 export DONT_GPRINTIFY=1
+
+touch %{buildroot}%{_sysconfdir}/crypttab
+chmod 600 %{buildroot}%{_sysconfdir}/crypttab
 
 %post
 ##
@@ -282,6 +285,7 @@ chmod 600 /var/log/btmp
 %ghost %attr(0664,root,utmp) /var/log/btmp
 %ghost %attr(0664,root,utmp) /var/log/wtmp
 %ghost %attr(0664,root,utmp) /var/run/utmp
+%verify(not md5 size mtime) %config(noreplace) %{_sysconfdir}/crypttab
 %config(noreplace) %{_sysconfdir}/modules
 %{_sysconfdir}/rc.modules
 %dir %{_sysconfdir}/modprobe.preload.d/
