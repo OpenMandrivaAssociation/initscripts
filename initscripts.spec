@@ -1,18 +1,15 @@
 Summary:	The inittab file and the %{_sysconfdir}/init.d scripts
 Name:		initscripts
-Version:	9.43
-Release:	5
+Version:	9.44
+Release:	1
 # ppp-watch is GPLv2+, everything else is GPLv2
 License:	GPLv2 and GPLv2+
 Group:		System/Base
-Source0:	initscripts-%{version}.tar.xz
+# https://abf.rosalinux.ru/proyvind/initscripts
+Source0:	%{name}-%{version}.tar.xz
 # udev rules for speeding up SSDs by using the noop scheduler
 Source1:	60-ssd.rules
 Source100:	%{name}.rpmlintrc
-# generated from own git branch
-Patch0:		0001-rewrite-partmon-perl-script-as-shell-script.patch
-Patch1:		0001-fix-sourced-script-with-shebang.patch
-Patch2:		0001-add-missing-profile.d-script.patch
 
 # for /bin/awk
 Requires:	gawk
@@ -98,9 +95,6 @@ Currently, this consists of various memory checking code.
 
 %prep
 %setup -q
-%patch0 -p1 -b .shell~
-%patch1 -p1 -b .noshebang~
-%patch2 -p1 -b .inputrc~
 rm -rf po
 ln -s mandriva/po
 
