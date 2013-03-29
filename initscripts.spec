@@ -1,15 +1,22 @@
 Summary:	The inittab file and the %{_sysconfdir}/init.d scripts
 Name:		initscripts
 Version:	9.44
-Release:	1
+Release:	2
 # ppp-watch is GPLv2+, everything else is GPLv2
 License:	GPLv2 and GPLv2+
 Group:		System/Base
+# Upstream URL: http://git.fedorahosted.org/git/initscripts.git
+Url:		https://abf.rosalinux.ru/proyvind/initscripts
 # https://abf.rosalinux.ru/proyvind/initscripts
 Source0:	%{name}-%{version}.tar.xz
 # udev rules for speeding up SSDs by using the noop scheduler
 Source1:	60-ssd.rules
 Source100:	%{name}.rpmlintrc
+
+BuildRequires:	glib2-devel
+BuildRequires:	pkgconfig
+BuildRequires:	popt-devel
+BuildRequires:	python
 
 # for /bin/awk
 Requires:	gawk
@@ -50,10 +57,16 @@ Requires:	iproute2
 Requires:	ethtool
 # http://bugzilla.redhat.com/show_bug.cgi?id=252973
 Conflicts:	nut < 2.2.0
-Obsoletes:	rhsound < %{version}-%{release} sapinit < %{version}-%{release}
-Provides:	rhsound sapinit
-Conflicts:	kernel <= 2.2, timeconfig < 3.0, pppd <= 2.4.4-3mdv2008.1, wvdial < 1.40-3
-Conflicts:	initscripts < 1.22.1-5, Aurora <= 7.2-17mdk
+Obsoletes:	rhsound < %{version}-%{release}
+Obsoletes:	sapinit < %{version}-%{release}
+Provides:	rhsound = %{version}-%{release}
+Provides:	sapinit = %{version}-%{release}
+Conflicts:	kernel <= 2.2
+Conflicts:	timeconfig < 3.0
+Conflicts:	pppd <= 2.4.4-3mdv2008.1
+Conflicts:	wvdial < 1.40-3
+Conflicts:	initscripts < 1.22.1-5
+Conflicts:	Aurora <= 7.2-17mdk
 Conflicts:	dhcpcd < 1.3.21pl1
 Conflicts:	XFree86-xfs < 4.2.0-12mdk
 Conflicts:	xinitrc < 2.4.12
@@ -65,16 +78,11 @@ Conflicts:	systemd <= 19-2
 Conflicts:	networkmanager < 0.8.2-8
 Requires:	util-linux-ng >= 2.16
 Requires:	udev >= 108-2mdv2007.1
-Requires:	ifmetric, resolvconf >= 1.41
+Requires:	ifmetric
+Requires:	resolvconf >= 1.41
 Requires:	dmsetup
 Conflicts:	prcsys
 Requires(post):	rpm-helper
-BuildRequires:	glib2-devel
-BuildRequires:	pkgconfig
-BuildRequires:	popt-devel
-BuildRequires:	python
-# Upstream URL: http://git.fedorahosted.org/git/initscripts.git
-Url:		https://abf.rosalinux.ru/proyvind/initscripts
 
 %description
 The initscripts package contains the basic system scripts used to boot
@@ -82,7 +90,7 @@ your Mandriva Linux system, change run levels, and shut the system
 down cleanly.  Initscripts also contains the scripts that activate and
 deactivate most network interfaces.
 
-%package -n	debugmode
+%package -n debugmode
 Summary:	Scripts for running in debugging mode
 Requires:	initscripts
 Group:		System/Base
@@ -119,7 +127,7 @@ python mandriva/gprintify.py \
 	%{buildroot}%{_systemdrootdir}/fedora-* \
 	%{buildroot}%{_systemdrootdir}/mandriva-*
 
-install -c -m 644 %SOURCE1 %buildroot/lib/udev/rules.d/
+install -c -m 644 %{SOURCE1} %{buildroot}/lib/udev/rules.d/
 
 %find_lang %{name}
 
@@ -251,14 +259,14 @@ chmod 600 /var/log/btmp
 /sbin/hibernate-cleanup.sh
 /sbin/ppp-watch
 %{_mandir}/man*/*
-%lang(cs)	%{_mandir}/cs/man*/*
-%lang(et)	%{_mandir}/et/man*/*
-%lang(fi)	%{_mandir}/fi/man*/*
-%lang(fr)	%{_mandir}/fr/man*/*
-%lang(it)	%{_mandir}/it/man*/*
-%lang(pt_BR)	%{_mandir}/pt_BR/man*/*
-%lang(ru)	%{_mandir}/ru/man*/*
-%lang(uk)	%{_mandir}/uk/man*/*
+%lang(cs) %{_mandir}/cs/man*/*
+%lang(et) %{_mandir}/et/man*/*
+%lang(fi) %{_mandir}/fi/man*/*
+%lang(fr) %{_mandir}/fr/man*/*
+%lang(it) %{_mandir}/it/man*/*
+%lang(pt_BR) %{_mandir}/pt_BR/man*/*
+%lang(ru) %{_mandir}/ru/man*/*
+%lang(uk) %{_mandir}/uk/man*/*
 %dir %attr(775,root,root) /var/run/netreport
 %dir %{_sysconfdir}/ppp
 %dir %{_sysconfdir}/ppp/ip-down.d
