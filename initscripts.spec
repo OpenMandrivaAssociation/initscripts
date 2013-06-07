@@ -21,7 +21,6 @@ BuildRequires:	python
 Requires: basesystem-minimal
 Requires(pre): basesystem-minimal
 Requires(post):	rpm-helper
-Requires:	mktemp
 Requires:	gettext-base >= 0.10.35-20mdk
 # for /sbin/ip
 Requires:	iproute2
