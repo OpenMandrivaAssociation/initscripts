@@ -1,7 +1,7 @@
 Summary:	The inittab file and the %{_sysconfdir}/init.d scripts
 Name:		initscripts
 Version:	9.44
-Release:	2
+Release:	3
 # ppp-watch is GPLv2+, everything else is GPLv2
 License:	GPLv2 and GPLv2+
 Group:		System/Base
@@ -18,43 +18,25 @@ BuildRequires:	pkgconfig
 BuildRequires:	popt-devel
 BuildRequires:	python
 
-# for /bin/awk
-Requires:	gawk
-# for /bin/sed
-Requires:	sed
+Requires: basesystem-minimal
+Requires(pre): basesystem-minimal
+Requires(post):	rpm-helper
 Requires:	mktemp
-Requires:	e2fsprogs >= 1.18-2mdk
-Requires:	procps >= 2.0.7-8mdk
 Requires:	gettext-base >= 0.10.35-20mdk
-#(tpg) this is in basesystem package
-#Requires:	module-init-tools
-
-# needed for chvt --userwait
-Requires:	kbd >= 1.15.1-2mdv
-#Requires:	sysklogd >= 1.3.31
-# for /sbin/fuser
-#(tpg) this is in basesystem package
-#Requires:	psmisc
-Requires:	which
-Requires:	setup >= 2.2.0-14mdk
 # for /sbin/ip
 Requires:	iproute2
 # for /sbin/arping
 Requires:	iputils
 Requires:	net-tools
-# for /bin/find
-Requires:	findutils
-
 # (blino) for pidof -c
 # (bor) for pidof -m
 Requires:	sysvinit-tools >= 2.87-8mdv2011.0
-
 Requires:	ifplugd >= 0.24
-#Requires: sound-scripts
-# (tv) unused:
-#Prereq:	gawk
 Requires:	iproute2
 Requires:	ethtool
+Requires:	ifmetric
+Requires:	resolvconf >= 1.41
+Requires:	dmsetup
 # http://bugzilla.redhat.com/show_bug.cgi?id=252973
 Conflicts:	nut < 2.2.0
 Obsoletes:	rhsound < %{version}-%{release}
@@ -76,13 +58,8 @@ Conflicts:	suspend-scripts < 1.27
 Conflicts:	mdadm < 2.6.4-2mdv2008.1
 Conflicts:	systemd <= 19-2
 Conflicts:	networkmanager < 0.8.2-8
-Requires:	util-linux-ng >= 2.16
-Requires:	udev >= 108-2mdv2007.1
-Requires:	ifmetric
-Requires:	resolvconf >= 1.41
-Requires:	dmsetup
 Conflicts:	prcsys
-Requires(post):	rpm-helper
+
 
 %description
 The initscripts package contains the basic system scripts used to boot
