@@ -13,7 +13,7 @@ Source0:	%{name}-%{version}.tar.xz
 Source1:	60-ssd.rules
 Source100:	%{name}.rpmlintrc
 
-BuildRequires:	glib2-devel
+BuildRequires:	pkgconfig(glib-2.0)
 BuildRequires:	pkgconfig
 BuildRequires:	popt-devel
 BuildRequires:	python
