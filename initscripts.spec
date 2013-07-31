@@ -1,7 +1,7 @@
 Summary:	The inittab file and the %{_sysconfdir}/init.d scripts
 Name:		initscripts
 Version:	9.44
-Release:	3
+Release:	4
 # ppp-watch is GPLv2+, everything else is GPLv2
 License:	GPLv2 and GPLv2+
 Group:		System/Base
@@ -12,6 +12,8 @@ Source0:	%{name}-%{version}.tar.xz
 # udev rules for speeding up SSDs by using the noop scheduler
 Source1:	60-ssd.rules
 Source100:	%{name}.rpmlintrc
+
+Patch1:		initscripts-9.44-arping.patch
 
 BuildRequires:	pkgconfig(glib-2.0)
 BuildRequires:	pkgconfig
@@ -83,6 +85,8 @@ rm -rf po
 ln -s mandriva/po
 
 xz --text ChangeLog
+
+%apply_patches
 
 %build
 %global optflags %{optflags} -Os
