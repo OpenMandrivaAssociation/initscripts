@@ -1,27 +1,25 @@
 Summary:	The inittab file and the %{_sysconfdir}/init.d scripts
 Name:		initscripts
-Version:	9.44
-Release:	4
+Version:	9.45
+Release:	1
 # ppp-watch is GPLv2+, everything else is GPLv2
 License:	GPLv2 and GPLv2+
 Group:		System/Base
 # Upstream URL: http://git.fedorahosted.org/git/initscripts.git
-Url:		https://abf.rosalinux.ru/proyvind/initscripts
-# https://abf.rosalinux.ru/proyvind/initscripts
+Url:		https://abf.rosalinux.ru/omv_software/initscripts
+# https://abf.rosalinux.ru/omv_software/initscripts
 Source0:	%{name}-%{version}.tar.xz
 # udev rules for speeding up SSDs by using the noop scheduler
 Source1:	60-ssd.rules
 Source100:	%{name}.rpmlintrc
-
-Patch1:		initscripts-9.44-arping.patch
 
 BuildRequires:	pkgconfig(glib-2.0)
 BuildRequires:	pkgconfig
 BuildRequires:	popt-devel
 BuildRequires:	python
 
-Requires: basesystem-minimal
-Requires(pre): basesystem-minimal
+Requires:	basesystem-minimal
+Requires(pre):	basesystem-minimal
 Requires(post):	rpm-helper
 Requires:	gettext-base >= 0.10.35-20mdk
 # for /sbin/ip
@@ -61,10 +59,9 @@ Conflicts:	systemd <= 19-2
 Conflicts:	networkmanager < 0.8.2-8
 Conflicts:	prcsys
 
-
 %description
 The initscripts package contains the basic system scripts used to boot
-your Mandriva Linux system, change run levels, and shut the system
+your %{distribution} system, change run levels, and shut the system
 down cleanly.  Initscripts also contains the scripts that activate and
 deactivate most network interfaces.
 
