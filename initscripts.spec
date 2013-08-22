@@ -108,7 +108,7 @@ install -c -m 644 %{SOURCE1} %{buildroot}/lib/udev/rules.d/
 
 # (tpg) remove as its not needed
 for i in 0 1 2 3 4 5 6; do
-rm -rf /etc/rc$i.d ;
+rm -rf %{buildroot}%{_sysconfdir}/rc$i.d ;
 done
 
 %find_lang %{name}
