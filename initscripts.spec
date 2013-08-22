@@ -106,6 +106,11 @@ python mandriva/gprintify.py \
 
 install -c -m 644 %{SOURCE1} %{buildroot}/lib/udev/rules.d/
 
+# (tpg) remove as its not needed
+for i in 0 1 2 3 4 5 6; do
+rm -rf /etc/rc$i.d ;
+done
+
 %find_lang %{name}
 
 # we have our own copy of gprintify
@@ -190,8 +195,8 @@ chmod 600 /var/log/btmp
 %{_sysconfdir}/sysconfig/network-scripts/ifup-tunnel
 %{_sysconfdir}/sysconfig/network-scripts/ifdown-tunnel
 %{_sysconfdir}/sysconfig/network-scripts/ifup-aliases
-#%{_sysconfdir}/sysconfig/network-scripts/ifup-ippp
-#%{_sysconfdir}/sysconfig/network-scripts/ifdown-ippp
+%{_sysconfdir}/sysconfig/network-scripts/ifup-isdn
+%{_sysconfdir}/sysconfig/network-scripts/ifdown-isdn
 %{_sysconfdir}/sysconfig/network-scripts/ifup-wireless
 %{_sysconfdir}/sysconfig/network-scripts/ifup-hso
 %{_sysconfdir}/sysconfig/network-scripts/ifdown-hso
@@ -276,23 +281,19 @@ chmod 600 /var/log/btmp
 %{_systemdrootdir}/fedora-import-state
 %{_systemdrootdir}/fedora-loadmodules
 %{_systemdrootdir}/fedora-readonly
-%{_systemdrootdir}/mandriva-boot-links
 %{_systemdrootdir}/mandriva-save-dmesg
 %{_systemunitdir}/basic.target.wants/fedora-autorelabel.service
 %{_systemunitdir}/basic.target.wants/fedora-autorelabel-mark.service
 %{_systemunitdir}/basic.target.wants/fedora-configure.service
 %{_systemunitdir}/basic.target.wants/fedora-loadmodules.service
-%{_systemunitdir}/basic.target.wants/mandriva-boot-links.service
 %{_systemunitdir}/basic.target.wants/mandriva-everytime.service
 %{_systemunitdir}/basic.target.wants/mandriva-save-dmesg.service
-%{_systemunitdir}/ctrl-alt-del.target
 %{_systemunitdir}/fedora-autorelabel.service
 %{_systemunitdir}/fedora-autorelabel-mark.service
 %{_systemunitdir}/fedora-configure.service
 %{_systemunitdir}/fedora-import-state.service
 %{_systemunitdir}/fedora-loadmodules.service
 %{_systemunitdir}/fedora-readonly.service
-%{_systemunitdir}/mandriva-boot-links.service
 %{_systemunitdir}/mandriva-everytime.service
 %{_systemunitdir}/mandriva-save-dmesg.service
 %{_systemunitdir}/local-fs.target.wants/fedora-import-state.service
