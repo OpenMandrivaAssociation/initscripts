@@ -1,7 +1,7 @@
 Summary:	The inittab file and the %{_sysconfdir}/init.d scripts
 Name:		initscripts
 Version:	9.45
-Release:	2
+Release:	3
 # ppp-watch is GPLv2+, everything else is GPLv2
 License:	GPLv2 and GPLv2+
 Group:		System/Base
@@ -120,6 +120,20 @@ export DONT_GPRINTIFY=1
 touch %{buildroot}%{_sysconfdir}/crypttab
 chmod 600 %{buildroot}%{_sysconfdir}/crypttab
 
+if [ -f %{buildroot}%{_sysconfdir}/sysctl.conf ]; then
+mkdir -p %{buildroot}%{_sysconfdir}/sysctl.d/
+mv -f %{buildroot}%{_sysconfdir}/sysctl.conf %{buildroot}%{_sysconfdir}/sysctl.d/99-sysctl.conf
+ln -s %{_sysconfdir}/sysctl.d/99-sysctl.conf %{buildroot}%{_sysconfdir}/sysctl.conf
+fi
+
+%pre
+if [ $1 -ge 2 ]; then
+    if [ -e %{_sysconfdir}/sysctl.conf && ! -L %{_sysconfdir}/sysctl.conf ]; then
+	mv -f %{_sysconfdir}/sysctl.conf %{_sysconfdir}/sysctl.d/99-sysctl.conf
+	ln -s %{_sysconfdir}/sysctl.d/99-sysctl.conf %{_sysconfdir}/sysctl.conf
+    fi
+fi
+
 %post
 ##
 touch /var/log/wtmp /var/run/utmp /var/log/btmp
@@ -203,7 +217,7 @@ chmod 600 /var/log/btmp
 %{_sysconfdir}/sysconfig/network-scripts/ifdown-hso
 %{_sysconfdir}/X11/prefdm
 %{_sysconfdir}/X11/lookupdm
-%config(noreplace) %{_sysconfdir}/networks 
+%config(noreplace) %{_sysconfdir}/networks
 %{_sysconfdir}/rwtab
 %dir %{_sysconfdir}/rwtab.d
 %{_sysconfdir}/statetab
@@ -213,7 +227,8 @@ chmod 600 /var/log/btmp
 %dir %{_sysconfdir}/rc.d/init.d
 /lib/lsb/init-functions
 %{_sysconfdir}/rc.d/init.d/*
-%config(noreplace) %{_sysconfdir}/sysctl.conf
+%config(noreplace) %{_sysconfdir}/sysctl.d/99-sysctl.conf
+%{_sysconfdir}/sysctl.conf
 %dir %{_prefix}/lib/sysctl.d
 %{_prefix}/lib/sysctl.d/00-system.conf
 %exclude %{_sysconfdir}/profile.d/debug*
