@@ -1,7 +1,7 @@
 Summary:	The inittab file and the %{_sysconfdir}/init.d scripts
 Name:		initscripts
 Version:	9.45
-Release:	3
+Release:	4
 # ppp-watch is GPLv2+, everything else is GPLv2
 License:	GPLv2 and GPLv2+
 Group:		System/Base
@@ -66,12 +66,13 @@ your %{distribution} system, change run levels, and shut the system
 down cleanly.  Initscripts also contains the scripts that activate and
 deactivate most network interfaces.
 
-%package -n debugmode
+%package debugmode
 Summary:	Scripts for running in debugging mode
 Requires:	initscripts
 Group:		System/Base
+%rename		debugmode
 
-%description -n	debugmode
+%description debugmode
 The debugmode package contains some basic scripts that are used to run
 the system in a debugging mode.
 
@@ -128,7 +129,7 @@ fi
 
 %pre
 if [ $1 -ge 2 ]; then
-    if [ -e %{_sysconfdir}/sysctl.conf && ! -L %{_sysconfdir}/sysctl.conf ]; then
+    if [ -e %{_sysconfdir}/sysctl.conf ] && [ ! -L %{_sysconfdir}/sysctl.conf ]; then
 	mv -f %{_sysconfdir}/sysctl.conf %{_sysconfdir}/sysctl.d/99-sysctl.conf
 	ln -s %{_sysconfdir}/sysctl.d/99-sysctl.conf %{_sysconfdir}/sysctl.conf
     fi
