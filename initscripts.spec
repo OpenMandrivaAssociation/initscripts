@@ -3,7 +3,7 @@
 Summary:	The inittab file and the %{_sysconfdir}/init.d scripts
 Name:		initscripts
 Version:	9.45
-Release:	4
+Release:	5
 # ppp-watch is GPLv2+, everything else is GPLv2
 License:	GPLv2 and GPLv2+
 Group:		System/Base
