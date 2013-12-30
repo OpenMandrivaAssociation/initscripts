@@ -3,7 +3,7 @@
 Summary:	The inittab file and the %{_sysconfdir}/init.d scripts
 Name:		initscripts
 Version:	9.45
-Release:	8
+Release:	9
 # ppp-watch is GPLv2+, everything else is GPLv2
 License:	GPLv2 and GPLv2+
 Group:		System/Base
@@ -20,11 +20,11 @@ BuildRequires:	pkgconfig
 BuildRequires:	popt-devel
 BuildRequires:	python
 
-Requires:	basesystem-minimal
+Requires:		basesystem-minimal
 Requires(pre):	basesystem-minimal
 Requires(post):	rpm-helper
 Requires(post):	util-linux
-Requires:	gettext-base >= 0.10.35-20mdk
+Requires:		gettext-base >= 0.10.35-20mdk
 # for /sbin/ip
 Requires:	iproute2
 # for /sbin/arping
@@ -151,6 +151,11 @@ if [ $1 -ge 2 ]; then
     fi
 fi
 
+if [ $1 -ge 2 ]; then
+# (tpg) die! systemd takes care of this
+chkconfig --del dm
+fi
+
 %post
 %tmpfiles_create {name}
 %tmpfiles_create mandriva
@@ -192,8 +197,6 @@ done
 %_post_service network
 
 %_post_service network-up
-
-%_post_service dm
 
 %_post_service netconsole
 
