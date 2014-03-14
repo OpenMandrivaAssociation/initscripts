@@ -343,6 +343,7 @@ done
 %{_var}/lib/rpm/filetriggers/clean-legacy-sysv-symlinks.*
 %{_systemdrootdir}/fedora-autorelabel
 %{_systemdrootdir}/fedora-configure
+%{_systemdrootdir}/fedora-domainname
 %{_systemdrootdir}/fedora-import-state
 %{_systemdrootdir}/fedora-loadmodules
 %{_systemdrootdir}/fedora-readonly
@@ -356,6 +357,7 @@ done
 %{_systemunitdir}/fedora-autorelabel.service
 %{_systemunitdir}/fedora-autorelabel-mark.service
 %{_systemunitdir}/fedora-configure.service
+%{_systemunitdir}/fedora-domainname.service
 %{_systemunitdir}/fedora-import-state.service
 %{_systemunitdir}/fedora-loadmodules.service
 %{_systemunitdir}/fedora-readonly.service
