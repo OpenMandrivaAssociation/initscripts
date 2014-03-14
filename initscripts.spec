@@ -240,7 +240,6 @@ done
 %{_sysconfdir}/sysconfig/network-scripts/network-functions-ipv6
 %{_sysconfdir}/sysconfig/network-scripts/init.ipv6-global
 %config(noreplace) %{_sysconfdir}/sysconfig/network-scripts/ifcfg-lo
-%{_sysconfdir}/sysconfig/network-scripts/ifup-ipx
 %{_sysconfdir}/sysconfig/network-scripts/ifup-post
 %{_sysconfdir}/sysconfig/network-scripts/ifdown-ppp
 %{_sysconfdir}/sysconfig/network-scripts/ifup-ppp
