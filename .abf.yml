@@ -1,3 +1,4 @@
----
-sources:
+removed_sources:
   initscripts-9.45.tar.xz: 45cdd5347290a4495104b5448a523619e24b2717
+sources:
+  initscripts-9.52.tar.xz: 5ff1a8e8cb620601d5b3c8b671a6e6c297003fe4

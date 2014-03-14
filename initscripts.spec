@@ -2,8 +2,8 @@
 
 Summary:	The inittab file and the %{_sysconfdir}/init.d scripts
 Name:		initscripts
-Version:	9.45
-Release:	14
+Version:	9.52
+Release:	1
 # ppp-watch is GPLv2+, everything else is GPLv2
 License:	GPLv2 and GPLv2+
 Group:		System/Base
@@ -24,7 +24,7 @@ Requires:		basesystem-minimal
 Requires(pre):	basesystem-minimal
 Requires(post):	rpm-helper
 Requires(post):	util-linux
-Requires:		gettext-base >= 0.10.35-20mdk
+Requires:	gettext-base >= 0.10.35-20mdk
 # for /sbin/ip
 Requires:	iproute2
 # for /sbin/arping
@@ -240,7 +240,6 @@ done
 %{_sysconfdir}/sysconfig/network-scripts/network-functions-ipv6
 %{_sysconfdir}/sysconfig/network-scripts/init.ipv6-global
 %config(noreplace) %{_sysconfdir}/sysconfig/network-scripts/ifcfg-lo
-%{_sysconfdir}/sysconfig/network-scripts/ifup-ipx
 %{_sysconfdir}/sysconfig/network-scripts/ifup-post
 %{_sysconfdir}/sysconfig/network-scripts/ifdown-ppp
 %{_sysconfdir}/sysconfig/network-scripts/ifup-ppp
@@ -343,6 +342,7 @@ done
 %{_var}/lib/rpm/filetriggers/clean-legacy-sysv-symlinks.*
 %{_systemdrootdir}/fedora-autorelabel
 %{_systemdrootdir}/fedora-configure
+%{_systemdrootdir}/fedora-domainname
 %{_systemdrootdir}/fedora-import-state
 %{_systemdrootdir}/fedora-loadmodules
 %{_systemdrootdir}/fedora-readonly
@@ -356,6 +356,7 @@ done
 %{_systemunitdir}/fedora-autorelabel.service
 %{_systemunitdir}/fedora-autorelabel-mark.service
 %{_systemunitdir}/fedora-configure.service
+%{_systemunitdir}/fedora-domainname.service
 %{_systemunitdir}/fedora-import-state.service
 %{_systemunitdir}/fedora-loadmodules.service
 %{_systemunitdir}/fedora-readonly.service
