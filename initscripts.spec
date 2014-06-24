@@ -92,6 +92,9 @@ xz --text ChangeLog
 %build
 %global optflags %{optflags} -Os
 %setup_compile_flags
+export CC=gcc
+export CXX=g++
+
 make
 make -C mandriva
 
