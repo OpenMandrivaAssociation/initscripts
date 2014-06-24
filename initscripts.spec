@@ -343,7 +343,6 @@ done
 /lib/tmpfiles.d/mandriva.conf
 %{_var}/lib/rpm/filetriggers/clean-legacy-sysv-symlinks.*
 %{_systemdrootdir}/fedora-autorelabel
-%{_systemdrootdir}/fedora-configure
 %{_systemdrootdir}/fedora-domainname
 %{_systemdrootdir}/fedora-import-state
 %{_systemdrootdir}/fedora-loadmodules
@@ -351,12 +350,10 @@ done
 %{_systemdrootdir}/mandriva-save-dmesg
 %{_systemunitdir}/basic.target.wants/fedora-autorelabel.service
 %{_systemunitdir}/basic.target.wants/fedora-autorelabel-mark.service
-%{_systemunitdir}/basic.target.wants/fedora-configure.service
 %{_systemunitdir}/basic.target.wants/fedora-loadmodules.service
 %{_systemunitdir}/basic.target.wants/mandriva-everytime.service
 %{_systemunitdir}/fedora-autorelabel.service
 %{_systemunitdir}/fedora-autorelabel-mark.service
-%{_systemunitdir}/fedora-configure.service
 %{_systemunitdir}/fedora-domainname.service
 %{_systemunitdir}/fedora-import-state.service
 %{_systemunitdir}/fedora-loadmodules.service
