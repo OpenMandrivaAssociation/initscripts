@@ -2,8 +2,8 @@
 
 Summary:	The inittab file and the %{_sysconfdir}/init.d scripts
 Name:		initscripts
-Version:	9.52
-Release:	5
+Version:	9.53
+Release:	1
 # ppp-watch is GPLv2+, everything else is GPLv2
 License:	GPLv2 and GPLv2+
 Group:		System/Base
@@ -18,9 +18,9 @@ Source100:	%{name}.rpmlintrc
 BuildRequires:	pkgconfig(glib-2.0)
 BuildRequires:	pkgconfig
 BuildRequires:	popt-devel
-BuildRequires:	python
+BuildRequires:	pkgconfig(python3)
 
-Requires:		basesystem-minimal
+Requires:	basesystem-minimal
 Requires(pre):	basesystem-minimal
 Requires(post):	rpm-helper
 Requires(post):	util-linux
@@ -154,6 +154,8 @@ fi
 if [ $1 -ge 2 ]; then
 # (tpg) die! systemd takes care of this
 chkconfig --del dm
+# (tpg) kill this too
+chkconfig --del partmon
 fi
 
 %post
@@ -192,8 +194,6 @@ do
 	fi
 done
 
-%_post_service partmon
-
 %_post_service network
 
 %_post_service network-up
@@ -224,7 +224,6 @@ done
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/adjtime
 %config(noreplace) %{_sysconfdir}/sysconfig/init
 %config(noreplace) %{_sysconfdir}/sysconfig/autofsck
-%config(noreplace) %{_sysconfdir}/sysconfig/partmon
 %config(noreplace) %{_sysconfdir}/sysconfig/netconsole
 %config(noreplace) %{_sysconfdir}/sysconfig/readonly-root
 %{_sysconfdir}/sysconfig/network-scripts/ifdown
@@ -352,7 +351,6 @@ done
 %{_systemunitdir}/basic.target.wants/fedora-configure.service
 %{_systemunitdir}/basic.target.wants/fedora-loadmodules.service
 %{_systemunitdir}/basic.target.wants/mandriva-everytime.service
-%{_systemunitdir}/basic.target.wants/mandriva-save-dmesg.service
 %{_systemunitdir}/fedora-autorelabel.service
 %{_systemunitdir}/fedora-autorelabel-mark.service
 %{_systemunitdir}/fedora-configure.service
@@ -365,7 +363,6 @@ done
 %{_systemunitdir}/local-fs.target.wants/fedora-import-state.service
 %{_systemunitdir}/local-fs.target.wants/fedora-readonly.service
 %{_systemunitdir}/mandriva-kmsg-loglevel.service
-%{_systemunitdir}/sysinit.target.wants/mandriva-kmsg-loglevel.service
 
 %files debugmode
 %config(noreplace) %{_sysconfdir}/sysconfig/debug
