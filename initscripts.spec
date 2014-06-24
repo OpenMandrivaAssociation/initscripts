@@ -3,7 +3,7 @@
 Summary:	The inittab file and the %{_sysconfdir}/init.d scripts
 Name:		initscripts
 Version:	9.53
-Release:	1
+Release:	0.1
 # ppp-watch is GPLv2+, everything else is GPLv2
 License:	GPLv2 and GPLv2+
 Group:		System/Base
@@ -18,7 +18,7 @@ Source100:	%{name}.rpmlintrc
 BuildRequires:	pkgconfig(glib-2.0)
 BuildRequires:	pkgconfig
 BuildRequires:	popt-devel
-BuildRequires:	pkgconfig(python3)
+BuildRequires:	pkgconfig(python2)
 
 Requires:	basesystem-minimal
 Requires(pre):	basesystem-minimal
@@ -92,8 +92,6 @@ xz --text ChangeLog
 %build
 %global optflags %{optflags} -Os
 %setup_compile_flags
-export CC=gcc
-export CXX=g++
 
 make
 make -C mandriva
