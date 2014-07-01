@@ -3,7 +3,7 @@
 Summary:	The inittab file and the %{_sysconfdir}/init.d scripts
 Name:		initscripts
 Version:	9.53
-Release:	0.1
+Release:	1.1
 # ppp-watch is GPLv2+, everything else is GPLv2
 License:	GPLv2 and GPLv2+
 Group:		System/Base
@@ -154,9 +154,9 @@ fi
 
 if [ $1 -ge 2 ]; then
 # (tpg) die! systemd takes care of this
-chkconfig --del dm
+chkconfig --del dm > /dev/null 2>&1
 # (tpg) kill this too
-chkconfig --del partmon
+chkconfig --del partmon > /dev/null 2>&1
 fi
 
 %post
