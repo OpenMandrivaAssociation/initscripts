@@ -192,9 +192,9 @@ done
 
 if [ $1 -ge 2 ]; then
 # (tpg) die! systemd takes care of this
-chkconfig --del dm > /dev/null 2>&1
+chkconfig --del dm > /dev/null 2>&1 || :
 # (tpg) kill this too
-chkconfig --del partmon > /dev/null 2>&1
+chkconfig --del partmon > /dev/null 2>&1 || :
 fi
 
 %_post_service network
