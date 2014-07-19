@@ -3,7 +3,7 @@
 Summary:	The inittab file and the %{_sysconfdir}/init.d scripts
 Name:		initscripts
 Version:	9.53
-Release:	5
+Release:	6
 # ppp-watch is GPLv2+, everything else is GPLv2
 License:	GPLv2 and GPLv2+
 Group:		System/Base
@@ -197,23 +197,23 @@ chkconfig --del dm > /dev/null 2>&1 || :
 chkconfig --del partmon > /dev/null 2>&1 || :
 fi
 
-%_post_service network
+%systemd_post network
 
-%_post_service network-up
+%systemd_post network-up
 
-%_post_service netconsole
+%systemd_post netconsole
 
 
 %preun
-%_preun_service netconsole
+%systemd_preun netconsole
 
-%_preun_service dm
+%systemd_preun dm
 
-%_preun_service network-up
+%systemd_preun network-up
 
-%_preun_service network
+%systemd_preun network
 
-%_preun_service partmon
+%systemd_preun partmon
 
 %files -f %{name}.lang
 %dir %{_sysconfdir}/sysconfig/network-scripts
