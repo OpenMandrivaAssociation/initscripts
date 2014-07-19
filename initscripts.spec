@@ -155,7 +155,7 @@ if [ $1 -ge 2 ]; then
 fi
 
 %post
-%tmpfiles_create {name}
+%tmpfiles_create %{name}
 %tmpfiles_create mandriva
 
 ##
