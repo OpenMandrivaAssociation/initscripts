@@ -16,7 +16,7 @@ Source100:	%{name}.rpmlintrc
 BuildRequires:	pkgconfig(glib-2.0)
 BuildRequires:	pkgconfig
 BuildRequires:	popt-devel
-BuildRequires:	pkgconfig(python3)
+BuildRequires:	pkgconfig(python2)
 
 Requires:	basesystem-minimal
 Requires(pre):	basesystem-minimal
