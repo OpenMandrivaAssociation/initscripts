@@ -3,7 +3,7 @@
 Summary:	The inittab file and the %{_sysconfdir}/init.d scripts
 Name:		initscripts
 Version:	9.53
-Release:	1.3
+Release:	1.4
 # ppp-watch is GPLv2+, everything else is GPLv2
 License:	GPLv2 and GPLv2+
 Group:		System/Base
@@ -11,14 +11,12 @@ Group:		System/Base
 Url:		https://abf.rosalinux.ru/omv_software/initscripts
 # https://abf.rosalinux.ru/omv_software/initscripts
 Source0:	%{name}-%{version}.tar.xz
-# udev rules for speeding up SSDs by using the noop scheduler
-Source1:	60-ssd.rules
 Source100:	%{name}.rpmlintrc
 
 BuildRequires:	pkgconfig(glib-2.0)
 BuildRequires:	pkgconfig
 BuildRequires:	popt-devel
-BuildRequires:	pkgconfig(python2)
+BuildRequires:	pkgconfig(python3)
 
 Requires:	basesystem-minimal
 Requires(pre):	basesystem-minimal
@@ -92,6 +90,8 @@ xz --text ChangeLog
 %build
 %global optflags %{optflags} -Os
 %setup_compile_flags
+export CC=gcc
+export CXX=g++
 
 make
 make -C mandriva
@@ -108,8 +108,6 @@ python mandriva/gprintify.py \
 	`find %{buildroot}/sysconfig/network-scripts -type f` \
 	%{buildroot}%{_systemdrootdir}/fedora-* \
 	%{buildroot}%{_systemdrootdir}/mandriva-*
-
-install -c -m 644 %{SOURCE1} %{buildroot}/lib/udev/rules.d/
 
 # (tpg) remove as its not needed
 for i in 0 1 2 3 4 5 6; do
@@ -190,9 +188,9 @@ done
 
 if [ $1 -ge 2 ]; then
 # (tpg) die! systemd takes care of this
-chkconfig --del dm > /dev/null 2>&1
+chkconfig --del dm > /dev/null 2>&1 || :
 # (tpg) kill this too
-chkconfig --del partmon > /dev/null 2>&1
+chkconfig --del partmon > /dev/null 2>&1 || :
 fi
 
 %systemd_post network
