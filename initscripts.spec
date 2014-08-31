@@ -35,7 +35,6 @@ Requires:	ifplugd >= 0.24
 Requires:	iproute2
 Requires:	ethtool
 Requires:	ifmetric
-Requires:	resolvconf >= 1.41
 Requires:	dmsetup
 # http://bugzilla.redhat.com/show_bug.cgi?id=252973
 Conflicts:	nut < 2.2.0
