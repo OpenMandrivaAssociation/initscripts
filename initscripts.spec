@@ -2,10 +2,9 @@
 
 Summary:	The inittab file and the %{_sysconfdir}/init.d scripts
 Name:		initscripts
-Version:	9.53
-Release:	8
-# ppp-watch is GPLv2+, everything else is GPLv2
-License:	GPLv2 and GPLv2+
+Version:	9.54
+Release:	1
+License:	GPLv2
 Group:		System/Base
 # Upstream URL: http://git.fedorahosted.org/git/initscripts.git
 Url:		https://abf.rosalinux.ru/omv_software/initscripts
@@ -238,8 +237,6 @@ fi
 %{_sysconfdir}/sysconfig/network-scripts/init.ipv6-global
 %config(noreplace) %{_sysconfdir}/sysconfig/network-scripts/ifcfg-lo
 %{_sysconfdir}/sysconfig/network-scripts/ifup-post
-%{_sysconfdir}/sysconfig/network-scripts/ifdown-ppp
-%{_sysconfdir}/sysconfig/network-scripts/ifup-ppp
 %{_sysconfdir}/sysconfig/network-scripts/ifup-routes
 %{_sysconfdir}/sysconfig/network-scripts/ifdown-routes
 %{_sysconfdir}/sysconfig/network-scripts/ifup-plip
@@ -300,7 +297,6 @@ fi
 /sbin/sushell
 #mdv
 /sbin/hibernate-cleanup.sh
-/sbin/ppp-watch
 %{_mandir}/man*/*
 %lang(cs) %{_mandir}/cs/man*/*
 %lang(et) %{_mandir}/et/man*/*
@@ -311,16 +307,6 @@ fi
 %lang(ru) %{_mandir}/ru/man*/*
 %lang(uk) %{_mandir}/uk/man*/*
 %dir %attr(775,root,root) /var/run/netreport
-%dir %{_sysconfdir}/ppp
-%dir %{_sysconfdir}/ppp/ip-down.d
-%dir %{_sysconfdir}/ppp/ip-up.d
-%dir %{_sysconfdir}/ppp/peers
-%{_sysconfdir}/ppp/ip-up
-%{_sysconfdir}/ppp/ip-down
-%{_sysconfdir}/ppp/ip-up.ipv6to4
-%{_sysconfdir}/ppp/ip-down.ipv6to4
-%{_sysconfdir}/ppp/ipv6-up
-%{_sysconfdir}/ppp/ipv6-down
 %dir %{_sysconfdir}/NetworkManager
 %dir %{_sysconfdir}/NetworkManager/dispatcher.d
 %{_sysconfdir}/NetworkManager/dispatcher.d/00-netreport
