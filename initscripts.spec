@@ -3,7 +3,7 @@
 Summary:	The inittab file and the %{_sysconfdir}/init.d scripts
 Name:		initscripts
 Version:	9.54
-Release:	1
+Release:	2
 License:	GPLv2
 Group:		System/Base
 # Upstream URL: http://git.fedorahosted.org/git/initscripts.git
@@ -21,6 +21,7 @@ Requires:	basesystem-minimal
 Requires(pre):	basesystem-minimal
 Requires(post):	rpm-helper
 Requires(post):	util-linux
+Requires(post):	chkconfig
 Requires:	gettext-base >= 0.10.35-20mdk
 # for /sbin/ip
 Requires:	iproute2
