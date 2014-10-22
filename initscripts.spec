@@ -3,7 +3,7 @@
 Summary:	The inittab file and the %{_sysconfdir}/init.d scripts
 Name:		initscripts
 Version:	9.54
-Release:	2
+Release:	3
 License:	GPLv2
 Group:		System/Base
 # Upstream URL: http://git.fedorahosted.org/git/initscripts.git
@@ -17,7 +17,7 @@ BuildRequires:	pkgconfig
 BuildRequires:	popt-devel
 BuildRequires:	pkgconfig(python3)
 
-Requires:	basesystem-minimal
+Requires:		basesystem-minimal
 Requires(pre):	basesystem-minimal
 Requires(post):	rpm-helper
 Requires(post):	util-linux
@@ -30,7 +30,7 @@ Requires:	iputils
 Requires:	net-tools
 # (blino) for pidof -c
 # (bor) for pidof -m
-Requires:	sysvinit-tools >= 2.87-8mdv2011.0
+Requires:	procps-ng
 Requires:	ifplugd >= 0.24
 Requires:	iproute2
 Requires:	ethtool
