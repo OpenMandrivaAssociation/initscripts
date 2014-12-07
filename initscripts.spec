@@ -3,7 +3,7 @@
 Summary:	The inittab file and the %{_sysconfdir}/init.d scripts
 Name:		initscripts
 Version:	9.54
-Release:	3
+Release:	4
 License:	GPLv2
 Group:		System/Base
 # Upstream URL: http://git.fedorahosted.org/git/initscripts.git
