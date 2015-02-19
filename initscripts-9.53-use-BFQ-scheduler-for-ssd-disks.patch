@@ -1,0 +1,6 @@
+diff -Naur initscripts-9.53/udev/rules.d/60-ssd.rules initscripts-9.53.tpg/udev/rules.d/60-ssd.rules
+--- initscripts-9.53/udev/rules.d/60-ssd.rules	2014-07-22 16:25:30.000000000 +0000
++++ initscripts-9.53.tpg/udev/rules.d/60-ssd.rules	2015-02-19 21:40:24.427847122 +0000
+@@ -1 +1 @@
+-ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/rotational}=="0", ATTR{queue/scheduler}="noop"
++ACTION=="add|change", KERNEL=="sd[a-z]", ATTR{queue/rotational}=="0", ATTR{queue/scheduler}="bfq"

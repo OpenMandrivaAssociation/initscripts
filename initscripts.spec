@@ -3,7 +3,7 @@
 Summary:	The inittab file and the %{_sysconfdir}/init.d scripts
 Name:		initscripts
 Version:	9.53
-Release:	1.5
+Release:	1.6
 # ppp-watch is GPLv2+, everything else is GPLv2
 License:	GPLv2 and GPLv2+
 Group:		System/Base
@@ -12,7 +12,7 @@ Url:		https://abf.rosalinux.ru/omv_software/initscripts
 # https://abf.rosalinux.ru/omv_software/initscripts
 Source0:	%{name}-%{version}.tar.xz
 Source100:	%{name}.rpmlintrc
-
+Patch0:		initscripts-9.53-use-BFQ-scheduler-for-ssd-disks.patch
 BuildRequires:	pkgconfig(glib-2.0)
 BuildRequires:	pkgconfig
 BuildRequires:	popt-devel
