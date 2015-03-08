@@ -3,7 +3,7 @@
 Summary:	The inittab file and the %{_sysconfdir}/init.d scripts
 Name:		initscripts
 Version:	9.54
-Release:	5
+Release:	6
 License:	GPLv2
 Group:		System/Base
 # Upstream URL: http://git.fedorahosted.org/git/initscripts.git
@@ -140,6 +140,9 @@ cat > %{buildroot}%{_var}/lib/rpm/filetriggers/clean-legacy-sysv-symlinks.script
 find -L /etc/rc.d/rc{0,1,2,3,4,5,6,7}.d -type l -exec rm -f {} +
 EOF
 chmod 755 %{buildroot}%{_var}/lib/rpm/filetriggers/clean-legacy-sysv-symlinks.script
+
+# (tpg) kill it with fire
+rm -rf %{buildroot}%{_initddir}/dm
 
 %pre
 if [ $1 -ge 2 ]; then
