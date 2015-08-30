@@ -2,26 +2,26 @@
 
 Summary:	The inittab file and the %{_sysconfdir}/init.d scripts
 Name:		initscripts
-Version:	9.53
-Release:	1.6
-# ppp-watch is GPLv2+, everything else is GPLv2
-License:	GPLv2 and GPLv2+
+Version:	9.54
+Release:	1
+License:	GPLv2
 Group:		System/Base
 # Upstream URL: http://git.fedorahosted.org/git/initscripts.git
 Url:		https://abf.rosalinux.ru/omv_software/initscripts
 # https://abf.rosalinux.ru/omv_software/initscripts
 Source0:	%{name}-%{version}.tar.xz
 Source100:	%{name}.rpmlintrc
-Patch0:		initscripts-9.53-use-BFQ-scheduler-for-ssd-disks.patch
+
 BuildRequires:	pkgconfig(glib-2.0)
 BuildRequires:	pkgconfig
 BuildRequires:	popt-devel
-BuildRequires:	pkgconfig(python2)
+BuildRequires:	pkgconfig(python3)
 
-Requires:	basesystem-minimal
+Requires:		basesystem-minimal
 Requires(pre):	basesystem-minimal
 Requires(post):	rpm-helper
 Requires(post):	util-linux
+Requires(post):	chkconfig
 Requires:	gettext-base >= 0.10.35-20mdk
 # for /sbin/ip
 Requires:	iproute2
@@ -30,12 +30,11 @@ Requires:	iputils
 Requires:	net-tools
 # (blino) for pidof -c
 # (bor) for pidof -m
-Requires:	sysvinit-tools >= 2.87-8mdv2011.0
+Requires:	procps-ng
 Requires:	ifplugd >= 0.24
 Requires:	iproute2
 Requires:	ethtool
 Requires:	ifmetric
-Requires:	resolvconf >= 1.41
 Requires:	dmsetup
 # http://bugzilla.redhat.com/show_bug.cgi?id=252973
 Conflicts:	nut < 2.2.0
@@ -90,6 +89,8 @@ xz --text ChangeLog
 %build
 %global optflags %{optflags} -Os
 %setup_compile_flags
+export CC=gcc
+export CXX=g++
 
 make
 make -C mandriva
@@ -139,6 +140,9 @@ cat > %{buildroot}%{_var}/lib/rpm/filetriggers/clean-legacy-sysv-symlinks.script
 find -L /etc/rc.d/rc{0,1,2,3,4,5,6,7}.d -type l -exec rm -f {} +
 EOF
 chmod 755 %{buildroot}%{_var}/lib/rpm/filetriggers/clean-legacy-sysv-symlinks.script
+
+# (tpg) kill it with fire
+rm -rf %{buildroot}%{_initddir}/dm
 
 %pre
 if [ $1 -ge 2 ]; then
@@ -237,8 +241,6 @@ fi
 %{_sysconfdir}/sysconfig/network-scripts/init.ipv6-global
 %config(noreplace) %{_sysconfdir}/sysconfig/network-scripts/ifcfg-lo
 %{_sysconfdir}/sysconfig/network-scripts/ifup-post
-%{_sysconfdir}/sysconfig/network-scripts/ifdown-ppp
-%{_sysconfdir}/sysconfig/network-scripts/ifup-ppp
 %{_sysconfdir}/sysconfig/network-scripts/ifup-routes
 %{_sysconfdir}/sysconfig/network-scripts/ifdown-routes
 %{_sysconfdir}/sysconfig/network-scripts/ifup-plip
@@ -299,7 +301,6 @@ fi
 /sbin/sushell
 #mdv
 /sbin/hibernate-cleanup.sh
-/sbin/ppp-watch
 %{_mandir}/man*/*
 %lang(cs) %{_mandir}/cs/man*/*
 %lang(et) %{_mandir}/et/man*/*
@@ -310,16 +311,6 @@ fi
 %lang(ru) %{_mandir}/ru/man*/*
 %lang(uk) %{_mandir}/uk/man*/*
 %dir %attr(775,root,root) /var/run/netreport
-%dir %{_sysconfdir}/ppp
-%dir %{_sysconfdir}/ppp/ip-down.d
-%dir %{_sysconfdir}/ppp/ip-up.d
-%dir %{_sysconfdir}/ppp/peers
-%{_sysconfdir}/ppp/ip-up
-%{_sysconfdir}/ppp/ip-down
-%{_sysconfdir}/ppp/ip-up.ipv6to4
-%{_sysconfdir}/ppp/ip-down.ipv6to4
-%{_sysconfdir}/ppp/ipv6-up
-%{_sysconfdir}/ppp/ipv6-down
 %dir %{_sysconfdir}/NetworkManager
 %dir %{_sysconfdir}/NetworkManager/dispatcher.d
 %{_sysconfdir}/NetworkManager/dispatcher.d/00-netreport
