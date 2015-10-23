@@ -2,8 +2,8 @@
 
 Summary:	The inittab file and the %{_sysconfdir}/init.d scripts
 Name:		initscripts
-Version:	9.54
-Release:	7
+Version:	9.64
+Release:	1
 License:	GPLv2
 Group:		System/Base
 # Upstream URL: http://git.fedorahosted.org/git/initscripts.git
@@ -28,6 +28,7 @@ Requires:	iproute2
 # for /sbin/arping
 Requires:	iputils
 Requires:	net-tools
+Requires:	ipcalc
 # (blino) for pidof -c
 # (bor) for pidof -m
 Requires:	procps-ng
@@ -87,13 +88,11 @@ xz --text ChangeLog
 %apply_patches
 
 %build
-%global optflags %{optflags} -Os
 %setup_compile_flags
-export CC=gcc
-export CXX=g++
+export CC=%{__cc}
 
-make
-make -C mandriva
+%make
+%make -C mandriva
 
 %install
 mkdir -p %{buildroot}%{_sysconfdir}
