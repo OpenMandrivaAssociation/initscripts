@@ -121,9 +121,9 @@ touch %{buildroot}%{_sysconfdir}/crypttab
 chmod 600 %{buildroot}%{_sysconfdir}/crypttab
 
 if [ -f %{buildroot}%{_sysconfdir}/sysctl.conf ]; then
-mkdir -p %{buildroot}%{_sysconfdir}/sysctl.d/
-mv -f %{buildroot}%{_sysconfdir}/sysctl.conf %{buildroot}%{_sysconfdir}/sysctl.d/99-sysctl.conf
-ln -s %{_sysconfdir}/sysctl.d/99-sysctl.conf %{buildroot}%{_sysconfdir}/sysctl.conf
+    mkdir -p %{buildroot}%{_sysconfdir}/sysctl.d/
+    mv -f %{buildroot}%{_sysconfdir}/sysctl.conf %{buildroot}%{_sysconfdir}/sysctl.d/99-sysctl.conf
+    ln -s %{_sysconfdir}/sysctl.d/99-sysctl.conf %{buildroot}%{_sysconfdir}/sysctl.conf
 fi
 
 # (cg) Upstream should stop shipping this too IMO (it's systemd's job now)
@@ -143,6 +143,15 @@ chmod 755 %{buildroot}%{_var}/lib/rpm/filetriggers/clean-legacy-sysv-symlinks.sc
 # (tpg) kill it with fire
 rm -rf %{buildroot}%{_initddir}/dm
 
+install -d %{buildroot}%{_presetdir}
+cat > %{buildroot}%{_presetdir}/86-initscripts.preset << EOF
+enable network
+disable netconsole
+disable dm
+disable network-up
+disable partmon
+EOF
+
 %pre
 if [ $1 -ge 2 ]; then
     if [ -e %{_sysconfdir}/sysctl.conf ] && [ ! -L %{_sysconfdir}/sysctl.conf ]; then
@@ -152,8 +161,6 @@ if [ $1 -ge 2 ]; then
 fi
 
 %post
-%tmpfiles_create %{name}
-%tmpfiles_create mandriva
 
 ##
 touch /var/log/wtmp /var/log/btmp
@@ -194,24 +201,6 @@ chkconfig --del dm > /dev/null 2>&1 || :
 chkconfig --del partmon > /dev/null 2>&1 || :
 fi
 
-%systemd_post network
-
-%systemd_post network-up
-
-%systemd_post netconsole
-
-
-%preun
-%systemd_preun netconsole
-
-%systemd_preun dm
-
-%systemd_preun network-up
-
-%systemd_preun network
-
-%systemd_preun partmon
-
 %files -f %{name}.lang
 %dir %{_sysconfdir}/sysconfig/network-scripts
 %dir %{_sysconfdir}/sysconfig/network-scripts/ifup.d
@@ -227,6 +216,7 @@ fi
 %config(noreplace) %{_sysconfdir}/sysconfig/netconsole
 %config(noreplace) %{_sysconfdir}/sysconfig/readonly-root
 %{_sysconfdir}/sysconfig/network-scripts/ifdown
+%{_presetdir}/86-initscripts.preset
 /sbin/ifdown
 %{_sysconfdir}/sysconfig/network-scripts/ifdown-post
 %{_sysconfdir}/sysconfig/network-scripts/ifup
@@ -272,8 +262,6 @@ fi
 %dir %{_sysconfdir}/rc.d/init.d
 /lib/lsb/init-functions
 %{_sysconfdir}/rc.d/init.d/*
-%config(noreplace) %{_sysconfdir}/sysctl.d/99-sysctl.conf
-%{_sysconfdir}/sysctl.conf
 %dir %{_prefix}/lib/sysctl.d
 %{_prefix}/lib/sysctl.d/00-system.conf
 %exclude %{_sysconfdir}/profile.d/debug*
@@ -286,8 +274,6 @@ fi
 %{_sbindir}/vpn-stop
 %{_sbindir}/mdv-network-event
 %{_sbindir}/sys-unconfig
-/bin/ipcalc
-/bin/usleep
 %attr(4755,root,root) %{_sbindir}/usernetctl
 /sbin/consoletype
 /sbin/genhostid
