@@ -91,7 +91,7 @@ xz --text ChangeLog
 %setup_compile_flags
 export CC=%{__cc}
 
-%make -j1
+%make
 %make -C mandriva
 
 %install
