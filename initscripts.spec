@@ -89,7 +89,7 @@ xz --text ChangeLog
 
 %build
 %setup_compile_flags
-export CC=%{__cc}
+export CC=gcc
 
 %make
 %make -C mandriva
