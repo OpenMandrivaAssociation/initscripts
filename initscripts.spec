@@ -1,6 +1,6 @@
 %define _requires_exceptions GLIBC_PRIVATE
 
-Summary:	The inittab file and the %{_sysconfdir}/init.d scripts
+Summary:	Scripts to bring up network interfaces and legacy utilities
 Name:		initscripts
 Version:	9.64
 Release:	1
@@ -217,6 +217,7 @@ fi
 %config(noreplace) %{_sysconfdir}/sysconfig/readonly-root
 %{_sysconfdir}/sysconfig/network-scripts/ifdown
 %{_presetdir}/86-initscripts.preset
+/bin/usleep
 /sbin/ifdown
 %{_sysconfdir}/sysconfig/network-scripts/ifdown-post
 %{_sysconfdir}/sysconfig/network-scripts/ifup
@@ -258,7 +259,6 @@ fi
 %{_sysconfdir}/statetab
 %dir %{_sysconfdir}/statetab.d
 /lib/udev/rules.d/*
-%config(noreplace) %{_sysconfdir}/inittab
 %dir %{_sysconfdir}/rc.d/init.d
 /lib/lsb/init-functions
 %{_sysconfdir}/rc.d/init.d/*
