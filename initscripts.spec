@@ -3,7 +3,7 @@
 Summary:	Scripts to bring up network interfaces and legacy utilities
 Name:		initscripts
 Version:	9.64
-Release:	1
+Release:	2
 License:	GPLv2
 Group:		System/Base
 # Upstream URL: http://git.fedorahosted.org/git/initscripts.git
@@ -27,7 +27,8 @@ Requires:	gettext-base >= 0.10.35-20mdk
 Requires:	iproute2
 # for /sbin/arping
 Requires:	iputils
-Requires:	net-tools
+Requires:	hostname >= 3.16
+Requires:	net-tools >= 2.0
 Requires:	ipcalc
 # (blino) for pidof -c
 # (bor) for pidof -m
