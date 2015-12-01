@@ -3,7 +3,7 @@
 Summary:	Scripts to bring up network interfaces and legacy utilities
 Name:		initscripts
 Version:	9.64
-Release:	2
+Release:	3
 License:	GPLv2
 Group:		System/Base
 # Upstream URL: http://git.fedorahosted.org/git/initscripts.git
@@ -153,6 +153,12 @@ disable network-up
 disable partmon
 EOF
 
+# add networking file
+cat > %{buildroot}%{_sysconfdir}/sysconfig/network << EOF
+NETWORKING=yes
+NETWORKING_IPV6=no
+EOF
+
 %pre
 if [ $1 -ge 2 ]; then
     if [ -e %{_sysconfdir}/sysctl.conf ] && [ ! -L %{_sysconfdir}/sysctl.conf ]; then
@@ -227,6 +233,7 @@ fi
 %dir %{_sysconfdir}/sysconfig/console/consoletrans
 %dir %{_sysconfdir}/sysconfig/console/consolefonts
 %dir %{_sysconfdir}/sysconfig/modules
+%config(noreplace) %{_sysconfdir}/sysconfig/network
 %{_sysconfdir}/sysconfig/network-scripts/network-functions
 %{_sysconfdir}/sysconfig/network-scripts/network-functions-ipv6
 %{_sysconfdir}/sysconfig/network-scripts/init.ipv6-global
