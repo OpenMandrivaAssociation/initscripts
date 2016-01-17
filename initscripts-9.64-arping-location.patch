@@ -1,0 +1,34 @@
+--- initscripts-9.64/rc.d/init.d/netconsole.omv~	2016-01-17 00:58:41.684783395 +0100
++++ initscripts-9.64/rc.d/init.d/netconsole	2016-01-17 00:58:50.713813145 +0100
+@@ -63,7 +63,7 @@ print_address_info ()
+ 		target=$host
+ 	fi
+ 	if [ -z "$SYSLOGMACADDR" ]; then
+-		arp=$(LANG=C /usr/sbin/arping -f -c 1 -I $DEV $target 2>/dev/null | awk '/ reply from .*[.*]/ { print gensub(".* reply from .* \\[(.*)\\].*","\\1","G"); exit }')
++		arp=$(LANG=C /sbin/arping -f -c 1 -I $DEV $target 2>/dev/null | awk '/ reply from .*[.*]/ { print gensub(".* reply from .* \\[(.*)\\].*","\\1","G"); exit }')
+ 		[ -n "$arp" ] && echo "SYSLOGMACADDR=$arp"
+ 	fi	
+ }	
+--- initscripts-9.64/sysconfig/network-scripts/ifup-eth.omv~	2016-01-17 00:59:04.947860960 +0100
++++ initscripts-9.64/sysconfig/network-scripts/ifup-eth	2016-01-17 00:59:18.625907938 +0100
+@@ -425,7 +425,7 @@ else
+ 
+         if ! LC_ALL=C ip addr ls ${REALDEVICE} | LC_ALL=C grep -q "${ipaddr[$idx]}/${prefix[$idx]}" ; then
+             [ "${REALDEVICE}" != "lo" ] && [ "${arpcheck[$idx]}" != "no" ] && \
+-            if ! /usr/sbin/arping -q -c 2 -w ${ARPING_WAIT:-3} -D -I ${REALDEVICE} ${ipaddr[$idx]}; then
++            if ! /sbin/arping -q -c 2 -w ${ARPING_WAIT:-3} -D -I ${REALDEVICE} ${ipaddr[$idx]}; then
+                 net_log $"Error, some other host already uses address ${ipaddr[$idx]}."
+                 mdv-network-event connection_failure ${DEVICE}
+                 exit 1
+@@ -443,9 +443,9 @@ else
+ 
+         # update ARP cache of neighboring computers
+         if [ "${REALDEVICE}" != "lo" ]; then
+-          /usr/sbin/arping -q -A -c 1 -I ${REALDEVICE} ${ipaddr[$idx]}
++          /sbin/arping -q -A -c 1 -I ${REALDEVICE} ${ipaddr[$idx]}
+           ( sleep 2;
+-            /usr/sbin/arping -q -U -c 1 -I ${REALDEVICE} ${ipaddr[$idx]} ) > /dev/null 2>&1 < /dev/null &
++            /sbin/arping -q -U -c 1 -I ${REALDEVICE} ${ipaddr[$idx]} ) > /dev/null 2>&1 < /dev/null &
+         fi
+     done
+     fi
