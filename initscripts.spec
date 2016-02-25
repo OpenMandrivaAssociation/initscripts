@@ -3,7 +3,7 @@
 Summary:	Scripts to bring up network interfaces and legacy utilities
 Name:		initscripts
 Version:	9.64
-Release:	4
+Release:	5
 License:	GPLv2
 Group:		System/Base
 # Upstream URL: http://git.fedorahosted.org/git/initscripts.git
@@ -18,7 +18,7 @@ BuildRequires:	pkgconfig
 BuildRequires:	popt-devel
 BuildRequires:	pkgconfig(python3)
 
-Requires:		basesystem-minimal
+Requires:	basesystem-minimal
 Requires(pre):	basesystem-minimal
 Requires(post):	rpm-helper
 Requires(post):	util-linux
@@ -38,7 +38,6 @@ Requires:	ifplugd >= 0.24
 Requires:	iproute2
 Requires:	ethtool
 Requires:	ifmetric
-Requires:	dmsetup
 # http://bugzilla.redhat.com/show_bug.cgi?id=252973
 Conflicts:	nut < 2.2.0
 Obsoletes:	rhsound < %{version}-%{release}
@@ -168,8 +167,8 @@ if [ $1 -ge 2 ]; then
     fi
 fi
 
-%post
 
+%posttrans
 ##
 touch /var/log/wtmp /var/log/btmp
 chown root:utmp /var/log/wtmp /var/log/btmp
@@ -179,27 +178,26 @@ chmod 600 /var/log/btmp
 # Add right translation file
 for i in `echo $LANGUAGE:$LC_ALL:$LC_COLLATE:$LANG:C | tr ':' ' '`
 do
-	if [ -r %{_datadir}/locale/$i/LC_MESSAGES/initscripts.mo ]; then
-		mkdir -p /etc/locale/$i/LC_MESSAGES/
-		cp %{_datadir}/locale/$i/LC_MESSAGES/initscripts.mo \
-			/etc/locale/$i/LC_MESSAGES/
-		#
-		# warly
-		# FIXME: this should be done by each locale when installed or upgraded
-		#
-		pushd %{_datadir}/locale/$i/ > /dev/null && for j in LC_*
-		do
-			if [ -r $j -a ! -d $j ]; then
-			    cp $j /etc/locale/$i/
-			fi
-		done && popd > /dev/null
-		if [ -r %{_datadir}/locale/$i/LC_MESSAGES/SYS_LC_MESSAGES ]; then
-			cp %{_datadir}/locale/$LANG/LC_MESSAGES/SYS_LC_MESSAGES /etc/locale/$i/LC_MESSAGES/
-		fi
-		#
-		#
-		break
+    if [ -r %{_datadir}/locale/$i/LC_MESSAGES/initscripts.mo ]; then
+	mkdir -p /etc/locale/$i/LC_MESSAGES/
+	cp %{_datadir}/locale/$i/LC_MESSAGES/initscripts.mo /etc/locale/$i/LC_MESSAGES/
+#
+# warly
+# FIXME: this should be done by each locale when installed or upgraded
+#
+	pushd %{_datadir}/locale/$i/ > /dev/null && for j in LC_*
+	do
+	    if [ -r $j -a ! -d $j ]; then
+		cp $j /etc/locale/$i/
+	    fi
+	done && popd > /dev/null
+	if [ -r %{_datadir}/locale/$i/LC_MESSAGES/SYS_LC_MESSAGES ]; then
+	    cp %{_datadir}/locale/$LANG/LC_MESSAGES/SYS_LC_MESSAGES /etc/locale/$i/LC_MESSAGES/
 	fi
+#
+#
+	break
+    fi
 done
 
 if [ $1 -ge 2 ]; then
