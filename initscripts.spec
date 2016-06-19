@@ -2,16 +2,14 @@
 
 Summary:	Scripts to bring up network interfaces and legacy utilities
 Name:		initscripts
-Version:	9.64
-Release:	6
+Version:	9.66
+Release:	1
 License:	GPLv2
 Group:		System/Base
 # Upstream URL: http://git.fedorahosted.org/git/initscripts.git
-Url:		https://abf.rosalinux.ru/omv_software/initscripts
-# https://abf.rosalinux.ru/omv_software/initscripts
+Url:		https://github.com/OpenMandrivaSoftware/initscripts
 Source0:	%{name}-%{version}.tar.xz
 Source100:	%{name}.rpmlintrc
-Patch0:		initscripts-9.64-arping-location.patch
 
 BuildRequires:	pkgconfig(glib-2.0)
 BuildRequires:	pkgconfig
