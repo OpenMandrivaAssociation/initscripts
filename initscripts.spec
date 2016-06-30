@@ -3,7 +3,7 @@
 Summary:	Scripts to bring up network interfaces and legacy utilities
 Name:		initscripts
 Version:	9.66
-Release:	1
+Release:	2
 License:	GPLv2
 Group:		System/Base
 # Upstream URL: http://git.fedorahosted.org/git/initscripts.git
@@ -79,8 +79,6 @@ Currently, this consists of various memory checking code.
 rm -rf po
 ln -s mandriva/po
 
-xz --text ChangeLog
-
 %apply_patches
 
 %build
@@ -153,6 +151,10 @@ cat > %{buildroot}%{_sysconfdir}/sysconfig/network << EOF
 NETWORKING=yes
 NETWORKING_IPV6=no
 EOF
+
+# (tpg) remove broken links
+rm -rf %{buildroot}%{_systemunitdir}/basic.target.wants/fedora-autorelabel.service
+rm -rf %{buildroot}%{_systemunitdir}/basic.target.wants/fedora-autorelabel-mark.service
 
 %pre
 if [ $1 -ge 2 ]; then
@@ -301,7 +303,7 @@ fi
 %dir %{_sysconfdir}/NetworkManager
 %dir %{_sysconfdir}/NetworkManager/dispatcher.d
 %{_sysconfdir}/NetworkManager/dispatcher.d/00-netreport
-%doc sysconfig.txt sysvinitfiles ChangeLog.xz static-routes-ipv6 ipv6-tunnel.howto ipv6-6to4.howto changes.ipv6
+%doc sysconfig.txt sysvinitfiles static-routes-ipv6 ipv6-tunnel.howto ipv6-6to4.howto changes.ipv6
 /var/lib/stateless
 %ghost %attr(0664,root,utmp) /var/log/btmp
 %ghost %attr(0664,root,utmp) /var/log/wtmp
@@ -319,8 +321,6 @@ fi
 %{_systemdrootdir}/fedora-loadmodules
 %{_systemdrootdir}/fedora-readonly
 %{_systemdrootdir}/mandriva-save-dmesg
-%{_systemunitdir}/basic.target.wants/fedora-autorelabel.service
-%{_systemunitdir}/basic.target.wants/fedora-autorelabel-mark.service
 %{_systemunitdir}/basic.target.wants/fedora-loadmodules.service
 %{_systemunitdir}/basic.target.wants/mandriva-everytime.service
 %{_systemunitdir}/fedora-domainname.service
