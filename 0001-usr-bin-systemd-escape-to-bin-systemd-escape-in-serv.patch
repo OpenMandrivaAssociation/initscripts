@@ -1,0 +1,25 @@
+From 8598acd7c0c82b54aac92062e2ebfbe2b9473cfa Mon Sep 17 00:00:00 2001
+From: Alexander Stefanov-Khryukin <alexander@mezon.ru>
+Date: Fri, 2 Dec 2016 14:41:03 +0000
+Subject: [PATCH] /usr/bin/systemd-escape to /bin/systemd-escape in service
+
+---
+ service | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/service b/service
+index f33fd1f..64106fe 100755
+--- a/service
++++ b/service
+@@ -89,7 +89,7 @@ elif [ -x "${ACTIONDIR}/${SERVICE}/${ACTION}" -a -n "${ACTION}" ]; then
+    env -i PATH="$PATH" TERM="$TERM" SYSTEMCTL_IGNORE_DEPENDENCIES=${SYSTEMCTL_IGNORE_DEPENDENCIES} SYSTEMCTL_SKIP_REDIRECT=${SYSTEMCTL_SKIP_REDIRECT} "${ACTIONDIR}/${SERVICE}/${ACTION}" ${OPTIONS}
+ elif `echo $ACTION | egrep -qw "start|stop|restart|try-restart|reload|force-reload|status|condrestart"` ; then
+    echo $"Redirecting to /bin/systemctl ${ACTION} ${OPTIONS} ${SERVICE}.service" >&2
+-   SERVICE_MANGLED=$(/usr/bin/systemd-escape --mangle ${SERVICE})
++   SERVICE_MANGLED=$(/bin/systemd-escape --mangle ${SERVICE})
+    exec /bin/systemctl ${ACTION} ${OPTIONS} ${SERVICE_MANGLED}
+ else
+    echo $"The service command supports only basic LSB actions (start, stop, restart, try-restart, reload, force-reload, status). For other actions, please try to use systemctl." >&2
+-- 
+2.8.3
+
