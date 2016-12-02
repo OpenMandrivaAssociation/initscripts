@@ -3,13 +3,14 @@
 Summary:	Scripts to bring up network interfaces and legacy utilities
 Name:		initscripts
 Version:	9.66
-Release:	2
+Release:	3
 License:	GPLv2
 Group:		System/Base
 # Upstream URL: http://git.fedorahosted.org/git/initscripts.git
 Url:		https://github.com/OpenMandrivaSoftware/initscripts
 Source0:	%{name}-%{version}.tar.xz
 Source100:	%{name}.rpmlintrc
+Patch0:		0001-usr-bin-systemd-escape-to-bin-systemd-escape-in-serv.patch
 
 BuildRequires:	pkgconfig(glib-2.0)
 BuildRequires:	pkgconfig
