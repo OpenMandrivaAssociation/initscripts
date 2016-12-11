@@ -3,7 +3,7 @@
 Summary:	Scripts to bring up network interfaces and legacy utilities
 Name:		initscripts
 Version:	9.66
-Release:	3
+Release:	4
 License:	GPLv2
 Group:		System/Base
 # Upstream URL: http://git.fedorahosted.org/git/initscripts.git
@@ -156,6 +156,9 @@ EOF
 # (tpg) remove broken links
 rm -rf %{buildroot}%{_systemunitdir}/basic.target.wants/fedora-autorelabel.service
 rm -rf %{buildroot}%{_systemunitdir}/basic.target.wants/fedora-autorelabel-mark.service
+
+# (tpg) get rid of it
+rm -rf %{buildroot}/lib/udev/rules.d/60-ssd.rules
 
 %pre
 if [ $1 -ge 2 ]; then
