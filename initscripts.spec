@@ -17,7 +17,6 @@ BuildRequires:	popt-devel
 BuildRequires:	pkgconfig(python3)
 
 Requires:	basesystem-minimal
-Requires(pre):	basesystem-minimal
 Requires(post):	rpm-helper
 Requires(post):	util-linux
 Requires(post):	chkconfig
@@ -114,12 +113,6 @@ export DONT_GPRINTIFY=1
 touch %{buildroot}%{_sysconfdir}/crypttab
 chmod 600 %{buildroot}%{_sysconfdir}/crypttab
 
-if [ -f %{buildroot}%{_sysconfdir}/sysctl.conf ]; then
-    mkdir -p %{buildroot}%{_sysconfdir}/sysctl.d/
-    mv -f %{buildroot}%{_sysconfdir}/sysctl.conf %{buildroot}%{_sysconfdir}/sysctl.d/99-sysctl.conf
-    ln -s %{_sysconfdir}/sysctl.d/99-sysctl.conf %{buildroot}%{_sysconfdir}/sysctl.conf
-fi
-
 # (cg) Upstream should stop shipping this too IMO (it's systemd's job now)
 rm -f %{buildroot}/var/run/utmp
 
@@ -158,14 +151,6 @@ rm -rf %{buildroot}%{_systemunitdir}/basic.target.wants/fedora-autorelabel-mark.
 
 # (tpg) get rid of it
 rm -rf %{buildroot}/lib/udev/rules.d/60-ssd.rules
-
-%pre
-if [ $1 -ge 2 ]; then
-    if [ -e %{_sysconfdir}/sysctl.conf ] && [ ! -L %{_sysconfdir}/sysctl.conf ]; then
-	mv -f %{_sysconfdir}/sysctl.conf %{_sysconfdir}/sysctl.d/99-sysctl.conf
-	ln -s %{_sysconfdir}/sysctl.d/99-sysctl.conf %{_sysconfdir}/sysctl.conf
-    fi
-fi
 
 
 %posttrans
@@ -269,8 +254,6 @@ fi
 %dir %{_sysconfdir}/rc.d/init.d
 /lib/lsb/init-functions
 %{_sysconfdir}/rc.d/init.d/*
-%dir %{_prefix}/lib/sysctl.d
-%{_prefix}/lib/sysctl.d/00-system.conf
 %exclude %{_sysconfdir}/profile.d/debug*
 %config %{_sysconfdir}/profile.d/*
 %dir %{_sysconfdir}/sysconfig/network-scripts/cellular.d
