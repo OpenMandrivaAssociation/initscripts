@@ -2,8 +2,8 @@
 
 Summary:	Scripts to bring up network interfaces and legacy utilities
 Name:		initscripts
-Version:	9.66
-Release:	4
+Version:	9.77
+Release:	1
 License:	GPLv2
 Group:		System/Base
 # Upstream URL: http://git.fedorahosted.org/git/initscripts.git
@@ -303,7 +303,7 @@ fi
 %lang(pt_BR) %{_mandir}/pt_BR/man*/*
 %lang(ru) %{_mandir}/ru/man*/*
 %lang(uk) %{_mandir}/uk/man*/*
-%dir %attr(775,root,root) /var/run/netreport
+%dir %attr(775,root,root) /run/netreport
 %dir %{_sysconfdir}/NetworkManager
 %dir %{_sysconfdir}/NetworkManager/dispatcher.d
 %{_sysconfdir}/NetworkManager/dispatcher.d/00-netreport
