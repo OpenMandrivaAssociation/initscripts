@@ -2,15 +2,14 @@
 
 Summary:	Scripts to bring up network interfaces and legacy utilities
 Name:		initscripts
-Version:	9.66
-Release:	4
+Version:	9.77
+Release:	1
 License:	GPLv2
 Group:		System/Base
 # Upstream URL: http://git.fedorahosted.org/git/initscripts.git
 Url:		https://github.com/OpenMandrivaSoftware/initscripts
 Source0:	%{name}-%{version}.tar.xz
 Source100:	%{name}.rpmlintrc
-Patch0:		0001-usr-bin-systemd-escape-to-bin-systemd-escape-in-serv.patch
 
 BuildRequires:	pkgconfig(glib-2.0)
 BuildRequires:	pkgconfig
@@ -18,7 +17,6 @@ BuildRequires:	popt-devel
 BuildRequires:	pkgconfig(python3)
 
 Requires:	basesystem-minimal
-Requires(pre):	basesystem-minimal
 Requires(post):	rpm-helper
 Requires(post):	util-linux
 Requires(post):	chkconfig
@@ -115,12 +113,6 @@ export DONT_GPRINTIFY=1
 touch %{buildroot}%{_sysconfdir}/crypttab
 chmod 600 %{buildroot}%{_sysconfdir}/crypttab
 
-if [ -f %{buildroot}%{_sysconfdir}/sysctl.conf ]; then
-    mkdir -p %{buildroot}%{_sysconfdir}/sysctl.d/
-    mv -f %{buildroot}%{_sysconfdir}/sysctl.conf %{buildroot}%{_sysconfdir}/sysctl.d/99-sysctl.conf
-    ln -s %{_sysconfdir}/sysctl.d/99-sysctl.conf %{buildroot}%{_sysconfdir}/sysctl.conf
-fi
-
 # (cg) Upstream should stop shipping this too IMO (it's systemd's job now)
 rm -f %{buildroot}/var/run/utmp
 
@@ -159,14 +151,6 @@ rm -rf %{buildroot}%{_systemunitdir}/basic.target.wants/fedora-autorelabel-mark.
 
 # (tpg) get rid of it
 rm -rf %{buildroot}/lib/udev/rules.d/60-ssd.rules
-
-%pre
-if [ $1 -ge 2 ]; then
-    if [ -e %{_sysconfdir}/sysctl.conf ] && [ ! -L %{_sysconfdir}/sysctl.conf ]; then
-	mv -f %{_sysconfdir}/sysctl.conf %{_sysconfdir}/sysctl.d/99-sysctl.conf
-	ln -s %{_sysconfdir}/sysctl.d/99-sysctl.conf %{_sysconfdir}/sysctl.conf
-    fi
-fi
 
 
 %posttrans
@@ -270,8 +254,6 @@ fi
 %dir %{_sysconfdir}/rc.d/init.d
 /lib/lsb/init-functions
 %{_sysconfdir}/rc.d/init.d/*
-%dir %{_prefix}/lib/sysctl.d
-%{_prefix}/lib/sysctl.d/00-system.conf
 %exclude %{_sysconfdir}/profile.d/debug*
 %config %{_sysconfdir}/profile.d/*
 %dir %{_sysconfdir}/sysconfig/network-scripts/cellular.d
@@ -303,7 +285,7 @@ fi
 %lang(pt_BR) %{_mandir}/pt_BR/man*/*
 %lang(ru) %{_mandir}/ru/man*/*
 %lang(uk) %{_mandir}/uk/man*/*
-%dir %attr(775,root,root) /var/run/netreport
+%dir %attr(775,root,root) /run/netreport
 %dir %{_sysconfdir}/NetworkManager
 %dir %{_sysconfdir}/NetworkManager/dispatcher.d
 %{_sysconfdir}/NetworkManager/dispatcher.d/00-netreport
