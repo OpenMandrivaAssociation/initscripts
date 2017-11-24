@@ -3,7 +3,7 @@
 Summary:	Scripts to bring up network interfaces and legacy utilities
 Name:		initscripts
 Version:	9.77
-Release:	1
+Release:	2
 License:	GPLv2
 Group:		System/Base
 # Upstream URL: http://git.fedorahosted.org/git/initscripts.git
