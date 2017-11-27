@@ -8,7 +8,7 @@ License:	GPLv2
 Group:		System/Base
 # Upstream URL: http://git.fedorahosted.org/git/initscripts.git
 Url:		https://github.com/OpenMandrivaSoftware/initscripts
-Source0:	%{name}-%{version}.tar.xz
+Source0:	%{name}-%{version}.tar.gz
 Source100:	%{name}.rpmlintrc
 
 BuildRequires:	pkgconfig(glib-2.0)
