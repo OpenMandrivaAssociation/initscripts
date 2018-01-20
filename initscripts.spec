@@ -2,8 +2,8 @@
 
 Summary:	Scripts to bring up network interfaces and legacy utilities
 Name:		initscripts
-Version:	9.77
-Release:	2
+Version:	9.79
+Release:	1
 License:	GPLv2
 Group:		System/Base
 # Upstream URL: http://git.fedorahosted.org/git/initscripts.git
@@ -16,22 +16,41 @@ BuildRequires:	pkgconfig
 BuildRequires:	popt-devel
 BuildRequires:	pkgconfig(python3)
 
-Requires:	basesystem-minimal
-Requires(post):	rpm-helper
-Requires(post):	util-linux
+Requires(post,preun):	rpm-helper >= 0.24.17
+Requires(post,preun,postun):	systemd >= 235
+Requires(post):	coreutils
+Requires(post):	grep
 Requires(post):	chkconfig
-Requires:	gettext-base >= 0.10.35-20mdk
+# for /bin/awk
+Requires:	gawk
+# for /bin/sed
+Requires:	sed
+Requires:	e2fsprogs
+Requires:	gettext-base >= 0.19
+# needed for chvt --userwait
+Requires:	kbd >= 2.0.4
+# for /sbin/fuser
+Requires:	psmisc
+Requires:	which
+Requires:	setup >= 2.8.9
+# for /sbin/arping
+Requires:	iputils
 # for /sbin/ip
 Requires:	iproute2
 Requires:	hostname >= 3.16
+# for /bin/find
+Requires:	findutils
 Requires:	net-tools >= 2.0
 Requires:	ipcalc
 # (blino) for pidof -c
 # (bor) for pidof -m
 Requires:	procps-ng
+Requires:	kmod
 Requires:	ifplugd >= 0.24
 Requires:	ethtool
 Requires:	ifmetric
+Requires:	util-linux >= 2.31
+Requires:	dmsetup
 # http://bugzilla.redhat.com/show_bug.cgi?id=252973
 Conflicts:	nut < 2.2.0
 Obsoletes:	rhsound < %{version}-%{release}
@@ -54,24 +73,13 @@ Conflicts:	mdadm < 2.6.4-2mdv2008.1
 Conflicts:	systemd <= 19-2
 Conflicts:	networkmanager < 0.8.2-8
 Conflicts:	prcsys
+%rename %{name}-debugmode
 
 %description
 The initscripts package contains the basic system scripts used to boot
 your %{distribution} system, change run levels, and shut the system
 down cleanly.  Initscripts also contains the scripts that activate and
 deactivate most network interfaces.
-
-%package debugmode
-Summary:	Scripts for running in debugging mode
-Requires:	initscripts
-Group:		System/Base
-%rename		debugmode
-
-%description debugmode
-The debugmode package contains some basic scripts that are used to run
-the system in a debugging mode.
-
-Currently, this consists of various memory checking code.
 
 %prep
 %setup -q
@@ -132,6 +140,10 @@ rm -rf %{buildroot}%{_initddir}/dm
 
 install -d %{buildroot}%{_presetdir}
 cat > %{buildroot}%{_presetdir}/86-initscripts.preset << EOF
+enable fedora-import-state.service
+enable fedora-loadmodules.service
+enable fedora-readonly.service
+enable mandriva-everytime.service
 enable network
 disable netconsole
 disable dm
@@ -152,44 +164,28 @@ rm -rf %{buildroot}%{_systemunitdir}/basic.target.wants/fedora-autorelabel-mark.
 # (tpg) get rid of it
 rm -rf %{buildroot}/lib/udev/rules.d/60-ssd.rules
 
+%post
+%systemd_post fedora-import-state.service fedora-loadmodules.service fedora-readonly.service mandriva-everytime.service
 
 %posttrans
+##Fixme
+touch /etc/sysconfig/i18n
 ##
 touch /var/log/wtmp /var/log/btmp
 chown root:utmp /var/log/wtmp /var/log/btmp
 chmod 664 /var/log/wtmp
 chmod 600 /var/log/btmp
 
-# Add right translation file
-for i in `echo $LANGUAGE:$LC_ALL:$LC_COLLATE:$LANG:C | tr ':' ' '`
-do
-    if [ -r %{_datadir}/locale/$i/LC_MESSAGES/initscripts.mo ]; then
-	mkdir -p /etc/locale/$i/LC_MESSAGES/
-	cp %{_datadir}/locale/$i/LC_MESSAGES/initscripts.mo /etc/locale/$i/LC_MESSAGES/
-#
-# warly
-# FIXME: this should be done by each locale when installed or upgraded
-#
-	pushd %{_datadir}/locale/$i/ > /dev/null && for j in LC_*
-	do
-	    if [ -r $j -a ! -d $j ]; then
-		cp $j /etc/locale/$i/
-	    fi
-	done && popd > /dev/null
-	if [ -r %{_datadir}/locale/$i/LC_MESSAGES/SYS_LC_MESSAGES ]; then
-	    cp %{_datadir}/locale/$LANG/LC_MESSAGES/SYS_LC_MESSAGES /etc/locale/$i/LC_MESSAGES/
-	fi
-#
-#
-	break
-    fi
-done
+%preun
+%systemd_preun fedora-import-state.service fedora-loadmodules.service fedora-readonly.service mandriva-everytime.service
 
-if [ $1 -ge 2 ]; then
-# (tpg) die! systemd takes care of this
-chkconfig --del dm > /dev/null 2>&1 || :
-# (tpg) kill this too
-chkconfig --del partmon > /dev/null 2>&1 || :
+%postun
+%systemd_postun fedora-import-state.service fedora-loadmodules.service fedora-readonly.service mandriva-everytime.service
+
+%triggerun -- initscripts < 9.79
+if [ $1 -gt 1 ]; then
+  systemctl enable fedora-import-state.service fedora-readonly.service mandriva-everytime.service &> /dev/null || :
+  echo -e "\nUPGRADE: Automatically re-enabling default systemd units: fedora-import-state.service fedora-readonly.service mandriva-everytime.service\n" || :
 fi
 
 %files -f %{name}.lang
@@ -254,7 +250,6 @@ fi
 %dir %{_sysconfdir}/rc.d/init.d
 /lib/lsb/init-functions
 %{_sysconfdir}/rc.d/init.d/*
-%exclude %{_sysconfdir}/profile.d/debug*
 %config %{_sysconfdir}/profile.d/*
 %dir %{_sysconfdir}/sysconfig/network-scripts/cellular.d
 %dir %{_sysconfdir}/sysconfig/network-scripts/hostname.d
@@ -306,7 +301,6 @@ fi
 %{_systemdrootdir}/fedora-import-state
 %{_systemdrootdir}/fedora-loadmodules
 %{_systemdrootdir}/fedora-readonly
-%{_systemdrootdir}/mandriva-save-dmesg
 %{_systemunitdir}/basic.target.wants/fedora-loadmodules.service
 %{_systemunitdir}/basic.target.wants/mandriva-everytime.service
 %{_systemunitdir}/fedora-domainname.service
@@ -314,11 +308,5 @@ fi
 %{_systemunitdir}/fedora-loadmodules.service
 %{_systemunitdir}/fedora-readonly.service
 %{_systemunitdir}/mandriva-everytime.service
-%{_systemunitdir}/mandriva-save-dmesg.service
 %{_systemunitdir}/local-fs.target.wants/fedora-import-state.service
 %{_systemunitdir}/local-fs.target.wants/fedora-readonly.service
-%{_systemunitdir}/mandriva-kmsg-loglevel.service
-
-%files debugmode
-%config(noreplace) %{_sysconfdir}/sysconfig/debug
-%config %{_sysconfdir}/profile.d/debug*
