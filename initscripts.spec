@@ -197,7 +197,6 @@ fi
 %dir %{_sysconfdir}/sysconfig/network-scripts/vpn.d/pptp
 %dir %{_sysconfdir}/sysconfig/network-scripts/vpn.d/vpnc
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/adjtime
-%config(noreplace) %{_sysconfdir}/sysconfig/init
 %config(noreplace) %{_sysconfdir}/sysconfig/autofsck
 %config(noreplace) %{_sysconfdir}/sysconfig/netconsole
 %config(noreplace) %{_sysconfdir}/sysconfig/readonly-root
