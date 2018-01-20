@@ -17,7 +17,7 @@ BuildRequires:	popt-devel
 BuildRequires:	pkgconfig(python3)
 
 Requires(post,preun):	rpm-helper >= 0.24.17
-Requires(post,preun,postun):	systemd >= 235
+Requires(post,preun):	systemd >= 235
 Requires(post):	coreutils
 Requires(post):	grep
 Requires(post):	chkconfig
@@ -105,8 +105,7 @@ make -C mandriva install ROOT=%{buildroot} mandir=%{_mandir}
 python mandriva/gprintify.py \
 	`find %{buildroot}%{_sysconfdir}/rc.d -type f` \
 	`find %{buildroot}/sysconfig/network-scripts -type f` \
-	%{buildroot}%{_systemdrootdir}/fedora-* \
-	%{buildroot}%{_systemdrootdir}/mandriva-*
+	%{buildroot}%{_systemdrootdir}/fedora-*
 
 # (tpg) remove as its not needed
 for i in 0 1 2 3 4 5 6; do
@@ -179,9 +178,6 @@ chmod 600 /var/log/btmp
 %preun
 %systemd_preun fedora-import-state.service fedora-loadmodules.service fedora-readonly.service mandriva-everytime.service
 
-%postun
-%systemd_postun fedora-import-state.service fedora-loadmodules.service fedora-readonly.service mandriva-everytime.service
-
 %triggerun -- initscripts < 9.79
 if [ $1 -gt 1 ]; then
   systemctl enable fedora-import-state.service fedora-readonly.service mandriva-everytime.service &> /dev/null || :
@@ -198,7 +194,6 @@ fi
 %dir %{_sysconfdir}/sysconfig/network-scripts/vpn.d/pptp
 %dir %{_sysconfdir}/sysconfig/network-scripts/vpn.d/vpnc
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/adjtime
-%config(noreplace) %{_sysconfdir}/sysconfig/init
 %config(noreplace) %{_sysconfdir}/sysconfig/autofsck
 %config(noreplace) %{_sysconfdir}/sysconfig/netconsole
 %config(noreplace) %{_sysconfdir}/sysconfig/readonly-root
@@ -301,12 +296,8 @@ fi
 %{_systemdrootdir}/fedora-import-state
 %{_systemdrootdir}/fedora-loadmodules
 %{_systemdrootdir}/fedora-readonly
-%{_systemunitdir}/basic.target.wants/fedora-loadmodules.service
-%{_systemunitdir}/basic.target.wants/mandriva-everytime.service
 %{_systemunitdir}/fedora-domainname.service
 %{_systemunitdir}/fedora-import-state.service
 %{_systemunitdir}/fedora-loadmodules.service
 %{_systemunitdir}/fedora-readonly.service
 %{_systemunitdir}/mandriva-everytime.service
-%{_systemunitdir}/local-fs.target.wants/fedora-import-state.service
-%{_systemunitdir}/local-fs.target.wants/fedora-readonly.service
