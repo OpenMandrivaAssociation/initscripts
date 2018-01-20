@@ -300,12 +300,8 @@ fi
 %{_systemdrootdir}/fedora-import-state
 %{_systemdrootdir}/fedora-loadmodules
 %{_systemdrootdir}/fedora-readonly
-%{_systemunitdir}/basic.target.wants/fedora-loadmodules.service
-%{_systemunitdir}/basic.target.wants/mandriva-everytime.service
 %{_systemunitdir}/fedora-domainname.service
 %{_systemunitdir}/fedora-import-state.service
 %{_systemunitdir}/fedora-loadmodules.service
 %{_systemunitdir}/fedora-readonly.service
 %{_systemunitdir}/mandriva-everytime.service
-%{_systemunitdir}/local-fs.target.wants/fedora-import-state.service
-%{_systemunitdir}/local-fs.target.wants/fedora-readonly.service
