@@ -17,7 +17,7 @@ BuildRequires:	popt-devel
 BuildRequires:	pkgconfig(python3)
 
 Requires(post,preun):	rpm-helper >= 0.24.17
-Requires(post,preun,postun):	systemd >= 235
+Requires(post,preun):	systemd >= 235
 Requires(post):	coreutils
 Requires(post):	grep
 Requires(post):	chkconfig
@@ -177,9 +177,6 @@ chmod 600 /var/log/btmp
 
 %preun
 %systemd_preun fedora-import-state.service fedora-loadmodules.service fedora-readonly.service mandriva-everytime.service
-
-%postun
-%systemd_postun fedora-import-state.service fedora-loadmodules.service fedora-readonly.service mandriva-everytime.service
 
 %triggerun -- initscripts < 9.79
 if [ $1 -gt 1 ]; then
