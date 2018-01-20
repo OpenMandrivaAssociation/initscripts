@@ -105,8 +105,7 @@ make -C mandriva install ROOT=%{buildroot} mandir=%{_mandir}
 python mandriva/gprintify.py \
 	`find %{buildroot}%{_sysconfdir}/rc.d -type f` \
 	`find %{buildroot}/sysconfig/network-scripts -type f` \
-	%{buildroot}%{_systemdrootdir}/fedora-* \
-	%{buildroot}%{_systemdrootdir}/mandriva-*
+	%{buildroot}%{_systemdrootdir}/fedora-*
 
 # (tpg) remove as its not needed
 for i in 0 1 2 3 4 5 6; do
