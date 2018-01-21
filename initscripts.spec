@@ -3,7 +3,7 @@
 Summary:	Scripts to bring up network interfaces and legacy utilities
 Name:		initscripts
 Version:	9.79
-Release:	1
+Release:	2
 License:	GPLv2
 Group:		System/Base
 # Upstream URL: http://git.fedorahosted.org/git/initscripts.git
@@ -178,10 +178,10 @@ chmod 600 /var/log/btmp
 %preun
 %systemd_preun fedora-import-state.service fedora-loadmodules.service fedora-readonly.service mandriva-everytime.service
 
-%triggerun -- initscripts < 9.79
+%triggerun -- initscripts < 9.79-2
 if [ $1 -gt 1 ]; then
-  systemctl enable fedora-import-state.service fedora-readonly.service mandriva-everytime.service &> /dev/null || :
-  echo -e "\nUPGRADE: Automatically re-enabling default systemd units: fedora-import-state.service fedora-readonly.service mandriva-everytime.service\n" || :
+  systemctl enable fedora-import-state.service fedora-loadmodules.service fedora-readonly.service mandriva-everytime.service &> /dev/null || :
+  echo -e "\nUPGRADE: Automatically re-enabling default systemd units: fedora-import-state.service fedora-loadmodules.service fedora-readonly.service mandriva-everytime.service\n" || :
 fi
 
 %files -f %{name}.lang
