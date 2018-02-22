@@ -3,7 +3,7 @@
 Summary:	Scripts to bring up network interfaces and legacy utilities
 Name:		initscripts
 Version:	9.79
-Release:	2
+Release:	3
 License:	GPLv2
 Group:		System/Base
 # Upstream URL: http://git.fedorahosted.org/git/initscripts.git
@@ -123,17 +123,6 @@ chmod 600 %{buildroot}%{_sysconfdir}/crypttab
 # (cg) Upstream should stop shipping this too IMO (it's systemd's job now)
 rm -f %{buildroot}/var/run/utmp
 
-# (cg) Clean up danging symlinks after initscript removal
-install -d %{buildroot}%{_var}/lib/rpm/filetriggers
-cat > %{buildroot}%{_var}/lib/rpm/filetriggers/clean-legacy-sysv-symlinks.filter << EOF
-^.%{_initrddir}/
-EOF
-cat > %{buildroot}%{_var}/lib/rpm/filetriggers/clean-legacy-sysv-symlinks.script << EOF
-#!/bin/sh
-find -L /etc/rc.d/rc{0,1,2,3,4,5,6,7}.d -type l -exec rm -f {} +
-EOF
-chmod 755 %{buildroot}%{_var}/lib/rpm/filetriggers/clean-legacy-sysv-symlinks.script
-
 # (tpg) kill it with fire
 rm -rf %{buildroot}%{_initddir}/dm
 
@@ -183,6 +172,9 @@ if [ $1 -gt 1 ]; then
   systemctl enable fedora-import-state.service fedora-loadmodules.service fedora-readonly.service mandriva-everytime.service &> /dev/null || :
   echo -e "\nUPGRADE: Automatically re-enabling default systemd units: fedora-import-state.service fedora-loadmodules.service fedora-readonly.service mandriva-everytime.service\n" || :
 fi
+
+# (cg) Clean up danging symlinks after initscript removal
+find -L /etc/rc.d/rc{0,1,2,3,4,5,6,7}.d -type l -delete
 
 %files -f %{name}.lang
 %dir %{_sysconfdir}/sysconfig/network-scripts
@@ -291,7 +283,6 @@ fi
 %dir /lib/tmpfiles.d
 /lib/tmpfiles.d/initscripts.conf
 /lib/tmpfiles.d/mandriva.conf
-%{_var}/lib/rpm/filetriggers/clean-legacy-sysv-symlinks.*
 %{_systemdrootdir}/fedora-domainname
 %{_systemdrootdir}/fedora-import-state
 %{_systemdrootdir}/fedora-loadmodules
