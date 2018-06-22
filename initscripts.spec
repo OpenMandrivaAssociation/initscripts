@@ -16,6 +16,9 @@ BuildRequires:	pkgconfig
 BuildRequires:	popt-devel
 BuildRequires:	pkgconfig(python3)
 
+BuildRequires:	rpm-helper
+BuildRequires:	systemd
+
 Requires(post,preun):	rpm-helper >= 0.24.17
 Requires(post,preun):	systemd >= 235
 Requires(post):	coreutils
