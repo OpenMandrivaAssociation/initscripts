@@ -3,7 +3,7 @@
 Summary:	Scripts to bring up network interfaces and legacy utilities
 Name:		initscripts
 Version:	9.80
-Release:	2
+Release:	3
 License:	GPLv2
 Group:		System/Base
 # Upstream URL: http://git.fedorahosted.org/git/initscripts.git
@@ -49,7 +49,6 @@ Requires:	ipcalc
 # (bor) for pidof -m
 Requires:	procps-ng
 Requires:	kmod
-Requires:	ifplugd >= 0.24
 Requires:	ethtool
 Requires:	ifmetric
 Requires:	util-linux >= 2.31
