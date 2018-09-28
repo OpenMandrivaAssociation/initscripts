@@ -1,0 +1,43 @@
+diff -Naur initscripts-10.01/Makefile initscripts-10.01.tpg/Makefile
+--- initscripts-10.01/Makefile	2018-08-06 11:06:05.000000000 +0000
++++ initscripts-10.01.tpg/Makefile	2018-09-28 22:33:25.722652810 +0000
+@@ -68,7 +68,11 @@
+ 
+ install-usr:
+ 	install -m 0755 -d $(DESTDIR)$(prefix)
+-	cp -a        usr/* $(DESTDIR)$(prefix)/
++	install -m 0755 -d $(DESTDIR)/lib
++	install -m 0755 -d $(DESTDIR)/sbin
++	cp -a        usr/libexec $(DESTDIR)$(prefix)/
++	cp -a        usr/lib/* $(DESTDIR)/lib
++	cp -a        usr/sbin/* $(DESTDIR)/sbin
+ 
+ install-network-scripts: install-usr install-etc
+ 	install -m 0755 -d      $(DESTDIR)$(sysconfdir)/sysconfig/network-scripts
+diff -Naur initscripts-10.01/src/Makefile initscripts-10.01.tpg/src/Makefile
+--- initscripts-10.01/src/Makefile	2018-08-06 11:06:05.000000000 +0000
++++ initscripts-10.01.tpg/src/Makefile	2018-09-28 22:23:27.466661083 +0000
+@@ -17,7 +17,7 @@
+ sbindir     = $(prefix)/sbin
+ libdir      = $(prefix)/lib
+ 
+-CC          = gcc
++CC          = $(CC)
+ CFLAGS     += $(RPM_OPT_FLAGS) -Wall -D_GNU_SOURCE -fPIE
+ LDFLAGS    += $(RPM_LD_FLAGS) -pie -z relro -z now
+ 
+@@ -28,12 +28,12 @@
+ install: all
+ 	install -m 0755 -d $(DESTDIR)$(bindir)
+ 	install -m 0755 -d $(DESTDIR)$(sbindir)
+-	install -m 0755 -d $(DESTDIR)$(libdir)/udev
++	install -m 0755 -d $(DESTDIR)/$(/udevdir)
+ 	install -m 0755 build/usleep         $(DESTDIR)$(bindir)
+ 	install -m 0755 build/consoletype    $(DESTDIR)$(sbindir)
+ 	install -m 0755 build/genhostid      $(DESTDIR)$(sbindir)
+ 	install -m 0755 build/usernetctl     $(DESTDIR)$(sbindir)
+-	install -m 0755 build/rename_device  $(DESTDIR)$(libdir)/udev
++	install -m 0755 build/rename_device  $(DESTDIR)/$(udevdir)
+ 
+ clean:
+ 	rm -f build/*

@@ -11,7 +11,7 @@ Url:		https://github.com/fedora-sysv/initscripts
 Source0:	https://github.com/fedora-sysv/initscripts/archive/%{name}-%{version}.tar.gz
 Source1:	60-scheduler.rules
 Source100:	%{name}.rpmlintrc
-
+Patch0:		initscripts-10.01-fix-paths.patch
 BuildRequires:	pkgconfig(glib-2.0)
 BuildRequires:	pkgconfig
 BuildRequires:	popt-devel
@@ -54,8 +54,7 @@ down cleanly.  Initscripts also contains the scripts that activate and
 deactivate most network interfaces.
 
 %prep
-%setup -q
-#autosetup -p1
+%autosetup -p1
 
 %build
 %setup_compile_flags
@@ -64,7 +63,7 @@ export CC=%{__cc}
 %make_build
 
 %install
-%make_install
+%make_install udevdir="/lib/udev/"
 
 # (tpg) remove as its not needed
 for i in 0 1 2 3 4 5 6; do
@@ -75,9 +74,9 @@ done
 
 install -d %{buildroot}%{_presetdir}
 cat > %{buildroot}%{_presetdir}/86-initscripts.preset << EOF
-enable fedora-import-state.service
-enable fedora-loadmodules.service
-enable fedora-readonly.service
+disable import-state.service
+enable loadmodules.service
+disable readonly.service
 disable network
 disable netconsole
 disable dm
@@ -91,17 +90,11 @@ NETWORKING=yes
 NETWORKING_IPV6=no
 EOF
 
-# (tpg) remove broken links
-rm -rf %{buildroot}%{_systemunitdir}/basic.target.wants/fedora-autorelabel.service
-rm -rf %{buildroot}%{_systemunitdir}/basic.target.wants/fedora-autorelabel-mark.service
-
-# (tpg) get rid of it
-rm -rf %{buildroot}/lib/udev/rules.d/60-ssd.rules
-
-install -m644 %{SOURCE1} %{buildroot}/lib/udev/rules.d/60-scheduler.rules
+install -m644 -D %{SOURCE1} %{buildroot}/lib/udev/rules.d/60-scheduler.rules
 
 %posttrans
-%systemd_post fedora-import-state.service fedora-loadmodules.service fedora-readonly.service
+%systemd_post loadmodules.service
+
 ##Fixme
 touch /etc/sysconfig/i18n
 ##
@@ -111,13 +104,7 @@ chmod 664 /var/log/wtmp
 chmod 600 /var/log/btmp
 
 %preun
-%systemd_preun fedora-import-state.service fedora-loadmodules.service fedora-readonly.service
-
-%triggerun -- initscripts < 9.79-2
-if [ $1 -gt 1 ]; then
-  systemctl enable fedora-import-state.service fedora-loadmodules.service fedora-readonly.service &> /dev/null || :
-  echo -e "\nUPGRADE: Automatically re-enabling default systemd units: fedora-import-state.service fedora-loadmodules.service fedora-readonly.service \n" || :
-fi
+%systemd_preun import-state.service loadmodules.service readonly.service
 
 %transfiletriggerpostun -- %{_initrddir}/
 find -L /etc/rc.d/rc{0,1,2,3,4,5,6,7}.d -type l -delete
