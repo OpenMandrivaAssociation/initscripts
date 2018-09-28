@@ -1,0 +1,2 @@
+# set BFQ scheduler for rotating disks
+ACTION=="add|change", KERNEL=="sd*[!0-9]|sr*", ATTR{queue/rotational}=="1", ATTR{queue/scheduler}="bfq"

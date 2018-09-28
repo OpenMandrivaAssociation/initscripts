@@ -1,80 +1,50 @@
-%define _requires_exceptions GLIBC_PRIVATE
+#this is required since latest glibc (new atomic OPs?)
+%global __requires_exclude GLIBC_PRIVATE
 
 Summary:	Scripts to bring up network interfaces and legacy utilities
 Name:		initscripts
-Version:	9.80
-Release:	3
+Version:	10.01
+Release:	1
 License:	GPLv2
 Group:		System/Base
-# Upstream URL: http://git.fedorahosted.org/git/initscripts.git
-Url:		https://github.com/OpenMandrivaSoftware/initscripts
-Source0:	https://github.com/OpenMandrivaSoftware/initscripts/archive/%{version}.tar.gz
+Url:		https://github.com/fedora-sysv/initscripts
+Source0:	https://github.com/fedora-sysv/initscripts/archive/%{name}-%{version}.tar.gz
+Source1:	60-scheduler.rules
 Source100:	%{name}.rpmlintrc
 
 BuildRequires:	pkgconfig(glib-2.0)
 BuildRequires:	pkgconfig
 BuildRequires:	popt-devel
-BuildRequires:	pkgconfig(python3)
+BuildRequires:	systemd-macros
+Buildrequires:	gettext-devel
 
-BuildRequires:	rpm-helper
-BuildRequires:	systemd
-
-Requires(post,preun):	rpm-helper >= 0.24.17
-Requires(post,preun):	systemd >= 235
-Requires(post):	coreutils
-Requires(post):	grep
-Requires(post):	chkconfig
-# for /bin/awk
+Requires(posttrans):	rpm-helper >= 0.24.17
+Requires(posttrans):	systemd >= 235
+Requires:	chkconfig
+Requires:	bash
+Requires:	filesystem
+Requires:	coreutils
 Requires:	gawk
-# for /bin/sed
-Requires:	sed
-Requires:	e2fsprogs
-Requires:	gettext-base >= 0.19
-# needed for chvt --userwait
-Requires:	kbd >= 2.0.4
-# for /sbin/fuser
-Requires:	psmisc
-Requires:	which
-Requires:	setup >= 2.8.9
-# for /sbin/arping
-Requires:	iputils
-# for /sbin/ip
-Requires:	iproute2
-Requires:	hostname >= 3.16
-# for /bin/find
 Requires:	findutils
-Requires:	net-tools >= 2.0
-Requires:	ipcalc
-# (blino) for pidof -c
-# (bor) for pidof -m
+Requires:	grep
 Requires:	procps-ng
+Requires:	setup >= 2.8.9
+Requires:	systemd
+Requires:	util-linux > 2.31
+Requires:	shadow
+Requires:	cpio
+Requires:	hostname >= 3.16
+Requires:	iproute2
+Requires:	ipcalc
+Requires:	iputils
 Requires:	kmod
+Requires:	sed
+Requires:	glibc
+Requires:	bc
+Requires:	dbus
+Requires:	net-tools >= 2.0
 Requires:	ethtool
-Requires:	ifmetric
-Requires:	util-linux >= 2.31
-Requires:	dmsetup
-# http://bugzilla.redhat.com/show_bug.cgi?id=252973
-Conflicts:	nut < 2.2.0
-Obsoletes:	rhsound < %{version}-%{release}
-Obsoletes:	sapinit < %{version}-%{release}
-Provides:	rhsound = %{version}-%{release}
-Provides:	sapinit = %{version}-%{release}
-Conflicts:	kernel <= 2.2
-Conflicts:	timeconfig < 3.0
-Conflicts:	pppd <= 2.4.4-3mdv2008.1
-Conflicts:	wvdial < 1.40-3
-Conflicts:	initscripts < 1.22.1-5
-Conflicts:	Aurora <= 7.2-17mdk
-Conflicts:	dhcpcd < 1.3.21pl1
-Conflicts:	XFree86-xfs < 4.2.0-12mdk
-Conflicts:	xinitrc < 2.4.12
-Conflicts:	lsb < 3.1-11mdv2007.1
-Conflicts:	lsb-core < 3.1-15mdv2008.1
-Conflicts:	suspend-scripts < 1.27
-Conflicts:	mdadm < 2.6.4-2mdv2008.1
-Conflicts:	systemd <= 19-2
-Conflicts:	networkmanager < 0.8.2-8
-Conflicts:	prcsys
+Provides:	/sbin/service
 %rename %{name}-debugmode
 
 %description
@@ -85,29 +55,16 @@ deactivate most network interfaces.
 
 %prep
 %setup -q
-rm -rf po
-ln -s mandriva/po
-
-%apply_patches
+#autosetup -p1
 
 %build
 %setup_compile_flags
 export CC=%{__cc}
 
-%make
-%make -C mandriva
+%make_build
 
 %install
-mkdir -p %{buildroot}%{_sysconfdir}
-make ROOT=%{buildroot} SUPERUSER=`id -un` SUPERGROUP=`id -gn` mandir=%{_mandir} install
-
-#MDK
-make -C mandriva install ROOT=%{buildroot} mandir=%{_mandir}
-
-python mandriva/gprintify.py \
-	`find %{buildroot}%{_sysconfdir}/rc.d -type f` \
-	`find %{buildroot}/sysconfig/network-scripts -type f` \
-	%{buildroot}%{_systemdrootdir}/fedora-*
+%make_install
 
 # (tpg) remove as its not needed
 for i in 0 1 2 3 4 5 6; do
@@ -116,25 +73,12 @@ done
 
 %find_lang %{name}
 
-# we have our own copy of gprintify
-export DONT_GPRINTIFY=1
-
-touch %{buildroot}%{_sysconfdir}/crypttab
-chmod 600 %{buildroot}%{_sysconfdir}/crypttab
-
-# (cg) Upstream should stop shipping this too IMO (it's systemd's job now)
-rm -f %{buildroot}/var/run/utmp
-
-# (tpg) kill it with fire
-rm -rf %{buildroot}%{_initddir}/dm
-
 install -d %{buildroot}%{_presetdir}
 cat > %{buildroot}%{_presetdir}/86-initscripts.preset << EOF
 enable fedora-import-state.service
 enable fedora-loadmodules.service
 enable fedora-readonly.service
-enable mandriva-everytime.service
-enable network
+disable network
 disable netconsole
 disable dm
 disable network-up
@@ -154,10 +98,10 @@ rm -rf %{buildroot}%{_systemunitdir}/basic.target.wants/fedora-autorelabel-mark.
 # (tpg) get rid of it
 rm -rf %{buildroot}/lib/udev/rules.d/60-ssd.rules
 
-%post
-%systemd_post fedora-import-state.service fedora-loadmodules.service fedora-readonly.service mandriva-everytime.service
+install -m644 %{SOURCE1} %{buildroot}/lib/udev/rules.d/60-scheduler.rules
 
 %posttrans
+%systemd_post fedora-import-state.service fedora-loadmodules.service fedora-readonly.service
 ##Fixme
 touch /etc/sysconfig/i18n
 ##
@@ -167,15 +111,15 @@ chmod 664 /var/log/wtmp
 chmod 600 /var/log/btmp
 
 %preun
-%systemd_preun fedora-import-state.service fedora-loadmodules.service fedora-readonly.service mandriva-everytime.service
+%systemd_preun fedora-import-state.service fedora-loadmodules.service fedora-readonly.service
 
 %triggerun -- initscripts < 9.79-2
 if [ $1 -gt 1 ]; then
-  systemctl enable fedora-import-state.service fedora-loadmodules.service fedora-readonly.service mandriva-everytime.service &> /dev/null || :
-  echo -e "\nUPGRADE: Automatically re-enabling default systemd units: fedora-import-state.service fedora-loadmodules.service fedora-readonly.service mandriva-everytime.service\n" || :
+  systemctl enable fedora-import-state.service fedora-loadmodules.service fedora-readonly.service &> /dev/null || :
+  echo -e "\nUPGRADE: Automatically re-enabling default systemd units: fedora-import-state.service fedora-loadmodules.service fedora-readonly.service \n" || :
 fi
 
-# (cg) Clean up danging symlinks after initscript removal
+%transfiletriggerpostun -- %{_initrddir}/
 find -L /etc/rc.d/rc{0,1,2,3,4,5,6,7}.d -type l -delete
 
 %files -f %{name}.lang
@@ -284,13 +228,11 @@ find -L /etc/rc.d/rc{0,1,2,3,4,5,6,7}.d -type l -delete
 %{_bindir}/*
 %dir /lib/tmpfiles.d
 /lib/tmpfiles.d/initscripts.conf
-/lib/tmpfiles.d/mandriva.conf
 %{_systemdrootdir}/fedora-domainname
 %{_systemdrootdir}/fedora-import-state
 %{_systemdrootdir}/fedora-loadmodules
 %{_systemdrootdir}/fedora-readonly
-%{_systemunitdir}/fedora-domainname.service
-%{_systemunitdir}/fedora-import-state.service
-%{_systemunitdir}/fedora-loadmodules.service
-%{_systemunitdir}/fedora-readonly.service
-%{_systemunitdir}/mandriva-everytime.service
+%{_unitdir}/fedora-domainname.service
+%{_unitdir}/fedora-import-state.service
+%{_unitdir}/fedora-loadmodules.service
+%{_unitdir}/fedora-readonly.service
