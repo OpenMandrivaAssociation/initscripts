@@ -22,7 +22,7 @@ diff -Naur initscripts-10.01/src/Makefile initscripts-10.01.tpg/src/Makefile
  libdir      = $(prefix)/lib
  
 -CC          = gcc
-+CC          = $(CC)
++CC         ?= gcc
  CFLAGS     += $(RPM_OPT_FLAGS) -Wall -D_GNU_SOURCE -fPIE
  LDFLAGS    += $(RPM_LD_FLAGS) -pie -z relro -z now
  
