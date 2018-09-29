@@ -58,9 +58,7 @@ deactivate most network interfaces.
 
 %build
 %setup_compile_flags
-export CC=%{__cc}
-
-%make_build
+%make_build CC="%{__cc}" RPM_OPT_FLAGS="%{optflags}" RPM_LD_FLAGS="%{ldflags}"
 
 %install
 %make_install udevdir="/lib/udev/"
