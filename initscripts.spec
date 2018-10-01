@@ -60,7 +60,7 @@ deactivate most network interfaces.
 
 %build
 %setup_compile_flags
-%make_build CC="%{__cc}" RPM_OPT_FLAGS="%{optflags}" RPM_LD_FLAGS="%{ldflags}" udevdir="/lib/udev/" bindir="/bin" sbindir="/sbin"
+%make_build CC="%{__cc}" RPM_OPT_FLAGS="%{optflags}" RPM_LD_FLAGS="%{ldflags}" udevdir="/lib/udev/"
 
 %install
 mkdir -p %{buildroot}/lib/udev
