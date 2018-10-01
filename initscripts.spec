@@ -61,6 +61,7 @@ deactivate most network interfaces.
 %make_build CC="%{__cc}" RPM_OPT_FLAGS="%{optflags}" RPM_LD_FLAGS="%{ldflags}"
 
 %install
+mkdir -p %{buildroot}/lib/udev
 %make_install CC="%{__cc}" RPM_OPT_FLAGS="%{optflags}" RPM_LD_FLAGS="%{ldflags}" udevdir="/lib/udev/"
 
 # (tpg) remove as its not needed
