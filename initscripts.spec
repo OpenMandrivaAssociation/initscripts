@@ -16,7 +16,7 @@ BuildRequires:	pkgconfig(glib-2.0)
 BuildRequires:	pkgconfig
 BuildRequires:	popt-devel
 BuildRequires:	systemd-macros
-Buildrequires:	gettext-devel
+BuildRequires:	gettext-devel
 
 Requires(posttrans):	rpm-helper >= 0.24.17
 Requires(posttrans):	systemd >= 235
@@ -61,7 +61,7 @@ deactivate most network interfaces.
 %make_build CC="%{__cc}" RPM_OPT_FLAGS="%{optflags}" RPM_LD_FLAGS="%{ldflags}"
 
 %install
-%make_install udevdir="/lib/udev/"
+%make_install CC="%{__cc}" RPM_OPT_FLAGS="%{optflags}" RPM_LD_FLAGS="%{ldflags}" udevdir="/lib/udev/"
 
 # (tpg) remove as its not needed
 for i in 0 1 2 3 4 5 6; do
