@@ -64,7 +64,7 @@ deactivate most network interfaces.
 
 %install
 mkdir -p %{buildroot}/lib/udev
-%make_install CC="%{__cc}" RPM_OPT_FLAGS="%{optflags}" RPM_LD_FLAGS="%{ldflags}" udevdir="/lib/udev/" bindir="/bin" sbindir="/sbin"
+%make_install CC="%{__cc}" RPM_OPT_FLAGS="%{optflags}" RPM_LD_FLAGS="%{ldflags}" libdir="/%{_lib}" libexecdir="%{_libexecdir}" datadir="%{_datadir}" mandir="%{_mandir}" sysconfdir="%{_sysconfdir}" udevdir="/lib/udev/" bindir="/bin" sbindir="/sbin"
 
 # (tpg) remove as its not needed
 for i in 0 1 2 3 4 5 6; do
