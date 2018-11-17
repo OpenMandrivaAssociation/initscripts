@@ -64,7 +64,7 @@ deactivate most network interfaces.
 
 %install
 mkdir -p %{buildroot}/lib/udev
-%make_install CC="%{__cc}" RPM_OPT_FLAGS="%{optflags}" RPM_LD_FLAGS="%{ldflags}" libdir="/%{_lib}" libexecdir="%{_libexecdir}" datadir="%{_datadir}" mandir="%{_mandir}" sysconfdir="%{_sysconfdir}" udevdir="/lib/udev/" bindir="/bin" sbindir="/sbin"
+%make_install CC="%{__cc}" RPM_OPT_FLAGS="%{optflags}" RPM_LD_FLAGS="%{ldflags}" prefix="%{_prefix}" libdir="/%{_lib}" libexecdir="%{_libexecdir}" datadir="%{_datadir}" mandir="%{_mandir}" sysconfdir="%{_sysconfdir}" udevdir="/lib/udev/" bindir="/bin" sbindir="/sbin"
 
 # (tpg) remove as its not needed
 for i in 0 1 2 3 4 5 6; do
@@ -113,58 +113,35 @@ find -L /etc/rc.d/rc{0,1,2,3,4,5,6,7}.d -type l -delete
 %files -f %{name}.lang
 %dir %{_sysconfdir}/sysconfig/network-scripts
 %dir %{_sysconfdir}/sysconfig/console
-%dir %{_sysconfdir}/sysconfig/modules
-%dir %{_sysconfdir}/rwtab.d
-%dir %{_sysconfdir}/statetab.d
 %dir %{_sysconfdir}/rc.d/init.d
-
-%config %{_sysconfdir}/profile.d/*
 %config(noreplace) %{_sysconfdir}/sysconfig/netconsole
 %config(noreplace) %{_sysconfdir}/sysconfig/readonly-root
 %{_sysconfdir}/sysconfig/network-scripts/*
-%{_sysconfdir}/X11/prefdm
-%{_sysconfdir}/X11/lookupdm
-%{_presetdir}/86-initscripts.preset
-/bin/usleep
-/sbin/consoletype
-/sbin/genhostid
-/sbin/netreport
-/sbin/ifdown
-/sbinifup
+%{_sysconfdir}/rc.d/rc.local
 %{_sysconfdir}/rwtab
 %{_sysconfdir}/statetab
-/lib/udev/rules.d/*
-/lib/lsb/init-functions
+%{_sysconfdir}/sysconfig/network
 %{_sysconfdir}/rc.d/init.d/*
-%attr(4755,root,root) %{_sbindir}/usernetctl
+%{_presetdir}/86-initscripts.preset
+/bin/usleep
+/sbin/service
+/sbin/consoletype
+/sbin/genhostid
+%attr(4755,root,root) /sbin/usernetctl
+/lib/udev/rules.d/*
 /lib/udev/rename_device
 %ifarch s390 s390x
 /lib/udev/ccw_init
 %endif
-/sbin/service
-/sbin/sushell
-#mdv
-/sbin/hibernate-cleanup.sh
+%{_libexecdir}/import-state
+%{_libexecdir}/loadmodules
+%{_libexecdir}/netconsole
+%{_libexecdir}/readonly-root
+%{_unitdir}/import-state.service
+%{_unitdir}/loadmodules.service
+%{_unitdir}/netconsole.service
+%{_unitdir}/readonly-root.service
 %{_mandir}/man*/*
-%dir %attr(775,root,root) /run/netreport
-%dir %{_sysconfdir}/NetworkManager
-%dir %{_sysconfdir}/NetworkManager/dispatcher.d
-%{_sysconfdir}/NetworkManager/dispatcher.d/00-netreport
 /var/lib/stateless
 %ghost %attr(0664,root,utmp) /var/log/btmp
 %ghost %attr(0664,root,utmp) /var/log/wtmp
-%verify(not md5 size mtime) %config(noreplace) %{_sysconfdir}/crypttab
-%config(noreplace) %{_sysconfdir}/modules
-%{_sysconfdir}/rc.modules
-%dir %{_sysconfdir}/modprobe.preload.d/
-%{_bindir}/*
-%dir /lib/tmpfiles.d
-/lib/tmpfiles.d/initscripts.conf
-%{_libexecdir}/domainname
-%{_libexecdir}/import-state
-%{_libexecdir}/loadmodules
-%{_libexecdir}/readonly
-%{_unitdir}/domainname.service
-%{_unitdir}/import-state.service
-%{_unitdir}/loadmodules.service
-%{_unitdir}/readonly.service

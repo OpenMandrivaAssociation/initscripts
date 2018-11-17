@@ -1,6 +1,6 @@
 diff -Naur initscripts-10.01/Makefile initscripts-10.01.tpg/Makefile
 --- initscripts-10.01/Makefile	2018-08-06 11:06:05.000000000 +0000
-+++ initscripts-10.01.tpg/Makefile	2018-10-02 20:43:21.832843141 +0000
++++ initscripts-10.01.tpg/Makefile	2018-11-17 02:18:41.636885776 +0000
 @@ -18,18 +18,18 @@
  
  # Normally /usr/local is used. However, it does not make sense for us to use it
@@ -45,9 +45,21 @@ diff -Naur initscripts-10.01/Makefile initscripts-10.01.tpg/Makefile
  
  install-network-scripts: install-usr install-etc
  	install -m 0755 -d      $(DESTDIR)$(sysconfdir)/sysconfig/network-scripts
+diff -Naur initscripts-10.01/po/Makefile initscripts-10.01.tpg/po/Makefile
+--- initscripts-10.01/po/Makefile	2018-08-06 11:06:05.000000000 +0000
++++ initscripts-10.01.tpg/po/Makefile	2018-11-17 02:19:04.642885458 +0000
+@@ -28,7 +28,7 @@
+ FMTCATALOGS = $(patsubst %.po,%.mo,$(CATALOGS))
+ 
+ POTFILES    = $(shell ls ../network-scripts/* | grep -v ifcfg-) \
+-	..$(sbindir)/service \
++	../usr/sbin/service \
+ 	..$(libexecdir)/import-state \
+ 	..$(libexecdir)/loadmodules \
+ 	..$(libexecdir)/readonly-root \
 diff -Naur initscripts-10.01/src/Makefile initscripts-10.01.tpg/src/Makefile
 --- initscripts-10.01/src/Makefile	2018-08-06 11:06:05.000000000 +0000
-+++ initscripts-10.01.tpg/src/Makefile	2018-10-02 20:46:40.386840395 +0000
++++ initscripts-10.01.tpg/src/Makefile	2018-11-17 02:18:41.636885776 +0000
 @@ -12,12 +12,12 @@
  
  # Normally /usr/local is used. However, it does not make sense for us to use it
