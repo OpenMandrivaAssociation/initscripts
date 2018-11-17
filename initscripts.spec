@@ -6,7 +6,7 @@
 Summary:	Scripts to bring up network interfaces and legacy utilities
 Name:		initscripts
 Version:	10.01
-Release:	3
+Release:	4
 License:	GPLv2
 Group:		System/Base
 Url:		https://github.com/fedora-sysv/initscripts
@@ -30,7 +30,7 @@ Requires:	gawk
 Requires:	findutils
 Requires:	grep
 Requires:	procps-ng
-Requires:	setup >= 2.8.9
+Requires:	setup >= 2.9.2
 Requires:	systemd
 Requires:	util-linux > 2.31
 Requires:	shadow
