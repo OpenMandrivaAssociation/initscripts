@@ -92,7 +92,7 @@ NETWORKING_IPV6=no
 EOF
 
 install -m644 -D %{SOURCE1} %{buildroot}/lib/udev/rules.d/60-scheduler.rules
-printf '%s\n' "#!/bin/sh" >> %{_sysconfdir}/rc.d/rc.local
+printf '%s\n' "#!/bin/sh" >> %{buildroot}%{_sysconfdir}/rc.d/rc.local
 
 %posttrans
 %systemd_post loadmodules.service
