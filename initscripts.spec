@@ -6,7 +6,7 @@
 Summary:	Scripts to bring up network interfaces and legacy utilities
 Name:		initscripts
 Version:	10.01
-Release:	4
+Release:	5
 License:	GPLv2
 Group:		System/Base
 Url:		https://github.com/fedora-sysv/initscripts
@@ -94,6 +94,9 @@ EOF
 install -m644 -D %{SOURCE1} %{buildroot}/lib/udev/rules.d/60-scheduler.rules
 printf '%s\n' "#!/bin/sh" >> %{buildroot}%{_sysconfdir}/rc.d/rc.local
 
+touch %{buildroot}%{_sysconfdir}/rc.modules
+mkdir -p %{buildroot}%{_sysconfdir}/sysconfig/modules
+
 %posttrans
 %systemd_post loadmodules.service
 
@@ -114,6 +117,7 @@ find -L /etc/rc.d/rc{0,1,2,3,4,5,6,7}.d -type l -delete
 %files -f %{name}.lang
 %dir %{_sysconfdir}/sysconfig/network-scripts
 %dir %{_sysconfdir}/sysconfig/console
+%dir %{_sysconfdir}/sysconfig/modules
 %dir %{_sysconfdir}/rc.d/init.d
 %config(noreplace) %{_sysconfdir}/sysconfig/netconsole
 %config(noreplace) %{_sysconfdir}/sysconfig/readonly-root
@@ -123,6 +127,7 @@ find -L /etc/rc.d/rc{0,1,2,3,4,5,6,7}.d -type l -delete
 %{_sysconfdir}/statetab
 %{_sysconfdir}/sysconfig/network
 %{_sysconfdir}/rc.d/init.d/*
+%{_sysconfdir}/rc.modules
 %{_presetdir}/86-initscripts.preset
 /bin/usleep
 /sbin/service
