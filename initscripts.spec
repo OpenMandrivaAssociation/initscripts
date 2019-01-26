@@ -6,7 +6,7 @@
 Summary:	Scripts to bring up network interfaces and legacy utilities
 Name:		initscripts
 Version:	10.01
-Release:	5
+Release:	6
 License:	GPLv2
 Group:		System/Base
 Url:		https://github.com/fedora-sysv/initscripts
@@ -95,6 +95,7 @@ install -m644 -D %{SOURCE1} %{buildroot}/lib/udev/rules.d/60-scheduler.rules
 printf '%s\n' "#!/bin/sh" >> %{buildroot}%{_sysconfdir}/rc.d/rc.local
 
 touch %{buildroot}%{_sysconfdir}/rc.modules
+chmod 755 %{buildroot}%{_sysconfdir}/rc.modules
 mkdir -p %{buildroot}%{_sysconfdir}/sysconfig/modules
 
 %posttrans
