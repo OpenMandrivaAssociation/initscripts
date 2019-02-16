@@ -6,7 +6,7 @@
 Summary:	Scripts to bring up network interfaces and legacy utilities
 Name:		initscripts
 Version:	10.01
-Release:	6
+Release:	7
 License:	GPLv2
 Group:		System/Base
 Url:		https://github.com/fedora-sysv/initscripts
@@ -113,7 +113,7 @@ chmod 600 /var/log/btmp
 %systemd_preun import-state.service loadmodules.service readonly.service
 
 %transfiletriggerpostun -- %{_initrddir}/
-find -L /etc/rc.d/rc{0,1,2,3,4,5,6,7}.d -type l -delete
+find -L /etc/rc.d/rc{0,1,2,3,4,5,6}.d -type l -delete
 
 %files -f %{name}.lang
 %dir %{_sysconfdir}/sysconfig/network-scripts
