@@ -98,6 +98,9 @@ touch %{buildroot}%{_sysconfdir}/rc.modules
 chmod 755 %{buildroot}%{_sysconfdir}/rc.modules
 mkdir -p %{buildroot}%{_sysconfdir}/sysconfig/modules
 
+# (tpg) this is in chkconfig already
+rm -rf %{buildroot}%{_sysconfdir}/init.d
+
 %posttrans
 %systemd_post loadmodules.service
 
