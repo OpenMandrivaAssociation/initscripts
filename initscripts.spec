@@ -5,8 +5,8 @@
 
 Summary:	Scripts to bring up network interfaces and legacy utilities
 Name:		initscripts
-Version:	10.01
-Release:	7
+Version:	10.02
+Release:	1
 License:	GPLv2
 Group:		System/Base
 Url:		https://github.com/fedora-sysv/initscripts
