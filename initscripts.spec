@@ -5,12 +5,12 @@
 
 Summary:	Scripts to bring up network interfaces and legacy utilities
 Name:		initscripts
-Version:	10.02
+Version:	10.03
 Release:	1
 License:	GPLv2
 Group:		System/Base
 Url:		https://github.com/fedora-sysv/initscripts
-Source0:	https://github.com/fedora-sysv/initscripts/archive/%{name}-%{version}.tar.gz
+Source0:	https://github.com/fedora-sysv/initscripts/archive/%{version}.tar.gz
 Source1:	60-scheduler.rules
 Source100:	%{name}.rpmlintrc
 Patch0:		initscripts-10.01-fix-paths.patch
