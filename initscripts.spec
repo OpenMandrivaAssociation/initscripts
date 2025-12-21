@@ -14,6 +14,7 @@ Source0:	https://github.com/fedora-sysv/initscripts/archive/%{version}.tar.gz
 Source1:	60-scheduler.rules
 Source100:	%{name}.rpmlintrc
 Patch0:		initscripts-10.01-fix-paths.patch
+BuildRequires:	make
 BuildRequires:	pkgconfig(glib-2.0)
 BuildRequires:	pkgconfig
 BuildRequires:	popt-devel
